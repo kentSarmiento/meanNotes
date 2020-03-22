@@ -1,2 +1,5 @@
 
-<h2> The notes create component </h2>
+<textarea rows="10" [(ngModel)]="textareaValue"></textarea>
+<button (click)="onAddNote()">Save note</button>
+
+<p>{{ newNote }}</p>
