@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
-import { NotesCreateComponent } from './notes/notes-create/notes-create.component'
+import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { NotesCreateComponent } from './notes/notes-create/notes-create.componen
   ],
   imports: [
     BrowserModule,
-    FormsModule
+    FormsModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
