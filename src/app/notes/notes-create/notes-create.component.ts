@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { NgForm } from '@angular/forms';
 
 import { Note } from '../notes.model';
 
@@ -15,12 +16,15 @@ export class NotesCreateComponent {
 
   @Output() noteCreated = new EventEmitter<Note>();
 
-  onAddNote() {
+  onAddNote(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
     const note : Note = {
-      title: this.enteredNoteTitle,
-      content: this.enteredNoteContent,
-      category: this.enteredCategory,
-      author: this.authorName,
+      title: form.value.title,
+      content: form.value.content,
+      category: form.value.category,
+      author: form.value.author,
     };
     this.noteCreated.emit(note);
   }

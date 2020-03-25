@@ -1,13 +1,35 @@
 <mat-card>
-  <mat-form-field>
-    <input matInput type="text" [(ngModel)]="enteredNoteTitle">
-  </mat-form-field>
-  <mat-form-field>
-    <textarea matInput rows="10" [(ngModel)]="enteredNoteContent"></textarea>
-  </mat-form-field>
 
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="onAddNote()">Save note</button>
+  <form (submit)="onAddNote(noteForm)" #noteForm="ngForm">
+    <mat-form-field>
+      <input
+        matInput
+        type="text"
+        name="title"
+        ngModel
+        required
+        #title="ngModel">
+      <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <textarea
+        matInput
+        rows="10"
+        name="content"
+        ngModel
+        required
+        #content="ngModel">
+      </textarea>
+      <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
+    </mat-form-field>
+<br><br>
+    <button
+      mat-raised-button
+      color="accent"
+      type="submit">
+        Save Note
+    </button>
+
+  </form>
 </mat-card>
