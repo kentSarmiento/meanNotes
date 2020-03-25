@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component , Input } from "@angular/core";
 
 @Component({
   selector: 'app-notes-list',
@@ -6,9 +6,5 @@ import { Component } from "@angular/core";
   styleUrls: ['./notes-list.component.css'],
 })
 export class NotesListComponent {
-  posts = [
-    {title: 'First Note', content: 'This is the first note'},
-    {title: 'Second Note', content: 'This is the second note'},
-    {title: 'Third Note', content: 'This is the third note'},
-  ];
+  @Input() notes = [];
 }

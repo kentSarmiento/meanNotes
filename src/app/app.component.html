@@ -1,6 +1,5 @@
 <app-header></app-header>
 <main>
-<app-notes-create></app-notes-create>
-
-<app-notes-list></app-notes-list>
+<app-notes-create (noteCreated)="onNoteAdded($event)"></app-notes-create>
+<app-notes-list [notes]="savedNotes"></app-notes-list>
 </main>

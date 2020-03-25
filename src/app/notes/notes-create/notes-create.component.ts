@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-notes-create',
@@ -6,10 +6,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./notes-create.component.css']
 })
 export class NotesCreateComponent {
-  textareaValue = '';
-  newNote = '';
+  enteredNoteTitle='';
+  enteredNoteContent='';
+
+  @Output() noteCreated = new EventEmitter();
 
   onAddNote() {
-    this.newNote = this.textareaValue;
+    const post = {
+      title: this.enteredNoteTitle,
+      content: this.enteredNoteContent
+    };
+    this.noteCreated.emit(post);
   }
 }
