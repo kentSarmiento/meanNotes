@@ -1,5 +1,12 @@
+<mat-card>
+  <mat-form-field>
+    <textarea matInput rows="10" [(ngModel)]="textareaValue"></textarea>
+  </mat-form-field>
 
-<textarea rows="10" [(ngModel)]="textareaValue"></textarea>
-<button (click)="onAddNote()">Save note</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onAddNote()">Save note</button>
+</mat-card>
 
 <p>{{ newNote }}</p>
