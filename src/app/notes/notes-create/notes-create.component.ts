@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 
+import { Note } from '../notes.model';
+
 @Component({
   selector: 'app-notes-create',
   templateUrl: './notes-create.component.html',
@@ -8,14 +10,18 @@ import { Component, EventEmitter, Output } from '@angular/core';
 export class NotesCreateComponent {
   enteredNoteTitle='';
   enteredNoteContent='';
+  enteredCategory='';
+  authorName='';
 
-  @Output() noteCreated = new EventEmitter();
+  @Output() noteCreated = new EventEmitter<Note>();
 
   onAddNote() {
-    const post = {
+    const note : Note = {
       title: this.enteredNoteTitle,
-      content: this.enteredNoteContent
+      content: this.enteredNoteContent,
+      category: this.enteredCategory,
+      author: this.authorName,
     };
-    this.noteCreated.emit(post);
+    this.noteCreated.emit(note);
   }
 }
