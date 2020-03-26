@@ -6,7 +6,11 @@
     <p>
       {{ note.content }}
     </p>
+    <mat-action-row>
+      <button mat-raised-button color="primary">Edit</button>
+      <button mat-raised-button color="warn">Delete</button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
 
-<p class="mat-body-1" align="center" *ngIf="notes.length == 0">No notes yet!</p>
+<p class="caption" align="center" *ngIf="notes.length == 0">No notes yet!</p>

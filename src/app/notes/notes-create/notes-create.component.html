@@ -8,6 +8,7 @@
         name="title"
         ngModel
         required
+        placeholder="Note Title"
         #title="ngModel">
       <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
     </mat-form-field>
@@ -19,14 +20,16 @@
         name="content"
         ngModel
         required
+        placeholder="Note Content"
         #content="ngModel">
       </textarea>
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
-<br><br>
+
+
     <button
       mat-raised-button
-      color="accent"
+      color="primary"
       type="submit">
         Save Note
     </button>

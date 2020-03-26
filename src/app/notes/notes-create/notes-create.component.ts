@@ -19,7 +19,8 @@ export class NotesCreateComponent {
     }
     this.notesService.addNote( form.value.title,
                                form.value.content,
-                               "note",
-                               "root" );
+                               form.value.category,
+                               form.value.author );
+    form.resetForm();
   }
 }
