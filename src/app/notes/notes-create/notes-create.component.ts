@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { Note } from '../notes.model';
+import { NotesService } from '../notes.service';
 
 @Component({
   selector: 'app-notes-create',
@@ -9,23 +10,16 @@ import { Note } from '../notes.model';
   styleUrls: ['./notes-create.component.css']
 })
 export class NotesCreateComponent {
-  enteredNoteTitle='';
-  enteredNoteContent='';
-  enteredCategory='';
-  authorName='';
 
-  @Output() noteCreated = new EventEmitter<Note>();
+  constructor(public notesService: NotesService ) {}
 
   onAddNote(form: NgForm) {
     if (form.invalid) {
       return;
     }
-    const note : Note = {
-      title: form.value.title,
-      content: form.value.content,
-      category: form.value.category,
-      author: form.value.author,
-    };
-    this.noteCreated.emit(note);
+    this.notesService.addNote( form.value.title,
+                               form.value.content,
+                               "note",
+                               "root" );
   }
 }
