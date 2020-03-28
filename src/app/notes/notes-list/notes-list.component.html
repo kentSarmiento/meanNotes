@@ -1,0 +1,20 @@
+<mat-accordion multi=true *ngIf="notes.length > 0">
+  <mat-expansion-panel *ngFor="let note of notes">
+    <mat-expansion-panel-header>
+      {{ note.title }}
+    </mat-expansion-panel-header>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="wrapping">{{ note.content }}</div>
+        </mat-card-content>
+      </mat-card>
+
+    <mat-action-row>
+      <button mat-button color="accent">Edit</button>
+      <button mat-button color="warn">Delete</button>
+    </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<p class="caption" align="center" *ngIf="notes.length == 0">No notes yet!</p>
