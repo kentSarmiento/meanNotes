@@ -7,10 +7,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import { AppComponent } from './app.component';
 import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
+import { NotesPageComponent } from './notes/notes-page/notes-page.component';
 import { HeaderComponent } from './header/header.component';
 
 @NgModule({
@@ -18,6 +20,7 @@ import { HeaderComponent } from './header/header.component';
     AppComponent,
     NotesCreateComponent,
     NotesListComponent,
+    NotesPageComponent,
     HeaderComponent,
   ],
   imports: [
@@ -29,6 +32,7 @@ import { HeaderComponent } from './header/header.component';
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
+    MatGridListModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

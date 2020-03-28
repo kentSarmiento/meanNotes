@@ -3,12 +3,16 @@
     <mat-expansion-panel-header>
       {{ note.title }}
     </mat-expansion-panel-header>
-    <p>
-      {{ note.content }}
-    </p>
+
+      <mat-card>
+        <mat-card-content>
+          <div class="wrapping">{{ note.content }}</div>
+        </mat-card-content>
+      </mat-card>
+
     <mat-action-row>
-      <button mat-raised-button color="primary">Edit</button>
-      <button mat-raised-button color="warn">Delete</button>
+      <button mat-button color="accent">Edit</button>
+      <button mat-button color="warn">Delete</button>
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>

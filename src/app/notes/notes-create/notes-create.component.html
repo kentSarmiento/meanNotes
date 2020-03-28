@@ -16,7 +16,7 @@
     <mat-form-field>
       <textarea
         matInput
-        rows="10"
+        rows="8"
         name="content"
         ngModel
         required
@@ -26,10 +26,9 @@
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
 
-
     <button
       mat-raised-button
-      color="primary"
+      color="accent"
       type="submit">
         Save Note
     </button>
