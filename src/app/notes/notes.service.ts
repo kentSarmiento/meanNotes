@@ -48,10 +48,11 @@ export class NotesService {
                           author: author
                         };
     this.http
-      .post(
+      .post<any>(
           "http://localhost:3000/notes", note
       )
-      .subscribe(() => {
+      .subscribe(response => {
+        note.id = response._id;
         this.notes.push(note);
         this.notesUpdated.next([...this.notes]);
       });
