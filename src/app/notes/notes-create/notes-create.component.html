@@ -1,7 +1,7 @@
 <mat-card>
 
   <form (submit)="onAddNote(noteForm)" #noteForm="ngForm">
-    <mat-form-field>
+    <mat-form-field class="title">
       <input
         matInput
         type="text"
@@ -13,7 +13,7 @@
       <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="content">
       <textarea
         matInput
         rows="8"
@@ -26,7 +26,33 @@
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
 
-    <button
+    <div class="category-author">
+    <mat-form-field class="category">
+      <input
+        matInput
+        type="text"
+        name="category"
+        ngModel
+        required
+        placeholder="Note Category"
+        #category="ngModel">
+      <mat-error *ngIf="category.invalid">Please enter note category</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="author">
+      <input
+        matInput
+        type="text"
+        name="author"
+        ngModel
+        required
+        placeholder="Note Author"
+        #author="ngModel">
+      <mat-error *ngIf="author.invalid">Please enter note author</mat-error>
+    </mat-form-field>
+    </div>
+
+    <button class="submit"
       mat-raised-button
       color="accent"
       type="submit">

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
-import { Note } from '../notes.model';
 import { NotesService } from '../notes.service';
 
 @Component({
