@@ -56,4 +56,17 @@ export class NotesService {
         this.notesUpdated.next([...this.notes]);
       });
   }
+
+  deleteNote(id: string) {
+    this.http
+      .delete(
+          "http://localhost:3000/notes/" + id
+      )
+      .subscribe(() => {
+        const updatedNotes = this.notes.filter(note => note.id !== id);
+        this.notes = updatedNotes;
+        this.notesUpdated.next([...this.notes]);
+      });
+  }
+
 }

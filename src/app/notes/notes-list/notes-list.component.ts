@@ -23,6 +23,10 @@ export class NotesListComponent implements OnInit {
       });
   }
 
+  onDelete(id: string) {
+    this.notesService.deleteNote(id);
+  }
+
   ngOnDestroy() {
     this.notesSub.unsubscribe();
   }
