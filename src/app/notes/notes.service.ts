@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { Note } from './notes.model';
 
@@ -14,9 +15,20 @@ export class NotesService {
 
   getNotes() {
     this.http
-      .get<Note[]>(
+      .get<any>(
           "http://localhost:3000/notes"
       )
+      .pipe(map((data) => {
+        return data.map(data => {
+          return {
+            id: data._id,
+            title: data.title,
+            content: data.content,
+            category: data.category,
+            author: data.author,
+          };
+        });
+      }))
       .subscribe((data: Note[]) => {
         this.notes = data;
         this.notesUpdated.next([...this.notes]);
@@ -29,10 +41,12 @@ export class NotesService {
 
   addNote(title: string, content: string,
           category: string, author: string) {
-    const note: Note = { _id: null, title: title,
+    const note: Note = {  id: null,
+                          title: title,
                           content: content,
                           category: category,
-                          author: author };
+                          author: author
+                        };
     this.http
       .post(
           "http://localhost:3000/notes", note
