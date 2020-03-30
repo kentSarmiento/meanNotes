@@ -11,6 +11,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { HttpClientModule } from '@angular/common/http'
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
 import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
 import { NotesPageComponent } from './notes/notes-page/notes-page.component';
@@ -26,6 +27,7 @@ import { HeaderComponent } from './header/header.component';
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
     MatInputModule,
