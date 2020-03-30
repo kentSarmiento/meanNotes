@@ -1,12 +1,12 @@
 <mat-card>
 
-  <form (submit)="onAddNote(noteForm)" #noteForm="ngForm">
+  <form (submit)="onSaveNote(noteForm)" #noteForm="ngForm">
     <mat-form-field class="title">
       <input
         matInput
         type="text"
         name="title"
-        ngModel
+        [ngModel]="note.title"
         required
         placeholder="Note Title"
         #title="ngModel">
@@ -18,7 +18,8 @@
         matInput
         rows="8"
         name="content"
-        ngModel
+        [ngModel]="note.content"
+        required
         required
         placeholder="Note Content"
         #content="ngModel">
@@ -32,7 +33,7 @@
         matInput
         type="text"
         name="category"
-        ngModel
+        [ngModel]="note.category"
         required
         placeholder="Note Category"
         #category="ngModel">
@@ -44,7 +45,7 @@
         matInput
         type="text"
         name="author"
-        ngModel
+        [ngModel]="note.author"
         required
         placeholder="Note Author"
         #author="ngModel">

@@ -35,6 +35,10 @@ export class NotesService {
       });
   }
 
+  getNote(id: string) {
+    return {...this.notes.find(p => p.id === id)};
+  }
+
   getNotesUpdatedListener() {
     return this.notesUpdated.asObservable(); // provide listener for emitter
   }
@@ -54,6 +58,27 @@ export class NotesService {
       .subscribe(response => {
         note.id = response._id;
         this.notes.push(note);
+        this.notesUpdated.next([...this.notes]);
+      });
+  }
+
+  updateNote(id: string, title: string, content: string,
+             category: string, author: string) {
+    const note: Note = {  id: id,
+                          title: title,
+                          content: content,
+                          category: category,
+                          author: author
+                        };
+    this.http
+      .put(
+          "http://localhost:3000/notes/" + id, note
+      )
+      .subscribe(response => {
+        const updatedNotes = this.notes;
+        const updatedNoteIdx = this.notes.findIndex(note => note.id !== id);
+        updatedNotes[updatedNoteIdx] = note;
+        this.notes = updatedNotes;
         this.notesUpdated.next([...this.notes]);
       });
   }

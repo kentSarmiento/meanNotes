@@ -1,25 +1,51 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { NotesService } from '../notes.service';
+import { Note } from '../notes.model';
 
 @Component({
   selector: 'app-notes-create',
   templateUrl: './notes-create.component.html',
   styleUrls: ['./notes-create.component.css']
 })
-export class NotesCreateComponent {
+export class NotesCreateComponent implements OnInit {
+  private mode = 'create';
+  private id: string;
+  note: Note;
 
-  constructor(public notesService: NotesService ) {}
+  constructor(public notesService: NotesService, public route: ActivatedRoute) {}
 
-  onAddNote(form: NgForm) {
+  ngOnInit() {
+    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('id')) {
+        this.mode = 'edit';
+        this.id = paramMap.get('id');
+        this.note = this.notesService.getNote(this.id);
+      } else {
+        this.mode = 'create';
+        this.id = null;
+      }
+    });
+  }
+
+  onSaveNote(form: NgForm) {
     if (form.invalid) {
       return;
     }
-    this.notesService.addNote( form.value.title,
-                               form.value.content,
-                               form.value.category,
-                               form.value.author );
+    if (this.mode === 'create' ){
+      this.notesService.addNote( form.value.title,
+                                 form.value.content,
+                                 form.value.category,
+                                 form.value.author );
+    } else {
+      this.notesService.updateNote( this.id,
+                                    form.value.title,
+                                    form.value.content,
+                                    form.value.category,
+                                    form.value.author );
+    }
     form.resetForm();
   }
 }
