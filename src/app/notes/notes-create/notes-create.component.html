@@ -1,5 +1,6 @@
-<mat-card>
+<mat-spinner *ngIf="isLoading"></mat-spinner>
 
+<mat-card *ngIf="!isLoading">
   <form (submit)="onSaveNote(noteForm)" #noteForm="ngForm">
     <mat-form-field class="title">
       <input

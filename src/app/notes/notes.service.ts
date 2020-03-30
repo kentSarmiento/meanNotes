@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { Router } from "@angular/router";
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -11,7 +12,7 @@ export class NotesService {
   private notesUpdated = new Subject<Note[]>(); // emitter, of sort
 
   /* Create HttpClient to send requests to backend server */
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   getNotes() {
     this.http
@@ -59,6 +60,7 @@ export class NotesService {
         note.id = response._id;
         this.notes.push(note);
         this.notesUpdated.next([...this.notes]);
+        this.router.navigate(["/"]);
       });
   }
 
@@ -80,6 +82,7 @@ export class NotesService {
         updatedNotes[updatedNoteIdx] = note;
         this.notes = updatedNotes;
         this.notesUpdated.next([...this.notes]);
+        this.router.navigate(["/"]);
       });
   }
 

@@ -14,6 +14,7 @@ export class NotesCreateComponent implements OnInit {
   private mode = 'create';
   private id: string;
   note: Note;
+  isLoading = false;
 
   constructor(public notesService: NotesService, public route: ActivatedRoute) {}
 
@@ -22,7 +23,9 @@ export class NotesCreateComponent implements OnInit {
       if (paramMap.has('id')) {
         this.mode = 'edit';
         this.id = paramMap.get('id');
+        this.isLoading = true;
         this.notesService.getNote(this.id).subscribe(noteData => {
+          this.isLoading = false;
           this.note = {  id: noteData._id,
                          title: noteData.title,
                          content: noteData.content,
@@ -40,6 +43,7 @@ export class NotesCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.mode === 'create' ){
       this.notesService.addNote( form.value.title,
                                  form.value.content,

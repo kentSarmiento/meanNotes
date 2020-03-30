@@ -19,3 +19,6 @@ mat-action-row {
   height: 48px;
   padding: 0;
 }
+mat-spinner {
+  margin: auto;
+}

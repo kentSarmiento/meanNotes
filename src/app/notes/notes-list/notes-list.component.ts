@@ -10,15 +10,18 @@ import { NotesService } from '../notes.service';
   styleUrls: ['./notes-list.component.css'],
 })
 export class NotesListComponent implements OnInit {
-  notes: Note[] = [];
   private notesSub : Subscription;
+  notes: Note[] = [];
+  isLoading = false;
 
   constructor (public notesService: NotesService){}
 
   ngOnInit() {
     this.notesService.getNotes();
+    this.isLoading = true;
     this.notesSub = this.notesService.getNotesUpdatedListener().
       subscribe( (notes: Note[]) => {
+        this.isLoading = false;
         this.notes = notes;
       });
   }
