@@ -6,7 +6,7 @@
         matInput
         type="text"
         name="title"
-        [ngModel]="note.title"
+        [ngModel]="note?.title"
         required
         placeholder="Note Title"
         #title="ngModel">
@@ -18,7 +18,7 @@
         matInput
         rows="8"
         name="content"
-        [ngModel]="note.content"
+        [ngModel]="note?.content"
         required
         required
         placeholder="Note Content"
@@ -33,7 +33,7 @@
         matInput
         type="text"
         name="category"
-        [ngModel]="note.category"
+        [ngModel]="note?.category"
         required
         placeholder="Note Category"
         #category="ngModel">
@@ -45,7 +45,7 @@
         matInput
         type="text"
         name="author"
-        [ngModel]="note.author"
+        [ngModel]="note?.author"
         required
         placeholder="Note Author"
         #author="ngModel">

@@ -22,7 +22,13 @@ export class NotesCreateComponent implements OnInit {
       if (paramMap.has('id')) {
         this.mode = 'edit';
         this.id = paramMap.get('id');
-        this.note = this.notesService.getNote(this.id);
+        this.notesService.getNote(this.id).subscribe(noteData => {
+          this.note = {  id: noteData._id,
+                         title: noteData.title,
+                         content: noteData.content,
+                         category: noteData.category,
+                         author: noteData.author};
+          });
       } else {
         this.mode = 'create';
         this.id = null;

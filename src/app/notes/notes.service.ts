@@ -36,7 +36,7 @@ export class NotesService {
   }
 
   getNote(id: string) {
-    return {...this.notes.find(p => p.id === id)};
+    return this.http.get<any>("http://localhost:3000/notes/" + id);
   }
 
   getNotesUpdatedListener() {
