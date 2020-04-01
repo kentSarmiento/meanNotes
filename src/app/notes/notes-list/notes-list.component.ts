@@ -1,4 +1,4 @@
-import { Component , OnInit } from "@angular/core";
+import { Component , OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from 'rxjs';
 
 import { Note } from "../notes.model"
@@ -10,17 +10,24 @@ import { NotesService } from '../notes.service';
   styleUrls: ['./notes-list.component.css'],
 })
 export class NotesListComponent implements OnInit {
-  notes: Note [] = [];
   private notesSub : Subscription;
+  notes: Note[] = [];
+  isLoading = false;
 
   constructor (public notesService: NotesService){}
 
   ngOnInit() {
-    this.notes = this.notesService.getNotes();
+    this.notesService.getNotes();
+    this.isLoading = true;
     this.notesSub = this.notesService.getNotesUpdatedListener().
       subscribe( (notes: Note[]) => {
+        this.isLoading = false;
         this.notes = notes;
       });
+  }
+
+  onDelete(id: string) {
+    this.notesService.deleteNote(id);
   }
 
   ngOnDestroy() {

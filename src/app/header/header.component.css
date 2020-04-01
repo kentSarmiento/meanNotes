@@ -6,3 +6,19 @@ mat-toolbar {
   font-weight: 400;
   height: 48px;
 }
+mat-button {
+  border: none;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+  color: white;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
