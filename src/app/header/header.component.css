@@ -6,6 +6,9 @@ mat-toolbar {
   font-weight: 400;
   height: 48px;
 }
+mat-button {
+  border: none;
+}
 ul {
   list-style: none;
   margin: 0;
