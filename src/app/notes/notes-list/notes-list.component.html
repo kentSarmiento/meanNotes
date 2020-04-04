@@ -17,6 +17,14 @@
   </mat-expansion-panel>
 </mat-accordion>
 
+<mat-paginator [length]="total"
+               [pageSize]="limit"
+               [pageSizeOptions]="options"
+               (page)="onChangePage($event)">
+</mat-paginator>
+</div>
+
+<div class="card">
 <p class="caption"
    align="center"
    *ngIf="notes.length == 0 && !isLoading">Add your first note!</p>
