@@ -27,3 +27,6 @@ mat-button {
   text-align: center;
   border: none;
 }
+mat-paginator {
+  margin-top: 24px;
+}

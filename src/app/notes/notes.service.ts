@@ -9,30 +9,38 @@ import { Note } from './notes.model';
 @Injectable({providedIn: "root"}) // ensure only one instance
 export class NotesService {
   private notes: Note[] = [];
-  private notesUpdated = new Subject<Note[]>(); // emitter, of sort
+  private notesUpdated = new Subject<{ notes: Note[], total: number }>(); // emitter, of sort
 
   /* Create HttpClient to send requests to backend server */
   constructor(private http: HttpClient, private router: Router) {}
 
-  getNotes() {
+  getNotes(page: number, limits: number) {
+    const query = `?page=${page}&limit=${limits}`;
     this.http
-      .get<any>(
-          "http://localhost:3000/notes"
+      .get<{notes: any, total: number}>(
+          "http://localhost:3000/notes" + query
       )
-      .pipe(map((data) => {
-        return data.map(data => {
+      .pipe(
+        map(response => {
           return {
-            id: data._id,
-            title: data.title,
-            content: data.content,
-            category: data.category,
-            author: data.author,
-          };
+            notes: response.notes.map(data => {
+              return {
+                id: data._id,
+                title: data.title,
+                content: data.content,
+                category: data.category,
+                author: data.author,
+              };
+            }),
+            total: response.total
+          }
+        }))
+      .subscribe(response => {
+        this.notes = response.notes;
+        this.notesUpdated.next({
+          notes: [...this.notes],
+          total: response.total
         });
-      }))
-      .subscribe((data: Note[]) => {
-        this.notes = data;
-        this.notesUpdated.next([...this.notes]);
       });
   }
 
@@ -56,10 +64,7 @@ export class NotesService {
       .post<any>(
           "http://localhost:3000/notes", note
       )
-      .subscribe(response => {
-        note.id = response._id;
-        this.notes.push(note);
-        this.notesUpdated.next([...this.notes]);
+      .subscribe(() => {
         this.router.navigate(["/"]);
       });
   }
@@ -76,26 +81,13 @@ export class NotesService {
       .put(
           "http://localhost:3000/notes/" + id, note
       )
-      .subscribe(response => {
-        const updatedNotes = this.notes;
-        const updatedNoteIdx = this.notes.findIndex(note => note.id !== id);
-        updatedNotes[updatedNoteIdx] = note;
-        this.notes = updatedNotes;
-        this.notesUpdated.next([...this.notes]);
+      .subscribe(() => {
         this.router.navigate(["/"]);
       });
   }
 
   deleteNote(id: string) {
-    this.http
-      .delete(
-          "http://localhost:3000/notes/" + id
-      )
-      .subscribe(() => {
-        const updatedNotes = this.notes.filter(note => note.id !== id);
-        this.notes = updatedNotes;
-        this.notesUpdated.next([...this.notes]);
-      });
+    return this.http
+      .delete( "http://localhost:3000/notes/" + id );
   }
-
 }
