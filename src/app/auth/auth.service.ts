@@ -23,6 +23,10 @@ export class AuthService {
     return this.token;
   }
 
+  getUserId() {
+    return this.userId;
+  }
+
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
   }

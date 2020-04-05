@@ -10,7 +10,7 @@
 
     <div class="wrapping">{{ note.content }}</div>
 
-    <mat-action-row>
+    <mat-action-row *ngIf="isUserAuthenticated && userId === note.creator">
       <a mat-button color="primary" [routerLink]="['/edit', note.id]">Edit</a>
       <a mat-button color="warn" (click)="onDelete(note.id)">Delete</a>
     </mat-action-row>
