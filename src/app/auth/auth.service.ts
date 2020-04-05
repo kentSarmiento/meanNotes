@@ -18,6 +18,23 @@ export class AuthService {
     return this.authStatusListener.asObservable();
   }
 
+  signup(username: string, email: string, password: string) {
+    const signupInfo = {
+      username: username,
+      email: email,
+      password: password
+    };
+    console.log(signupInfo);
+    this.http
+      .post(
+        "http://localhost:3000/users/signup",
+        signupInfo
+      )
+      .subscribe(response => {
+        console.log(response);
+      });
+  }
+
   login(username: string, password: string) {
     const authInfo: AuthInfo = {
       username: username,
