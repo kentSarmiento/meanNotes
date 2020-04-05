@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Subject } from "rxjs";
+import { Router } from "@angular/router";
 
 import { AuthInfo } from "./authinfo.model";
 
@@ -12,7 +13,11 @@ export class AuthService {
   private tokenTimer: any;
   private authStatusListener = new Subject<boolean>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
+
+  getIsAuthenticated() {
+    return this.isAuthenticated;
+  }
 
   getAuthStatusListener() {
     return this.authStatusListener.asObservable();
@@ -31,7 +36,7 @@ export class AuthService {
         signupInfo
       )
       .subscribe(response => {
-        console.log(response);
+        this.login(username, password); // Login user immediately after signup
       });
   }
 
@@ -58,6 +63,7 @@ export class AuthService {
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
           this.saveAuthData(this.token, expirationDate, this.userId);
+          this.router.navigate(["/"]);
         }
       });
   }
@@ -69,6 +75,7 @@ export class AuthService {
     this.authStatusListener.next(false);
     this.clearAuthData();
     this.resetAuthTimer();
+    this.router.navigate(["/"]);
   }
 
   private setAuthTimer(duration: number) {

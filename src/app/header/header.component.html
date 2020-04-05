@@ -3,8 +3,17 @@
   <span class="spacer"></span>
   <span>
   <ul>
-    <li>
-      <a mat-button routerLink="/create" routerLinkActive="mat-primary">New Note</a>
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/login" >Log in</a>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/signup" >Sign up</a>
+    </li>
+    <li *ngIf="isUserAuthenticated">
+      <a mat-button routerLink="/create" >Add note</a>
+    </li>
+    <li *ngIf="isUserAuthenticated">
+      <button mat-button (click)="onLogout()">Log out</button>
     </li>
   </ul>
   </span>
