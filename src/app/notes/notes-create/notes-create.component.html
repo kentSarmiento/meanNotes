@@ -28,32 +28,6 @@
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
 
-    <div class="category-author">
-    <mat-form-field class="category">
-      <input
-        matInput
-        type="text"
-        name="category"
-        [ngModel]="note?.category"
-        required
-        placeholder="Note Category"
-        #category="ngModel">
-      <mat-error *ngIf="category.invalid">Please enter note category</mat-error>
-    </mat-form-field>
-
-    <mat-form-field class="author">
-      <input
-        matInput
-        type="text"
-        name="author"
-        [ngModel]="note?.author"
-        required
-        placeholder="Note Author"
-        #author="ngModel">
-      <mat-error *ngIf="author.invalid">Please enter note author</mat-error>
-    </mat-form-field>
-    </div>
-
     <button class="submit"
       mat-raised-button
       color="accent"
