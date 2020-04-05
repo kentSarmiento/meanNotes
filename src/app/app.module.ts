@@ -9,6 +9,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -18,6 +19,7 @@ import { NotesCreateComponent } from './notes/notes-create/notes-create.componen
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
 import { NotesPageComponent } from './notes/notes-page/notes-page.component';
 import { HeaderComponent } from './header/header.component';
+import { SignupComponent } from './auth/signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +28,7 @@ import { HeaderComponent } from './header/header.component';
     NotesListComponent,
     NotesPageComponent,
     HeaderComponent,
+    SignupComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +42,7 @@ import { HeaderComponent } from './header/header.component';
     MatExpansionModule,
     MatGridListModule,
     MatPaginatorModule,
+    MatIconModule,
     HttpClientModule,
     MatProgressSpinnerModule,
   ],

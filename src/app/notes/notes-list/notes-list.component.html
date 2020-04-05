@@ -1,7 +1,7 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 
 <div class="card">
-<mat-accordion multi=true *ngIf="notes.length > 0 && !isLoading">
+<mat-accordion *ngIf="notes.length > 0 && !isLoading">
   <mat-expansion-panel *ngFor="let note of notes">
     <mat-expansion-panel-header>
       {{ note.title }}
