@@ -29,8 +29,7 @@ export class NotesCreateComponent implements OnInit {
           this.note = {  id: noteData._id,
                          title: noteData.title,
                          content: noteData.content,
-                         category: noteData.category,
-                         author: noteData.author};
+                         creator: noteData.creator };
           });
       } else {
         this.mode = 'create';
@@ -46,15 +45,11 @@ export class NotesCreateComponent implements OnInit {
     this.isLoading = true;
     if (this.mode === 'create' ){
       this.notesService.addNote( form.value.title,
-                                 form.value.content,
-                                 form.value.category,
-                                 form.value.author );
+                                 form.value.content );
     } else {
       this.notesService.updateNote( this.id,
                                     form.value.title,
-                                    form.value.content,
-                                    form.value.category,
-                                    form.value.author );
+                                    form.value.content );
     }
     form.resetForm();
   }

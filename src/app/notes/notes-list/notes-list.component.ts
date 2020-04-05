@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 
 import { Note } from "../notes.model"
 import { NotesService } from '../notes.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-notes-list',
@@ -19,11 +20,20 @@ export class NotesListComponent implements OnInit {
   options = [1, 2, 5, 10];
   isLoading = false;
 
-  constructor (public notesService: NotesService){}
+  private authListener : Subscription;
+  isUserAuthenticated = false;
+  userId: string;
+
+  constructor (
+    public notesService: NotesService,
+    private authService: AuthService) {}
 
   ngOnInit() {
     this.isLoading = true;
     this.notesService.getNotes(this.page, this.limit);
+    this.isUserAuthenticated = this.authService.getIsAuthenticated();
+    this.userId = this.authService.getUserId();
+
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
       .subscribe( (notebook: { notes: Note[], total: number }) => {
@@ -31,6 +41,13 @@ export class NotesListComponent implements OnInit {
         this.total = notebook.total;
         this.notes = notebook.notes;
       });
+
+     this.authListener = this.authService
+       .getAuthStatusListener()
+       .subscribe( isAuthenticated => {
+          this.isUserAuthenticated = this.authService.getIsAuthenticated();
+          this.userId = this.authService.getUserId();
+        });
   }
 
   onChangePage(pageInfo: PageEvent) {
@@ -48,6 +65,7 @@ export class NotesListComponent implements OnInit {
   }
 
   ngOnDestroy() {
+    this.authListener.unsubscribe();
     this.notesSub.unsubscribe();
   }
 }

@@ -28,8 +28,7 @@ export class NotesService {
                 id: data._id,
                 title: data.title,
                 content: data.content,
-                category: data.category,
-                author: data.author,
+                creator: data.creator,
               };
             }),
             total: response.total
@@ -52,13 +51,11 @@ export class NotesService {
     return this.notesUpdated.asObservable(); // provide listener for emitter
   }
 
-  addNote(title: string, content: string,
-          category: string, author: string) {
+  addNote(title: string, content: string) {
     const note: Note = {  id: null,
                           title: title,
                           content: content,
-                          category: category,
-                          author: author
+                          creator: null // creator information is retrieved from token
                         };
     this.http
       .post<any>(
@@ -69,13 +66,11 @@ export class NotesService {
       });
   }
 
-  updateNote(id: string, title: string, content: string,
-             category: string, author: string) {
+  updateNote(id: string, title: string, content: string) {
     const note: Note = {  id: id,
                           title: title,
                           content: content,
-                          category: category,
-                          author: author
+                          creator: null // creator information is retrieved from token
                         };
     this.http
       .put(

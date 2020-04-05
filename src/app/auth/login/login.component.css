@@ -1,0 +1,9 @@
+mat-card {
+  width: 62%;
+  margin: 1rem auto;
+  border-radius: 8px;
+}
+mat-form-field {
+  width: 100%;
+  margin: .2rem auto;
+}

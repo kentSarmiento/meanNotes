@@ -3,16 +3,22 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { NotesListComponent } from "./notes/notes-list/notes-list.component";
 import { NotesCreateComponent } from "./notes/notes-create/notes-create.component";
+import { SignupComponent } from "./auth/signup/signup.component";
+import { LoginComponent } from "./auth/login/login.component";
+import { AuthGuard } from "./auth/auth-guard";
 
 const routes: Routes = [
   { path: '', component: NotesListComponent },
-  { path: 'create', component: NotesCreateComponent },
-  { path: 'edit/:id', component: NotesCreateComponent },
+  { path: 'create', component: NotesCreateComponent, canActivate: [AuthGuard]},
+  { path: 'edit/:id', component: NotesCreateComponent, canActivate: [AuthGuard]},
+  { path: 'signup', component: SignupComponent },
+  { path: 'login', component: LoginComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule {
 

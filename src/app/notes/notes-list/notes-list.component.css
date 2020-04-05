@@ -13,10 +13,6 @@ hr {
 }
 mat-expansion-panel {
   width: 100%;
-  margin: 0px auto;
-}
-mat-action-row {
-  height: 32px;
 }
 mat-spinner {
   margin: auto;
