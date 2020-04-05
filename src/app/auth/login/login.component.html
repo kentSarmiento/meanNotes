@@ -1,0 +1,26 @@
+<mat-card>
+  <form (submit)="onLogin(loginForm)" #loginForm="ngForm">
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matInput name="username"
+        ngModel
+        #usernameInput="ngModel"
+        required>
+      <mat-error *ngIf="usernameInput.invalid">Please enter a username</mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Password</mat-label>
+      <input matInput name="password"
+        [type]="hide ? 'password' : 'text'"
+        ngModel
+        #passwordInput="ngModel"
+        required>
+      <button mat-icon-button type="button" matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+      <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      <mat-error *ngIf="passwordInput.invalid">Please enter a password</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Log in</button>
+  </form>
+</mat-card>

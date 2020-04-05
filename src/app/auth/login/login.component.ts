@@ -2,13 +2,13 @@ import { Component } from "@angular/core";
 import { NgForm } from "@angular/forms";
 
 @Component({
-  templateUrl: "./signup.component.html",
-  styleUrls: [ "./signup.component.css" ]
+  templateUrl: "./login.component.html",
+  styleUrls: [ "./login.component.css" ]
 })
-export class SignupComponent {
+export class LoginComponent {
   hide=true;
 
-  onSignup(form: NgForm) {
+  onLogin(form: NgForm) {
     if (form.invalid) {
       return;
     }

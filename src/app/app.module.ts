@@ -20,6 +20,7 @@ import { NotesListComponent } from './notes/notes-list/notes-list.component';
 import { NotesPageComponent } from './notes/notes-page/notes-page.component';
 import { HeaderComponent } from './header/header.component';
 import { SignupComponent } from './auth/signup/signup.component';
+import { LoginComponent } from './auth/login/login.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { SignupComponent } from './auth/signup/signup.component';
     NotesPageComponent,
     HeaderComponent,
     SignupComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
