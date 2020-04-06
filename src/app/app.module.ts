@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -17,6 +18,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NotesCreateComponent } from './notes/notes-create/notes-create.component';
 import { NotesListComponent } from './notes/notes-list/notes-list.component';
+import { NotesPrivateComponent } from './notes/notes-private/notes-private.component';
 import { NotesPageComponent } from './notes/notes-page/notes-page.component';
 import { HeaderComponent } from './header/header.component';
 import { SignupComponent } from './auth/signup/signup.component';
@@ -28,6 +30,7 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     AppComponent,
     NotesCreateComponent,
     NotesListComponent,
+    NotesPrivateComponent,
     NotesPageComponent,
     HeaderComponent,
     SignupComponent,
@@ -41,6 +44,7 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     MatInputModule,
     MatCardModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatToolbarModule,
     MatExpansionModule,
     MatGridListModule,

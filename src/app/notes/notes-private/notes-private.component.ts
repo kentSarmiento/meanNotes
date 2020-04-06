@@ -7,11 +7,11 @@ import { NotesService } from '../notes.service';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
-  selector: 'app-notes-list',
-  templateUrl: './notes-list.component.html',
-  styleUrls: ['./notes-list.component.css'],
+  selector: 'app-notes-private',
+  templateUrl: './notes-private.component.html',
+  styleUrls: ['./notes-private.component.css'],
 })
-export class NotesListComponent implements OnInit {
+export class NotesPrivateComponent implements OnInit {
   private notesSub : Subscription;
   notes: Note[] = [];
   page = 1;
@@ -30,9 +30,9 @@ export class NotesListComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
-    this.notesService.getNotes(this.page, this.limit);
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
+    this.notesService.getNotesByUser(this.userId, this.page, this.limit);
 
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
@@ -47,9 +47,6 @@ export class NotesListComponent implements OnInit {
        .subscribe( isAuthenticated => {
           this.isUserAuthenticated = this.authService.getIsAuthenticated();
           this.userId = this.authService.getUserId();
-
-          this.isLoading = true;
-          this.notesService.getNotes(this.page, this.limit);
         });
   }
 
@@ -57,14 +54,13 @@ export class NotesListComponent implements OnInit {
     this.isLoading = true;
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
-    this.notesService.getNotes(this.page, this.limit);
+    this.notesService.getNotesByUser(this.userId, this.page, this.limit);
   }
 
   onDelete(id: string) {
     this.isLoading = true;
     this.notesService.deleteNote(id).subscribe(() => {
-      this.isLoading = true;
-      this.notesService.getNotes(this.page, this.limit);
+      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
     });
   }
 

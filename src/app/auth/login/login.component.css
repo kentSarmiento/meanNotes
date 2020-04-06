@@ -1,9 +1,16 @@
-mat-card {
+mat-expansion-panel {
   width: 62%;
   margin: 1rem auto;
   border-radius: 8px;
 }
+mat-action-row {
+  height: 24px;
+}
 mat-form-field {
   width: 100%;
   margin: .2rem auto;
+}
+.username {
+  width: 100%;
+  margin-top: 2rem;
 }
