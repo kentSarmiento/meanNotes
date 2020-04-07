@@ -1,5 +1,8 @@
 <mat-toolbar color="primary">
-  <span><a routerLink="/">My Notes</a></span>
+  <a routerLink="/">notesRepository</a>
+  <span *ngIf="isUserAuthenticated">
+    <a mat-button routerLink="/personal">My notes</a>
+  </span>
   <span class="spacer"></span>
   <span>
   <ul>

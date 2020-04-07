@@ -28,6 +28,37 @@ export class NotesService {
                 id: data._id,
                 title: data.title,
                 content: data.content,
+                personal: data.personal,
+                creator: data.creator,
+              };
+            }),
+            total: response.total
+          }
+        }))
+      .subscribe(response => {
+        this.notes = response.notes;
+        this.notesUpdated.next({
+          notes: [...this.notes],
+          total: response.total
+        });
+      });
+  }
+
+  getNotesByUser(userId: string, page: number, limits: number) {
+    const query = `?page=${page}&limit=${limits}`;
+    this.http
+      .get<{notes: any, total: number}>(
+          "http://localhost:3000/users/" + userId + "/notes" + query
+      )
+      .pipe(
+        map(response => {
+          return {
+            notes: response.notes.map(data => {
+              return {
+                id: data._id,
+                title: data.title,
+                content: data.content,
+                personal: data.personal,
                 creator: data.creator,
               };
             }),
@@ -51,10 +82,11 @@ export class NotesService {
     return this.notesUpdated.asObservable(); // provide listener for emitter
   }
 
-  addNote(title: string, content: string) {
+  addNote(title: string, content: string, personal: boolean) {
     const note: Note = {  id: null,
                           title: title,
                           content: content,
+                          personal: personal,
                           creator: null // creator information is retrieved from token
                         };
     this.http
@@ -66,10 +98,11 @@ export class NotesService {
       });
   }
 
-  updateNote(id: string, title: string, content: string) {
+  updateNote(id: string, title: string, content: string, personal: boolean) {
     const note: Note = {  id: id,
                           title: title,
                           content: content,
+                          personal: personal,
                           creator: null // creator information is retrieved from token
                         };
     this.http

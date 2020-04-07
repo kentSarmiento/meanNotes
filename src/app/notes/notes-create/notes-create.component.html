@@ -1,39 +1,45 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 
-<mat-card *ngIf="!isLoading">
+<mat-expansion-panel [expanded]=true *ngIf="!isLoading">
   <form (submit)="onSaveNote(noteForm)" #noteForm="ngForm">
-    <mat-form-field class="title">
+
+    <mat-form-field class="title" appearance="outline">
+      <mat-label>Note Title</mat-label>
       <input
         matInput
         type="text"
         name="title"
         [ngModel]="note?.title"
         required
-        placeholder="Note Title"
         #title="ngModel">
       <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
     </mat-form-field>
 
-    <mat-form-field class="content">
+    <mat-form-field class="content" appearance="outline">
+      <mat-label>Note Content</mat-label>
       <textarea
         matInput
         rows="8"
         name="content"
         [ngModel]="note?.content"
         required
-        required
-        placeholder="Note Content"
         #content="ngModel">
       </textarea>
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
 
-    <button class="submit"
-      mat-raised-button
+  <mat-action-row>
+    <button
+      mat-button
       color="accent"
-      type="submit">
-        Save Note
-    </button>
+      (click)="togglePrivate()"
+      type="submit">Save as Private</button>
+    <button
+      class="submit"
+      mat-button
+      color="primary"
+      type="submit">Save</button>
+  </mat-action-row>
 
   </form>
-</mat-card>
+</mat-expansion-panel>

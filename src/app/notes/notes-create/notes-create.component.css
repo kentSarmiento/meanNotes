@@ -1,35 +1,19 @@
-mat-card {
+mat-expansion-panel {
   width: 80%;
   margin: 1rem auto;
   border-radius: 8px;
+}
+mat-action-row {
+  height: 24px;
 }
 mat-spinner {
   margin: auto;
 }
 .title {
   width: 100%;
-  margin: .2rem auto;
+  margin-top: 2rem;
 }
 .content {
   width: 100%;
   margin: .2rem auto;
-}
-.category-author {
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  margin: .2rem;
-}
-.category {
-  display: block;
-  width: 45%;
-  margin-right: .6rem;
-}
-.author {
-  display: block;
-  width: 45%;
-  margin-left: .6rem;
-}
-.submit {
-  margin: .6rem auto;
 }
