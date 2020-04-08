@@ -1,6 +1,7 @@
 import { Component , OnInit, OnDestroy } from "@angular/core";
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { Note } from "../notes.model"
 import { NotesService } from '../notes.service';
@@ -26,13 +27,19 @@ export class NotesListComponent implements OnInit {
 
   constructor (
     public notesService: NotesService,
-    private authService: AuthService) {}
+    private authService: AuthService,
+    public route: Router) {}
 
   ngOnInit() {
     this.isLoading = true;
-    this.notesService.getNotes(this.page, this.limit);
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
+
+    if (this.route.url === "/personal") {
+      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+    } else {
+      this.notesService.getNotes(this.page, this.limit);
+    }
 
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
@@ -49,7 +56,11 @@ export class NotesListComponent implements OnInit {
           this.userId = this.authService.getUserId();
 
           this.isLoading = true;
-          this.notesService.getNotes(this.page, this.limit);
+          if (this.route.url === "/personal") {
+            this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+          } else {
+            this.notesService.getNotes(this.page, this.limit);
+          }
         });
   }
 
@@ -57,14 +68,22 @@ export class NotesListComponent implements OnInit {
     this.isLoading = true;
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
-    this.notesService.getNotes(this.page, this.limit);
+    if (this.route.url === "/personal") {
+      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+    } else {
+      this.notesService.getNotes(this.page, this.limit);
+    }
   }
 
   onDelete(id: string) {
     this.isLoading = true;
     this.notesService.deleteNote(id).subscribe(() => {
       this.isLoading = true;
-      this.notesService.getNotes(this.page, this.limit);
+      if (this.route.url === "/personal") {
+        this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+      } else {
+        this.notesService.getNotes(this.page, this.limit);
+      }
     });
   }
 
