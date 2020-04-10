@@ -8,15 +8,33 @@ mat-toolbar {
 }
 ul {
   list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
 }
-a {
+a, button {
   text-decoration: none;
   color: white;
+  font-size: 14px;
+  font-weight: 500;
 }
-
+.mat-menu-item {
+  color: black;
+  font-weight: 400;
+}
+.mat-raised-button {
+  color: black;
+  width: 24%;
+  max-width: 108px;
+  font-size: 24px;
+  letter-spacing: 6px;
+  font-weight: 1000;
+  text-align: right;
+  padding-right: 0;
+}
 .spacer {
   flex: 1 1 auto;
+}
+.divider {
+  font-weight: 8;
+  font-size: 24px;
+  color: gray;
 }

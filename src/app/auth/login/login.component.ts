@@ -5,9 +5,10 @@ import { AuthService } from "../auth.service";
 
 @Component({
   templateUrl: "./login.component.html",
-  styleUrls: [ "./login.component.css" ]
+  styleUrls: [ "../common/auth-common.css" ]
 })
 export class LoginComponent {
+  isLoading = false;
   hide=true;
 
   constructor(private authService: AuthService) {}
@@ -16,6 +17,7 @@ export class LoginComponent {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     this.authService.login(form.value.username, form.value.password);
     form.resetForm();
   }

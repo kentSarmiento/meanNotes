@@ -1,4 +1,5 @@
-<mat-expansion-panel [expanded]=true>
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<mat-expansion-panel [expanded]=true  *ngIf="!isLoading">
   <form (submit)="onSignup(signupForm)" #signupForm="ngForm">
 
     <mat-form-field class="username" appearance="outline">
@@ -34,7 +35,7 @@
     </mat-form-field>
 
   <mat-action-row>
-    <button mat-button color="accent" type="submit">Sign up</button>
+    <button mat-stroked-button color="accent" type="submit">Sign up</button>
   </mat-action-row>
 
   </form>

@@ -9,13 +9,15 @@
     <mat-expansion-panel-header>
       {{ note.title }}
     </mat-expansion-panel-header>
-    <hr>
 
     <div class="wrapping">{{ note.content }}</div>
 
     <mat-action-row *ngIf="isUserAuthenticated && userId === note.creator">
-      <a mat-button color="primary" [routerLink]="['/edit', note.id]">Edit</a>
-      <a mat-button color="warn" (click)="onDelete(note.id)">Delete</a>
+      <a mat-stroked-button color="primary" [routerLink]="['/edit', note.id]">Edit</a>
+      <button mat-stroked-button color="warn" (click)="onDelete(note.id)">Delete</button>
+    </mat-action-row>
+
+    <mat-action-row *ngIf="!isUserAuthenticated || userId !== note.creator">
     </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
