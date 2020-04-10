@@ -4,8 +4,8 @@
    align="center"
    *ngIf="notes.length == 0 && !isLoading">Add your first note!</p>
 
-<mat-accordion *ngIf="!isLoading">
-  <mat-expansion-panel *ngFor="let note of notes">
+<mat-accordion *ngIf="!isLoading" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  <mat-expansion-panel *ngFor="let note of notes" cdkDrag>
     <mat-expansion-panel-header>
       {{ note.title }}
     </mat-expansion-panel-header>

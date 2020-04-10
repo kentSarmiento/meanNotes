@@ -29,6 +29,9 @@ export class NotesService {
                 title: data.title,
                 content: data.content,
                 personal: data.personal,
+                created: data.created,
+                updated: data.updated,
+                rank: data.rank,
                 creator: data.creator,
               };
             }),
@@ -59,6 +62,9 @@ export class NotesService {
                 title: data.title,
                 content: data.content,
                 personal: data.personal,
+                created: data.created,
+                updated: data.updated,
+                rank: data.rank,
                 creator: data.creator,
               };
             }),
@@ -83,12 +89,12 @@ export class NotesService {
   }
 
   addNote(title: string, content: string, personal: boolean) {
-    const note: Note = {  id: null,
-                          title: title,
-                          content: content,
-                          personal: personal,
-                          creator: null // creator information is retrieved from token
-                        };
+    const note = {  id: null,
+                    title: title,
+                    content: content,
+                    personal: personal,
+                    created: new Date(),
+                  };
     this.http
       .post<any>(
           "http://localhost:3000/notes", note
@@ -99,12 +105,12 @@ export class NotesService {
   }
 
   updateNote(id: string, title: string, content: string, personal: boolean) {
-    const note: Note = {  id: id,
-                          title: title,
-                          content: content,
-                          personal: personal,
-                          creator: null // creator information is retrieved from token
-                        };
+    const note = {  id: id,
+                    title: title,
+                    content: content,
+                    personal: personal,
+                    updated: new Date()
+                  };
     this.http
       .put(
           "http://localhost:3000/notes/" + id, note
@@ -112,6 +118,14 @@ export class NotesService {
       .subscribe(() => {
         this.router.navigate(["/"]);
       });
+  }
+
+  updateNoteRank(id: string, rank: Number) {
+    const note = {
+      id: id,
+      rank: rank
+    };
+    this.http.put("http://localhost:3000/notes/" + id, note).subscribe(() => {});
   }
 
   deleteNote(id: string) {
