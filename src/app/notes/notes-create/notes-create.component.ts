@@ -13,7 +13,7 @@ import { Note } from '../notes.model';
 export class NotesCreateComponent implements OnInit {
   private mode = 'create';
   private id: string;
-  private personal = false;
+  private personal = true;
   note: Note;
   isLoading = false;
 
@@ -31,6 +31,9 @@ export class NotesCreateComponent implements OnInit {
                          title: noteData.title,
                          content: noteData.content,
                          personal: noteData.personal,
+                         created: noteData.created,
+                         updated: noteData.updated,
+                         rank: noteData.rank,
                          creator: noteData.creator };
           });
       } else {
@@ -40,8 +43,8 @@ export class NotesCreateComponent implements OnInit {
     });
   }
 
-  togglePrivate() {
-    this.personal = true;
+  togglePersonal() {
+    this.personal = false;
   }
 
   onSaveNote(form: NgForm) {

@@ -4,4 +4,7 @@ export interface Note {
   content: string;
   personal: boolean;
   creator: string;
+  created: Date;
+  updated: Date;
+  rank: Number;
 }

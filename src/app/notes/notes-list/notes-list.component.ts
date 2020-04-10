@@ -1,4 +1,5 @@
 import { Component , OnInit, OnDestroy } from "@angular/core";
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -85,6 +86,28 @@ export class NotesListComponent implements OnInit {
         this.notesService.getNotes(this.page, this.limit);
       }
     });
+  }
+
+  onDrop(event: CdkDragDrop<string[]>) {
+    const ranks = this.notes.map(note => { return note.rank; });
+
+    moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
+
+    if (event.previousIndex < event.currentIndex) {
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        this.notes[idx].rank = ranks[idx];
+        this.notesService.updateNoteRank(
+                                         this.notes[idx].id,
+                                         this.notes[idx].rank);
+      }
+    } else {
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        this.notes[idx].rank = ranks[idx];
+        this.notesService.updateNoteRank(
+                                         this.notes[idx].id,
+                                         this.notes[idx].rank);
+      }
+    }
   }
 
   ngOnDestroy() {

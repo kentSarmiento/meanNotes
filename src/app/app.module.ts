@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { HttpClientModule , HTTP_INTERCEPTORS } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -50,6 +51,7 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     MatMenuModule,
     HttpClientModule,
     MatProgressSpinnerModule,
+    DragDropModule,
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]

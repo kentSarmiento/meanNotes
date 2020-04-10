@@ -37,7 +37,6 @@ export class AuthService {
       email: email,
       password: password
     };
-    console.log(signupInfo);
     this.http
       .post(
         "http://localhost:3000/users/signup",
