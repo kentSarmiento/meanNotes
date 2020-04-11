@@ -45,7 +45,7 @@
   <font color="red">{{errorMessage}}</font>
 <br>
 </p>
-<div class="paginator-container" *ngIf="!isLoading">
+<div class="paginator-container" *ngIf="notes.length != 0 && !isLoading">
 <mat-paginator [length]="total"
                [pageSize]="limit"
                [pageSizeOptions]="options"
