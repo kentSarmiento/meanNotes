@@ -1,12 +1,6 @@
 <mat-toolbar color="primary">
   <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
   <span *ngIf="isUserAuthenticated">
-    <button mat-button [matMenuTriggerFor]="view"> View </button>
-    <mat-menu #view="matMenu">
-      <button mat-menu-item routerLink="/">All notes</button>
-      <button mat-menu-item routerLink="/personal">Personal notes</button>
-    </mat-menu>
-    <span class="divider">|</span>
     <a mat-button routerLink="/create" > Add </a>
   </span>
   <span class="spacer"></span>
