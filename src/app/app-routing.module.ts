@@ -12,8 +12,7 @@ const routes: Routes = [
   { path: 'personal', component: NotesListComponent, canActivate: [AuthGuard] },
   { path: 'create', component: NotesCreateComponent, canActivate: [AuthGuard] },
   { path: 'edit/:id', component: NotesCreateComponent, canActivate: [AuthGuard] },
-  { path: 'signup', component: SignupComponent },
-  { path: 'login', component: LoginComponent },
+  { path: "auth", loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }
 ];
 
 @NgModule({

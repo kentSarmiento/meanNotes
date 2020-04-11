@@ -13,13 +13,13 @@
   <span>
   <ul>
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/login" >Log in</a>
+      <a mat-button routerLink="/auth/login" >Log in</a>
     </li>
     <li *ngIf="!isUserAuthenticated">
     <span class="divider">|</span>
     </li>
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/signup" >Sign up</a>
+      <a mat-button routerLink="/auth/signup" >Sign up</a>
     </li>
     <li *ngIf="isUserAuthenticated">
       <button mat-button (click)="onLogout()">Log out</button>
