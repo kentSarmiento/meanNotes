@@ -1,28 +1,35 @@
-mat-expansion-panel {
-  width: 100%;
-  margin: 1rem auto;
-  border-radius: 8px;
-}
 mat-spinner {
   margin: auto;
 }
 
-:host ::ng-deep .mat-expansion-panel-body {
-  padding-top: 2rem !important;
-  padding-bottom: 0 !important;
+.new-container {
+  width: 100%;
+  margin: auto;
 }
-.mat-stroked-button {
-  width: 48%;
-  max-width: 240px;
-  border-radius: 24px;
+.new-header {
+  width: 100%;
+  top: 0;
+  position: fixed;
+  z-index: 9001;
 }
-.private-button {
-  min-width: 124px;
+.new-body {
+  width: 94%;
+  margin: auto;
 }
 .title {
-  width: 100%;
+  font-size: 14px !important;
+  height: 81%;
+  width: 90%;
+  max-width: 1024px;
+  margin: auto;
+  margin-left: 2%;
+}
+.mat-input-element {
+  white-space: pre;
+  overflow-x: scroll;
 }
 .content {
   width: 100%;
+  padding: 0;
   margin: .2rem auto;
 }

@@ -1,46 +1,49 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 
-<mat-expansion-panel [expanded]=true *ngIf="!isLoading">
+<div class="new-container" *ngIf="!isLoading">
   <form (submit)="onSaveNote(noteForm)" #noteForm="ngForm">
 
-    <mat-form-field class="title" appearance="outline">
-      <mat-label>Note Title</mat-label>
+  <div class="new-header"><mat-toolbar color="primary">
+    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+    <mat-form-field class="title" >
       <input
         matInput
         type="text"
+        placeholder="Note Title"
         name="title"
         [ngModel]="note?.title"
         required
         #title="ngModel">
+      <mat-hint align="end" *ngIf="(24 - title.value.length) > 0">{{ 24 - title.value.length }} characters remaining for title summary</mat-hint>
       <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
     </mat-form-field>
+    <span class="spacer"></span>
+    <ul>
+      <li>
+        <button
+          class="submit"
+          mat-button
+          color="white"
+          type="submit">Save</button>
+      </li>
+    </ul>
+  </mat-toolbar></div>
 
+  <div class="new-body">
     <mat-form-field class="content" appearance="outline">
       <mat-label>Note Content</mat-label>
       <textarea
         matInput
-        rows="8"
+        rows="14"
         name="content"
         [ngModel]="note?.content"
         required
         #content="ngModel">
       </textarea>
+      <mat-hint align="end"  *ngIf="(140 - content?.value.length) > 0">{{ 140 - content?.value.length }} characters remaining for note summary</mat-hint>
       <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
     </mat-form-field>
-
-  <mat-action-row>
-    <button
-      mat-stroked-button
-      class="private-button"
-      color="accent"
-      (click)="togglePersonal()"
-      type="submit">Save as Public</button>
-    <button
-      class="submit"
-      mat-stroked-button
-      color="primary"
-      type="submit">Save</button>
-  </mat-action-row>
+  </div>
 
   </form>
-</mat-expansion-panel>
+</div>

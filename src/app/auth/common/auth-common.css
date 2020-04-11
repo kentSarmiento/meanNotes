@@ -1,5 +1,10 @@
+@media only screen and (min-width: 680px) {
+  mat-expansion-panel { width: 62%; }
+}
+@media only screen and (max-width: 680px) {
+  mat-expansion-panel { width: 81%; }
+}
 mat-expansion-panel {
-  width: 100%;
   max-width: 420px;
   margin: 1rem auto;
   border-radius: 8px;

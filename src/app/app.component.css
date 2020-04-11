@@ -1,10 +1,5 @@
-@media only screen and (min-width: 680px) {
-  main { width: 62%; }
-}
-@media only screen and (max-width: 680px) {
-  main { width: 81%; }
-}
 main {
-   display: block;
-   margin: 4rem auto;
+  width: 100%;
+  display: block;
+  margin: 4rem auto;
 }

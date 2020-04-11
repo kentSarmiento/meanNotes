@@ -91,9 +91,11 @@ export class NotesListComponent implements OnInit {
   onDrop(event: CdkDragDrop<string[]>) {
     const ranks = this.notes.map(note => { return note.rank; });
 
-    moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
-
     if (event.previousIndex < event.currentIndex) {
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        if (this.notes[idx].creator!=this.userId) return;
+      }
+      moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
         this.notes[idx].rank = ranks[idx];
         this.notesService.updateNoteRank(
@@ -102,6 +104,11 @@ export class NotesListComponent implements OnInit {
       }
     } else {
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        if (this.notes[idx].creator!=this.userId) return;
+      }
+      moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        console.log("xx" + this.notes[idx].rank)
         this.notes[idx].rank = ranks[idx];
         this.notesService.updateNoteRank(
                                          this.notes[idx].id,

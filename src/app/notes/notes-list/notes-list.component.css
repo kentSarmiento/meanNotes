@@ -1,13 +1,21 @@
+@media only screen and (min-width: 680px) {
+  mat-expansion-panel,.paginator-container { width: 62%; }
+}
+@media only screen and (max-width: 680px) {
+  mat-expansion-panel,.paginator-container { width: 72%; }
+}
+
 mat-expansion-panel {
-  width: 100%;
+  margin: auto;
 }
 mat-spinner {
   margin: auto;
 }
-mat-paginator {
-  margin-top: 1rem;
-}
 
+:host ::ng-deep .mat-paginator-container .mat-paginator-outer-container {
+  margin-right: 0 !important;
+  padding: 0 !important;
+}
 :host ::ng-deep mat-expansion-panel-body {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -15,15 +23,41 @@ mat-paginator {
 mat-expansion-panel-header.mat-expanded,
 mat-expansion-panel-header.mat-expanded:hover,
 mat-expansion-panel-header.mat-expanded:focus {
+  height: 24px !important;
   font-size: 24px;
   font-weight: 500;
 }
-.mat-stroked-button {
-  width: 48%;
-  max-width: 240px;
-  border-radius: 24px;
+mat-expansion-panel-header.unauth-title,
+mat-expansion-panel-header.unauth-title:hover,
+mat-expansion-panel-header.unauth-title:focus {
+  background: #696969 !important;
+  color: white !important;
+}
+mat-expansion-panel-header.mat-expanded.unauth-title,
+mat-expansion-panel-header.mat-expanded.unauth-title:focus,
+mat-expansion-panel-header.mat-expanded.unauth-title:hover {
+  background: white !important;
+  color: black !important;
+}
+.mat-button {
+  width: 12%;
+  min-width: 81px;
+  border-radius: 48px;
+  margin: 0;
 }
 .wrapping {
   white-space: pre-wrap;
   word-break: normal;
+}
+.for-caption {
+  padding-top: 0;
+  padding-bottom: 0;
+  background: gray;
+}
+.mat-caption {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.paginator-container {
+  margin: auto;
 }

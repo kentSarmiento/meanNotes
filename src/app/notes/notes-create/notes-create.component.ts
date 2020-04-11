@@ -8,7 +8,7 @@ import { Note } from '../notes.model';
 @Component({
   selector: 'app-notes-create',
   templateUrl: './notes-create.component.html',
-  styleUrls: ['./notes-create.component.css']
+  styleUrls: ['../../header/header.component.css', './notes-create.component.css']
 })
 export class NotesCreateComponent implements OnInit {
   private mode = 'create';
@@ -28,17 +28,18 @@ export class NotesCreateComponent implements OnInit {
         this.notesService.getNote(this.id).subscribe(noteData => {
           this.isLoading = false;
           this.note = {  id: noteData._id,
-                         title: noteData.title,
-                         content: noteData.content,
-                         personal: noteData.personal,
-                         created: noteData.created,
-                         updated: noteData.updated,
-                         rank: noteData.rank,
-                         creator: noteData.creator };
+                         title: noteData.title, content: noteData.content,
+                         personal: noteData.personal, creator: noteData.creator,
+                         created: noteData.created, updated: noteData.updated,
+                         rank: noteData.rank };
           });
       } else {
         this.mode = 'create';
         this.id = null;
+        this.note = { id: null,
+                      title: "", content: "",
+                      personal: undefined, creator: undefined,
+                      created: undefined, updated: undefined, rank: undefined };
       }
     });
   }
