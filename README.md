@@ -16,3 +16,5 @@ Backend: https://github.com/kentSarmiento/meanNotes-server-node/
 
 * Categorization of notes.
 * Support for different views for notes ( sorting based on date of creation, date of last update, etc. etc. ).
+* Note sharing.
+* Note search.
