@@ -12,6 +12,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 import { HttpClientModule , HTTP_INTERCEPTORS } from '@angular/common/http'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -24,6 +25,8 @@ import { HeaderComponent } from './header/header.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { LoginComponent } from './auth/login/login.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
+import { ErrorInterceptor } from "./error/error-interceptor";
+import { ErrorComponent } from "./error/error.component";
 
 @NgModule({
   declarations: [
@@ -33,6 +36,7 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     HeaderComponent,
     SignupComponent,
     LoginComponent,
+    ErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -49,11 +53,15 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     MatPaginatorModule,
     MatIconModule,
     MatMenuModule,
+    MatDialogModule,
     HttpClientModule,
     MatProgressSpinnerModule,
     DragDropModule,
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

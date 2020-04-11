@@ -44,6 +44,8 @@ export class AuthService {
       )
       .subscribe(response => {
         this.login(username, password); // Login user immediately after signup
+      }, error => {
+        this.authStatusListener.next(false);
       });
   }
 
@@ -72,6 +74,8 @@ export class AuthService {
           this.saveAuthData(this.token, expirationDate, this.userId);
           this.router.navigate(["/"]);
         }
+      }, error => {
+        this.authStatusListener.next(false);
       });
   }
 
