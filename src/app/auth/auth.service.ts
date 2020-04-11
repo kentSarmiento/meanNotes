@@ -3,7 +3,10 @@ import { HttpClient } from "@angular/common/http";
 import { Subject } from "rxjs";
 import { Router } from "@angular/router";
 
+import { environment } from "../../environments/environment";
 import { AuthInfo } from "./authinfo.model";
+
+const SERVER_URL = environment.serverUrl + "/users/";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
@@ -39,11 +42,13 @@ export class AuthService {
     };
     this.http
       .post(
-        "http://localhost:3000/users/signup",
+        SERVER_URL + "/signup",
         signupInfo
       )
       .subscribe(response => {
         this.login(username, password); // Login user immediately after signup
+      }, error => {
+        this.authStatusListener.next(false);
       });
   }
 
@@ -54,7 +59,7 @@ export class AuthService {
     };
     this.http
       .post<{ token: string; expiresIn: number; userId: string}>(
-        "http://localhost:3000/users/login",
+        SERVER_URL + "/login",
         authInfo
       )
       .subscribe(response => {
@@ -72,6 +77,8 @@ export class AuthService {
           this.saveAuthData(this.token, expirationDate, this.userId);
           this.router.navigate(["/"]);
         }
+      }, error => {
+        this.authStatusListener.next(false);
       });
   }
 

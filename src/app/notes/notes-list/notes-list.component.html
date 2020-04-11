@@ -39,6 +39,12 @@
   </mat-expansion-panel>
 </mat-accordion>
 <br>
+<p class="mat-caption"
+   align="center"
+   *ngIf="isUserAuthenticated && errorOccurred">
+  <font color="red">{{errorMessage}}</font>
+<br>
+</p>
 <div class="paginator-container" *ngIf="!isLoading">
 <mat-paginator [length]="total"
                [pageSize]="limit"

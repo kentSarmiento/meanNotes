@@ -4,7 +4,11 @@ import { Router } from "@angular/router";
 import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { environment } from "../../environments/environment";
 import { Note } from './notes.model';
+
+const SERVER_URL = environment.serverUrl;
+const NOTES_SERVICE_URL = environment.serverUrl + "/notes/";
 
 @Injectable({providedIn: "root"}) // ensure only one instance
 export class NotesService {
@@ -18,7 +22,7 @@ export class NotesService {
     const query = `?page=${page}&limit=${limits}`;
     this.http
       .get<{notes: any, total: number}>(
-          "http://localhost:3000/notes" + query
+          NOTES_SERVICE_URL + query
       )
       .pipe(
         map(response => {
@@ -51,7 +55,7 @@ export class NotesService {
     const query = `?page=${page}&limit=${limits}`;
     this.http
       .get<{notes: any, total: number}>(
-          "http://localhost:3000/users/" + userId + "/notes" + query
+          SERVER_URL + "/users/" + userId + "/notes" + query
       )
       .pipe(
         map(response => {
@@ -81,7 +85,7 @@ export class NotesService {
   }
 
   getNote(id: string) {
-    return this.http.get<any>("http://localhost:3000/notes/" + id);
+    return this.http.get<any>(NOTES_SERVICE_URL + id);
   }
 
   getNotesUpdatedListener() {
@@ -96,9 +100,7 @@ export class NotesService {
                     created: new Date(),
                   };
     this.http
-      .post<any>(
-          "http://localhost:3000/notes", note
-      )
+      .post<any>(NOTES_SERVICE_URL, note)
       .subscribe(() => {
         this.router.navigate(["/"]);
       });
@@ -112,9 +114,7 @@ export class NotesService {
                     updated: new Date()
                   };
     this.http
-      .put(
-          "http://localhost:3000/notes/" + id, note
-      )
+      .put(NOTES_SERVICE_URL + id, note)
       .subscribe(() => {
         this.router.navigate(["/"]);
       });
@@ -125,11 +125,13 @@ export class NotesService {
       id: id,
       rank: rank
     };
-    this.http.put("http://localhost:3000/notes/" + id, note).subscribe(() => {});
+    this.http
+      .put(NOTES_SERVICE_URL + id, note)
+      .subscribe(() => {});
   }
 
   deleteNote(id: string) {
     return this.http
-      .delete( "http://localhost:3000/notes/" + id );
+      .delete(NOTES_SERVICE_URL + id);
   }
 }

@@ -22,6 +22,9 @@ export class NotesListComponent implements OnInit {
   options = [1, 2, 5, 10];
   isLoading = false;
 
+  errorOccurred = false;
+  errorMessage: string;
+
   private authListener : Subscription;
   isUserAuthenticated = false;
   userId: string;
@@ -33,6 +36,7 @@ export class NotesListComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
+    this.errorOccurred = false;
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
@@ -67,6 +71,7 @@ export class NotesListComponent implements OnInit {
 
   onChangePage(pageInfo: PageEvent) {
     this.isLoading = true;
+    this.errorOccurred = false;
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
     if (this.route.url === "/personal") {
@@ -78,6 +83,7 @@ export class NotesListComponent implements OnInit {
 
   onDelete(id: string) {
     this.isLoading = true;
+    this.errorOccurred = false;
     this.notesService.deleteNote(id).subscribe(() => {
       this.isLoading = true;
       if (this.route.url === "/personal") {
@@ -85,15 +91,26 @@ export class NotesListComponent implements OnInit {
       } else {
         this.notesService.getNotes(this.page, this.limit);
       }
+    }, () => {
+      this.isLoading = false;
     });
   }
 
   onDrop(event: CdkDragDrop<string[]>) {
     const ranks = this.notes.map(note => { return note.rank; });
+    this.errorOccurred = false;
 
-    if (event.previousIndex < event.currentIndex) {
+    if (event.previousIndex == event.currentIndex) {
+      this.errorOccurred = true;
+      this.errorMessage = "Note is not moved";
+      return;
+    } else if (event.previousIndex < event.currentIndex) {
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
-        if (this.notes[idx].creator!=this.userId) return;
+        if (this.notes[idx].creator!=this.userId) {
+          this.errorOccurred = true;
+          this.errorMessage = "Cannot move note made by others";
+          return;
+        }
       }
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
@@ -104,11 +121,14 @@ export class NotesListComponent implements OnInit {
       }
     } else {
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
-        if (this.notes[idx].creator!=this.userId) return;
+        if (this.notes[idx].creator!=this.userId) {
+          this.errorOccurred = true;
+          this.errorMessage = "Cannot move note made by others";
+          return;
+        }
       }
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
-        console.log("xx" + this.notes[idx].rank)
         this.notes[idx].rank = ranks[idx];
         this.notesService.updateNoteRank(
                                          this.notes[idx].id,

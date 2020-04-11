@@ -1,27 +1,18 @@
-# MeanNotes
+# Notes Application
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.7.
+Backend: https://github.com/kentSarmiento/meanNotes-server-node/
 
-## Development server
+## Main page
+![01main](https://user-images.githubusercontent.com/3069067/79051568-ded3f880-7c6b-11ea-9971-d91852a7c35c.png)
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Adding note:
+![02add](https://user-images.githubusercontent.com/3069067/79051528-a59b8880-7c6b-11ea-9104-cde7244ab855.png)
 
-## Code scaffolding
+## Home page (with note):
+![03home](https://user-images.githubusercontent.com/3069067/79051530-a6ccb580-7c6b-11ea-997b-6a624f65b8f5.png)
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Next AIs
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+* Categorization of notes.
+* Support for different views for notes ( sorting based on date of creation, date of last update, etc. etc. ).
