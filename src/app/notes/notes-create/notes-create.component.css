@@ -14,6 +14,7 @@ mat-spinner {
 }
 .new-body {
   width: 94%;
+  padding-top: 1rem;
   margin: auto;
 }
 .title {
