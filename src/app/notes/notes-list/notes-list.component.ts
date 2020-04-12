@@ -40,11 +40,10 @@ export class NotesListComponent implements OnInit {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
-    if (this.route.url === "/personal") {
+    if (this.isUserAuthenticated)
       this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    } else {
-      this.notesService.getNotes(this.page, this.limit);
-    }
+    else
+      this.isLoading = false;
 
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
@@ -61,10 +60,12 @@ export class NotesListComponent implements OnInit {
           this.userId = this.authService.getUserId();
 
           this.isLoading = true;
-          if (this.route.url === "/personal") {
+          if (this.isUserAuthenticated)
             this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-          } else {
-            this.notesService.getNotes(this.page, this.limit);
+          else {
+            this.isLoading = false;
+            this.notes = [];
+            this.total = 0;
           }
         });
   }
@@ -74,11 +75,7 @@ export class NotesListComponent implements OnInit {
     this.errorOccurred = false;
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
-    if (this.route.url === "/personal") {
-      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    } else {
-      this.notesService.getNotes(this.page, this.limit);
-    }
+    this.notesService.getNotesByUser(this.userId, this.page, this.limit);
   }
 
   onDelete(id: string) {
@@ -86,11 +83,7 @@ export class NotesListComponent implements OnInit {
     this.errorOccurred = false;
     this.notesService.deleteNote(id).subscribe(() => {
       this.isLoading = true;
-      if (this.route.url === "/personal") {
-        this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-      } else {
-        this.notesService.getNotes(this.page, this.limit);
-      }
+      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
     }, () => {
       this.isLoading = false;
     });
