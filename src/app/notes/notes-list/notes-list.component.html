@@ -46,8 +46,10 @@
 <br>
 </p>
 <div class="paginator-container" *ngIf="notes.length != 0 && !isLoading">
-<mat-paginator [length]="total"
+<mat-paginator #paginator
+               [length]="total"
                [pageSize]="limit"
+               [pageIndex]="(page-1)"
                [pageSizeOptions]="options"
                (page)="onChangePage($event)">
 </mat-paginator>
