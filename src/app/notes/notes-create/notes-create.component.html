@@ -34,7 +34,7 @@
       <mat-label>Note Content</mat-label>
       <textarea
         matInput
-        rows="14"
+        rows="{{textareaRow}}"
         name="content"
         [ngModel]="note?.content"
         required

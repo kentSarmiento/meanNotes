@@ -30,6 +30,7 @@ mat-spinner {
   overflow-x: scroll;
 }
 .content {
+  font-size: 14px !important;
   width: 100%;
   padding: 0;
   margin: .2rem auto;
