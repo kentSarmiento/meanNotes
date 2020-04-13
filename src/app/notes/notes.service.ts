@@ -127,9 +127,8 @@ export class NotesService {
       id: id,
       rank: rank
     };
-    this.http
-      .put(SERVER_URL + id, note)
-      .subscribe(() => {});
+    return this.http
+      .put(SERVER_URL + id, note);
   }
 
   deleteNote(id: string) {

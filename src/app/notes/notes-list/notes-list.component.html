@@ -9,7 +9,8 @@
   <mat-expansion-panel
     *ngFor="let note of notes"
     cdkDrag
-    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator"
+    cdkDragLockAxis="y"
+    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator || isOngoingOperation"
     #panel>
 
     <mat-expansion-panel-header
@@ -41,19 +42,29 @@
 </mat-accordion>
 </div>
 
-<br>
+<div class="error-message-container">
 <p class="mat-caption"
    align="center"
    *ngIf="isUserAuthenticated && errorOccurred">
   <font color="red">{{errorMessage}}</font>
-<br>
 </p>
-<div class="paginator-container" *ngIf="notes.length != 0 && !isLoading">
+</div>
+
+<div class="small-spinner-container" *ngIf="isOngoingOperation">
+<mat-spinner diameter="20" color="accent"></mat-spinner>
+<p class="mat-caption"
+   align="center">
+Ongoing sync in the background...
+</p>
+</div>
+
+<div class="paginator-container" *ngIf="notes.length != 0 && !isLoading && !isOngoingOperation">
 <mat-paginator #paginator
                [length]="total"
                [pageSize]="limit"
                [pageIndex]="(page-1)"
                [pageSizeOptions]="options"
+               [showFirstLastButtons]="true"
                (page)="onChangePage($event)">
 </mat-paginator>
 </div>

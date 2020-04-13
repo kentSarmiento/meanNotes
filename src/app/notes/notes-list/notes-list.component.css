@@ -54,9 +54,12 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
   margin-top: 0;
   margin-bottom: 0;
 }
-.paginator-container {
-  margin: auto;
-}
+.paginator-container, .small-spinner-container,
+.error-message-container,
 .accordion-container {
   margin: auto;
+}
+.paginator-container, .small-spinner-container,
+.error-message-container {
+  margin-top: 2px;
 }

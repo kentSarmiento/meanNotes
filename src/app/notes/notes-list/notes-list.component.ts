@@ -25,6 +25,8 @@ export class NotesListComponent implements OnInit {
   errorOccurred = false;
   errorMessage: string;
 
+  isOngoingOperation = false;
+
   private authListener : Subscription;
   isUserAuthenticated = false;
   userId: string;
@@ -89,6 +91,51 @@ export class NotesListComponent implements OnInit {
     });
   }
 
+  /* The following implementation for drag&drop feature should be improved */
+  onUpdateNoteRankDown = (id, rank, first, index, last, done, notes) => {
+    this.notesService.updateNoteRank(id, rank)
+      .subscribe((result) => {
+        if (done) {
+          this.isOngoingOperation = false;
+          return;
+        }
+        index = index+1;
+        if (index <= last) {
+          this.onUpdateNoteRankDown(notes[index].id,
+                                    notes[index].rank,
+                                    first, index, last, false, notes);
+        } else {
+          // update first entry correctly
+          this.onUpdateNoteRankDown(notes[first].id,
+                                    notes[first].rank,
+                                    first, index, last, true, notes);
+        }
+      }, () => {
+          // error occurred in update, re-enable operations
+          this.isOngoingOperation = false;
+      });
+  }
+  onUpdateNoteRankUp = (id, rank, first, index, last, done, notes) => {
+    this.notesService.updateNoteRank(id, rank)
+      .subscribe((result) => {
+        if (done) {
+          this.isOngoingOperation = false;
+          return;
+        }
+        index = index-1;
+        if (index >= last) {
+          this.onUpdateNoteRankUp(notes[index].id,
+                                  notes[index].rank,
+                                  first, index, last, false, notes);
+        } else {
+          this.onUpdateNoteRankUp(notes[first].id,
+                                  notes[first].rank,
+                                  first, index, last, true, notes);
+        }
+      }, () => {
+          this.isOngoingOperation = false;
+      });
+  }
   onDrop(event: CdkDragDrop<string[]>) {
     const ranks = this.notes.map(note => { return note.rank; });
     this.errorOccurred = false;
@@ -105,13 +152,17 @@ export class NotesListComponent implements OnInit {
           return;
         }
       }
+
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
         this.notes[idx].rank = ranks[idx];
-        this.notesService.updateNoteRank(
-                                         this.notes[idx].id,
-                                         this.notes[idx].rank);
       }
+
+      this.isOngoingOperation = true;
+      this.onUpdateNoteRankDown(this.notes[event.previousIndex].id,
+                                Number.MAX_SAFE_INTEGER,
+                                event.previousIndex, event.previousIndex,
+                                event.currentIndex, false, this.notes);
     } else {
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
         if (this.notes[idx].creator!=this.userId) {
@@ -120,13 +171,17 @@ export class NotesListComponent implements OnInit {
           return;
         }
       }
+
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
         this.notes[idx].rank = ranks[idx];
-        this.notesService.updateNoteRank(
-                                         this.notes[idx].id,
-                                         this.notes[idx].rank);
       }
+
+      this.isOngoingOperation = true;
+      this.onUpdateNoteRankUp(this.notes[event.previousIndex].id,
+                              Number.MAX_SAFE_INTEGER,
+                              event.previousIndex, event.previousIndex,
+                              event.currentIndex, false, this.notes);
     }
   }
 
