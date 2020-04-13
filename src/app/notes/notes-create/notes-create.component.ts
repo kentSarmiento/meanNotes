@@ -1,9 +1,11 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 import { NotesService } from '../notes.service';
-import { Note } from '../notes.model';
+import { Note } from '../notes.model'
+import { AuthService } from '../../auth/auth.service';;
 
 @Component({
   selector: 'app-notes-create',
@@ -19,22 +21,36 @@ export class NotesCreateComponent implements OnInit {
 
   textareaRow = 8;
 
-  constructor(public notesService: NotesService, public route: ActivatedRoute) {}
+  private authListener : Subscription;
+  isUserAuthenticated = false;
+  userId: string;
+
+  constructor (
+    private notesService: NotesService,
+    private authService: AuthService,
+    private router: Router,
+    private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.resizeTextarea();
-    this.route.paramMap.subscribe((paramMap: ParamMap) => {
+    this.isUserAuthenticated = this.authService.getIsAuthenticated();
+    this.userId = this.authService.getUserId();
+
+    this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.mode = 'edit';
         this.id = paramMap.get('id');
         this.isLoading = true;
-        this.notesService.getNote(this.id).subscribe(noteData => {
+        this.notesService.getNote(this.userId, this.id).subscribe(noteData => {
           this.isLoading = false;
           this.note = {  id: noteData._id,
                          title: noteData.title, content: noteData.content,
                          personal: noteData.personal, creator: noteData.creator,
                          created: noteData.created, updated: noteData.updated,
                          rank: noteData.rank };
+          }, () => {
+            this.isLoading = false;
+            this.router.navigate(["/"]);
           });
       } else {
         this.mode = 'create';
