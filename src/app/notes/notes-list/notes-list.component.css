@@ -1,12 +1,8 @@
 @media only screen and (min-width: 680px) {
-  mat-expansion-panel,.paginator-container { width: 62%; }
+  .accordion-container,.paginator-container { width: 62%; }
 }
 @media only screen and (max-width: 680px) {
-  mat-expansion-panel,.paginator-container { width: 72%; }
-}
-
-mat-expansion-panel {
-  margin: auto;
+  .accordion-container,.paginator-container { width: 72%; }
 }
 mat-spinner {
   margin: auto;
@@ -59,5 +55,8 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
   margin-bottom: 0;
 }
 .paginator-container {
+  margin: auto;
+}
+.accordion-container {
   margin: auto;
 }

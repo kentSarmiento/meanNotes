@@ -12,26 +12,27 @@ mat-spinner {
   position: fixed;
   z-index: 9001;
 }
-.new-body {
-  width: 94%;
-  padding-top: 1rem;
-  margin: auto;
-}
 .title {
   font-size: 14px !important;
   height: 81%;
   width: 90%;
-  max-width: 1024px;
   margin: auto;
   margin-left: 2%;
 }
 .mat-input-element {
   white-space: pre;
-  overflow-x: scroll;
+}
+.new-body {
+  width: 100%;
+  padding: 0;
+  padding-top: 1rem;
+  margin: auto;
 }
 .content {
   font-size: 14px !important;
   width: 100%;
   padding: 0;
-  margin: .2rem auto;
+}
+.textarea {
+  resize: none;
 }
