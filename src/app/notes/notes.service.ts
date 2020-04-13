@@ -7,8 +7,7 @@ import { map } from 'rxjs/operators';
 import { environment } from "../../environments/environment";
 import { Note } from './notes.model';
 
-const SERVER_URL = environment.serverUrl;
-const NOTES_SERVICE_URL = environment.serverUrl + "/notes/";
+const SERVER_URL = environment.serverUrl + "/notes/";
 
 @Injectable({providedIn: "root"}) // ensure only one instance
 export class NotesService {
@@ -22,7 +21,7 @@ export class NotesService {
     const query = `?page=${page}&limit=${limits}`;
     this.http
       .get<{notes: any, total: number}>(
-          NOTES_SERVICE_URL + query
+          SERVER_URL + query
       )
       .pipe(
         map(response => {
@@ -52,11 +51,9 @@ export class NotesService {
   }
 
   getNotesByUser(userId: string, page: number, limits: number) {
-    const query = `?page=${page}&limit=${limits}`;
+    const query = `?userId=${userId}&page=${page}&limit=${limits}`;
     this.http
-      .get<{notes: any, total: number}>(
-          SERVER_URL + "/users/" + userId + "/notes" + query
-      )
+      .get<{notes: any, total: number}>(SERVER_URL + query)
       .pipe(
         map(response => {
           return {
@@ -84,8 +81,9 @@ export class NotesService {
       });
   }
 
-  getNote(id: string) {
-    return this.http.get<any>(NOTES_SERVICE_URL + id);
+  getNote(userId: string, id: string) {
+    const query = `?userId=${userId}`;
+    return this.http.get<any>(SERVER_URL + id + query);
   }
 
   getNotesUpdatedListener() {
@@ -100,8 +98,10 @@ export class NotesService {
                     created: new Date(),
                   };
     this.http
-      .post<any>(NOTES_SERVICE_URL, note)
+      .post<any>(SERVER_URL, note)
       .subscribe(() => {
+        this.router.navigate(["/"]);
+      }, () => {
         this.router.navigate(["/"]);
       });
   }
@@ -114,8 +114,10 @@ export class NotesService {
                     updated: new Date()
                   };
     this.http
-      .put(NOTES_SERVICE_URL + id, note)
+      .put(SERVER_URL + id, note)
       .subscribe(() => {
+        this.router.navigate(["/"]);
+      }, () => {
         this.router.navigate(["/"]);
       });
   }
@@ -125,13 +127,11 @@ export class NotesService {
       id: id,
       rank: rank
     };
-    this.http
-      .put(NOTES_SERVICE_URL + id, note)
-      .subscribe(() => {});
+    return this.http
+      .put(SERVER_URL + id, note);
   }
 
   deleteNote(id: string) {
-    return this.http
-      .delete(NOTES_SERVICE_URL + id);
+    return this.http.delete(SERVER_URL + id);
   }
 }

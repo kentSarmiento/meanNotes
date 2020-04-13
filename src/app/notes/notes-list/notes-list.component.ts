@@ -25,6 +25,8 @@ export class NotesListComponent implements OnInit {
   errorOccurred = false;
   errorMessage: string;
 
+  isOngoingOperation = false;
+
   private authListener : Subscription;
   isUserAuthenticated = false;
   userId: string;
@@ -40,11 +42,10 @@ export class NotesListComponent implements OnInit {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
-    if (this.route.url === "/personal") {
+    if (this.isUserAuthenticated)
       this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    } else {
-      this.notesService.getNotes(this.page, this.limit);
-    }
+    else
+      this.isLoading = false;
 
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
@@ -61,10 +62,12 @@ export class NotesListComponent implements OnInit {
           this.userId = this.authService.getUserId();
 
           this.isLoading = true;
-          if (this.route.url === "/personal") {
+          if (this.isUserAuthenticated)
             this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-          } else {
-            this.notesService.getNotes(this.page, this.limit);
+          else {
+            this.isLoading = false;
+            this.notes = [];
+            this.total = 0;
           }
         });
   }
@@ -74,11 +77,7 @@ export class NotesListComponent implements OnInit {
     this.errorOccurred = false;
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
-    if (this.route.url === "/personal") {
-      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    } else {
-      this.notesService.getNotes(this.page, this.limit);
-    }
+    this.notesService.getNotesByUser(this.userId, this.page, this.limit);
   }
 
   onDelete(id: string) {
@@ -86,16 +85,57 @@ export class NotesListComponent implements OnInit {
     this.errorOccurred = false;
     this.notesService.deleteNote(id).subscribe(() => {
       this.isLoading = true;
-      if (this.route.url === "/personal") {
-        this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-      } else {
-        this.notesService.getNotes(this.page, this.limit);
-      }
+      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
     }, () => {
       this.isLoading = false;
     });
   }
 
+  /* The following implementation for drag&drop feature should be improved */
+  onUpdateNoteRankDown = (id, rank, first, index, last, done, notes) => {
+    this.notesService.updateNoteRank(id, rank)
+      .subscribe((result) => {
+        if (done) {
+          this.isOngoingOperation = false;
+          return;
+        }
+        index = index+1;
+        if (index <= last) {
+          this.onUpdateNoteRankDown(notes[index].id,
+                                    notes[index].rank,
+                                    first, index, last, false, notes);
+        } else {
+          // update first entry correctly
+          this.onUpdateNoteRankDown(notes[first].id,
+                                    notes[first].rank,
+                                    first, index, last, true, notes);
+        }
+      }, () => {
+          // error occurred in update, re-enable operations
+          this.isOngoingOperation = false;
+      });
+  }
+  onUpdateNoteRankUp = (id, rank, first, index, last, done, notes) => {
+    this.notesService.updateNoteRank(id, rank)
+      .subscribe((result) => {
+        if (done) {
+          this.isOngoingOperation = false;
+          return;
+        }
+        index = index-1;
+        if (index >= last) {
+          this.onUpdateNoteRankUp(notes[index].id,
+                                  notes[index].rank,
+                                  first, index, last, false, notes);
+        } else {
+          this.onUpdateNoteRankUp(notes[first].id,
+                                  notes[first].rank,
+                                  first, index, last, true, notes);
+        }
+      }, () => {
+          this.isOngoingOperation = false;
+      });
+  }
   onDrop(event: CdkDragDrop<string[]>) {
     const ranks = this.notes.map(note => { return note.rank; });
     this.errorOccurred = false;
@@ -112,13 +152,17 @@ export class NotesListComponent implements OnInit {
           return;
         }
       }
+
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
         this.notes[idx].rank = ranks[idx];
-        this.notesService.updateNoteRank(
-                                         this.notes[idx].id,
-                                         this.notes[idx].rank);
       }
+
+      this.isOngoingOperation = true;
+      this.onUpdateNoteRankDown(this.notes[event.previousIndex].id,
+                                Number.MAX_SAFE_INTEGER,
+                                event.previousIndex, event.previousIndex,
+                                event.currentIndex, false, this.notes);
     } else {
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
         if (this.notes[idx].creator!=this.userId) {
@@ -127,13 +171,17 @@ export class NotesListComponent implements OnInit {
           return;
         }
       }
+
       moveItemInArray(this.notes, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
         this.notes[idx].rank = ranks[idx];
-        this.notesService.updateNoteRank(
-                                         this.notes[idx].id,
-                                         this.notes[idx].rank);
       }
+
+      this.isOngoingOperation = true;
+      this.onUpdateNoteRankUp(this.notes[event.previousIndex].id,
+                              Number.MAX_SAFE_INTEGER,
+                              event.previousIndex, event.previousIndex,
+                              event.currentIndex, false, this.notes);
     }
   }
 
