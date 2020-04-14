@@ -38,7 +38,9 @@ export class NotesListComponent implements OnInit {
 
   ngOnInit() {
     this.isLoading = true;
+    this.isOngoingOperation = false
     this.errorOccurred = false;
+
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
@@ -51,8 +53,14 @@ export class NotesListComponent implements OnInit {
       .getNotesUpdatedListener()
       .subscribe( (notebook: { notes: Note[], total: number }) => {
         this.isLoading = false;
-        this.total = notebook.total;
-        this.notes = notebook.notes;
+        this.isOngoingOperation = false
+          if (this.isUserAuthenticated) {
+            this.total = notebook.total;
+            this.notes = notebook.notes;
+          } else {
+            this.notes = [];
+            this.total = 0;
+          }
       });
 
      this.authListener = this.authService
@@ -66,6 +74,7 @@ export class NotesListComponent implements OnInit {
             this.notesService.getNotesByUser(this.userId, this.page, this.limit);
           else {
             this.isLoading = false;
+            this.isOngoingOperation = false
             this.notes = [];
             this.total = 0;
           }
@@ -81,13 +90,12 @@ export class NotesListComponent implements OnInit {
   }
 
   onDelete(id: string) {
-    this.isLoading = true;
+    this.isOngoingOperation = true;
     this.errorOccurred = false;
     this.notesService.deleteNote(id).subscribe(() => {
-      this.isLoading = true;
       this.notesService.getNotesByUser(this.userId, this.page, this.limit);
     }, () => {
-      this.isLoading = false;
+      this.isOngoingOperation = false;
     });
   }
 
