@@ -79,9 +79,6 @@ export class NotesCreateComponent implements OnInit {
     });
   }
 
-  togglePersonal() {
-    this.personal = false;
-  }
   onSaveNote() {
     if (this.form.invalid) {
       return;
@@ -89,13 +86,11 @@ export class NotesCreateComponent implements OnInit {
     this.isLoading = true;
     if (this.mode === 'create' ){
       this.notesService.addNote( this.form.value.title,
-                                 this.form.value.content,
-                                 this.personal );
+                                 this.form.value.content);
     } else {
       this.notesService.updateNote( this.id,
                                     this.form.value.title,
-                                    this.form.value.content,
-                                    this.personal );
+                                    this.form.value.content);
     }
     this.form.reset();
   }
