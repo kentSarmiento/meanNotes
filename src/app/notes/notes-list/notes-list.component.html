@@ -29,7 +29,13 @@
     </mat-expansion-panel-header>
 
     <p class="mat-title">{{ note.title }}</p>
-    <p class="wrapping">{{ note.content.substring(0,140) }}<span *ngIf="note.content.length >140">...</span></p>
+
+    <div class="scrolling-container">
+    <quill-view
+      [content]="note.content"
+      format="text"
+      preserveWhitespace=true></quill-view>
+    </div>
 
     <mat-action-row *ngIf="isUserAuthenticated && userId === note.creator">
       <a mat-button color="primary" [routerLink]="['/edit', note.id]">Edit</a>
