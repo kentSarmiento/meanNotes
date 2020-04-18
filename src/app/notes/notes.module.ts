@@ -2,6 +2,7 @@ import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { QuillModule } from 'ngx-quill';
 
 import { NotesCreateComponent } from './notes-create/notes-create.component';
 import { NotesListComponent } from './notes-list/notes-list.component';
@@ -16,7 +17,21 @@ import { AngularMaterialModule } from "../angular-material.module";
     CommonModule,
     ReactiveFormsModule,
     AngularMaterialModule,
-    RouterModule
+    RouterModule,
+    QuillModule.forRoot({
+      modules: {
+        toolbar: [
+          [
+            { 'header': [1, 2, 3, 4, 5, 6, false] },
+            'bold', 'italic', 'underline'
+          ],
+          [
+            { 'align': [] },
+            { 'list': 'ordered'}, { 'list': 'bullet' },
+            'code-block'
+          ],
+        ]
+      }})
   ]
 })
 export class NotesModule {}

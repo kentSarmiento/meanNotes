@@ -13,7 +13,6 @@
         formControlName="title"
         #title>
       <mat-hint align="end" *ngIf="(40 - ((title?.value) ? title.value.length : 0)) > 0">{{ 40 - ((title?.value) ? title.value.length : 0) }} characters remaining for title summary</mat-hint>
-      <mat-error *ngIf="title.invalid">Please enter note title</mat-error>
     </mat-form-field>
     <span class="spacer"></span>
     <ul>
@@ -27,19 +26,14 @@
     </ul>
   </mat-toolbar></div>
 
+  <div class="background-toolbar"></div>
   <div class="new-body">
-    <mat-form-field class="content" appearance="fill">
-      <mat-label>Note Content</mat-label>
-      <textarea
-        matInput
-        rows="{{textareaRow}}"
-        name="content"
-        formControlName="content"
-        #content>
-      </textarea>
-      <mat-hint align="end"  *ngIf="(140 - ((content?.value) ? content.value.length : 0)) > 0">{{ 140 - ((content?.value) ? content.value.length : 0) }} characters remaining for note summary</mat-hint>
-      <mat-error *ngIf="content.invalid">Please enter note content</mat-error>
-    </mat-form-field>
+    <quill-editor
+      placeholder=""
+      formControlName="content"
+      preserveWhitespace=true
+      scrollingContainer=true
+      sanitize="true"></quill-editor>
   </div>
 
   </form>

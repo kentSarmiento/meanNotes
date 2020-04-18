@@ -10,7 +10,10 @@ import { AuthService } from '../../auth/auth.service';;
 @Component({
   selector: 'app-notes-create',
   templateUrl: './notes-create.component.html',
-  styleUrls: ['../../header/header.component.css', './notes-create.component.css']
+  styleUrls: [
+    '../../header/header.component.css',
+    './notes-create.component.css'
+  ]
 })
 export class NotesCreateComponent implements OnInit {
   private mode = 'create';
@@ -18,8 +21,6 @@ export class NotesCreateComponent implements OnInit {
   private personal = true;
   note: Note;
   isLoading = false;
-
-  textareaRow = 8;
 
   form: FormGroup;
 
@@ -43,7 +44,6 @@ export class NotesCreateComponent implements OnInit {
       })
     })
 
-    this.resizeTextarea();
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
@@ -76,14 +76,6 @@ export class NotesCreateComponent implements OnInit {
                       created: undefined, updated: undefined, rank: undefined };
       }
     });
-  }
-
-  @HostListener('window:resize', ['$event'])
-  onWindowResize(event) { this.resizeTextarea(); }
-
-  resizeTextarea() {
-    // FIXME : This is temporary calculations based on padding-top(64) and font-size(14)
-    this.textareaRow = Math.floor((window.innerHeight - 64) / 14) - 10;
   }
 
   togglePersonal() {
