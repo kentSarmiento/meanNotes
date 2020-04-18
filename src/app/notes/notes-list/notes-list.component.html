@@ -12,8 +12,8 @@
     cdkDragLockAxis="y"
     [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator ||
                        isOngoingOperation || panel.expanded"
+    hideToggle
     #panel>
-
     <mat-expansion-panel-header
       *ngIf="isUserAuthenticated && userId === note.creator">
         <div *ngIf="!panel.expanded">
