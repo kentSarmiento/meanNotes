@@ -192,12 +192,18 @@ export class NotesListComponent implements OnInit {
   }
 
   onUpdateNoteLabel(note: Note) {
+    this.isOngoingOperation = true;
     this.notesService.updateNoteLabel(note.id, note.category)
       .subscribe(result => {
-        console.log(result);
+        this.isOngoingOperation = false;
+      }, () => {
+        this.isOngoingOperation = false;
       });
   }
   onLabelNote(note: Note) {
+    if (note.category === undefined) {
+      note.category = [];
+    }
     const currentCategory = note.category.map(
                               category => { return category; });
     const dialogRef = this.dialog.open(NotesListCategoryDialog, {
@@ -207,7 +213,9 @@ export class NotesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (JSON.stringify(currentCategory) !== JSON.stringify(note.category)) {
+        if (JSON.stringify(currentCategory) !== JSON.stringify(result.category)) {
+          note.category = result.map(
+                            category => { return category; });
           this.onUpdateNoteLabel(note);
         }
       }
