@@ -39,7 +39,6 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
 }
 .mat-button {
   width: 12%;
-  min-width: 81px;
   margin: 0;
 }
 .for-caption {
@@ -54,6 +53,9 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
 .mat-action-row {
   padding: 0 8px 0 0;
 }
+.mat-dialog-actions {
+  padding: 0;
+}
 .paginator-container, .small-spinner-container,
 .error-message-container,
 .accordion-container {
@@ -65,6 +67,12 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
 }
 .scrolling-container {
   height: 124px;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.category-input {
+  width: 100%;
 }
 
 :host ::ng-deep .ql-container {

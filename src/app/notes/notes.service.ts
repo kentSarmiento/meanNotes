@@ -36,6 +36,7 @@ export class NotesService {
                 updated: data.updated,
                 rank: data.rank,
                 creator: data.creator,
+                category: data.category,
               };
             }),
             total: response.total
@@ -67,6 +68,7 @@ export class NotesService {
                 updated: data.updated,
                 rank: data.rank,
                 creator: data.creator,
+                category: data.category,
               };
             }),
             total: response.total
@@ -127,8 +129,15 @@ export class NotesService {
       id: id,
       rank: rank
     };
-    return this.http
-      .put(SERVER_URL + id, note);
+    return this.http.put(SERVER_URL + id, note);
+  }
+
+  updateNoteLabel(id: string, category: string[]) {
+    const note = {
+      id: id,
+      category: category
+    };
+    return this.http.put(SERVER_URL + id, note);
   }
 
   deleteNote(id: string) {

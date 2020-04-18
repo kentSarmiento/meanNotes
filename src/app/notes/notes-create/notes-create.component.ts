@@ -57,6 +57,7 @@ export class NotesCreateComponent implements OnInit {
           this.note = {  id: noteData._id,
                          title: noteData.title, content: noteData.content,
                          personal: noteData.personal, creator: noteData.creator,
+                         category: noteData.category,
                          created: noteData.created, updated: noteData.updated,
                          rank: noteData.rank };
           this.form.setValue({
@@ -72,7 +73,7 @@ export class NotesCreateComponent implements OnInit {
         this.id = null;
         this.note = { id: null,
                       title: "", content: "",
-                      personal: undefined, creator: undefined,
+                      personal: undefined, creator: undefined, category: undefined,
                       created: undefined, updated: undefined, rank: undefined };
       }
     });
@@ -81,7 +82,6 @@ export class NotesCreateComponent implements OnInit {
   togglePersonal() {
     this.personal = false;
   }
-
   onSaveNote() {
     if (this.form.invalid) {
       return;

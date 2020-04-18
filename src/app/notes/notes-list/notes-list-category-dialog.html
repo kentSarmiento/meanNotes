@@ -1,0 +1,20 @@
+<div mat-dialog-content>
+<p class="mat-title">Note labels</p>
+<mat-form-field class="category-input" appearance="fill">
+  <mat-chip-list #chipList>
+    <mat-chip *ngFor="let category of data.category"
+             (removed)="onRemoveCategory(category)">
+      {{category}}
+      <mat-icon matChipRemove>cancel</mat-icon>
+    </mat-chip>
+    <input matInput
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (matChipInputTokenEnd)="onAddCategory($event)">
+  </mat-chip-list>
+</mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+<button mat-button [mat-dialog-close]="">Cancel</button>
+<button mat-button color="primary" [mat-dialog-close]="data.category" cdkFocusInitial>Save</button>
+</div>
