@@ -16,14 +16,14 @@
     <mat-expansion-panel-header
       *ngIf="isUserAuthenticated && userId === note.creator">
         <div *ngIf="!panel.expanded">
-          {{ note.title.substring(0,24) }}<span *ngIf="note.title.length >24">...</span>
+          {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
         </div>
     </mat-expansion-panel-header>
     <mat-expansion-panel-header
       class="unauth-title"
       *ngIf="!isUserAuthenticated || userId !== note.creator">
         <div *ngIf="!panel.expanded">
-        {{ note.title.substring(0,24) }}<span *ngIf="note.title.length >24">...</span>
+        {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
         </div>
     </mat-expansion-panel-header>
 
