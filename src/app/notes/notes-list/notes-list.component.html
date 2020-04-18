@@ -10,7 +10,8 @@
     *ngFor="let note of notes"
     cdkDrag
     cdkDragLockAxis="y"
-    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator || isOngoingOperation"
+    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator ||
+                       isOngoingOperation || panel.expanded"
     #panel>
 
     <mat-expansion-panel-header
