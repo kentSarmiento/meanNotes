@@ -1,0 +1,36 @@
+.mat-spinner {
+  margin: auto;
+}
+.new-container {
+  width: 100%;
+  margin: auto;
+}
+.new-header {
+  width: 100%;
+  top: 0;
+  position: fixed;
+  z-index: 9001;
+}
+.title {
+  font-size: 16px !important;
+  margin: auto;
+  margin-left: 22px;
+}
+
+:host ::ng-deep .ql-toolbar {
+  top: 48px;
+  position: fixed !important;
+  z-index: 100;
+  background: #ccc;
+  border: 0 !important;
+  padding: 4px !important;
+}
+:host ::ng-deep .ql-container {
+  width: 100% !important;
+  border: 0 !important;
+}
+:host ::ng-deep .ql-editor {
+  white-space: pre-wrap !important;
+  padding: 8px !important;
+  margin: 0 !important;
+}

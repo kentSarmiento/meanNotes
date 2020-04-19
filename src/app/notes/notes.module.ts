@@ -8,6 +8,7 @@ import { NotesCreateComponent } from './notes-create/notes-create.component';
 import { NotesListComponent } from './notes-list/notes-list.component';
 import { NotesListCategoryDialog } from './notes-list/notes-list.component';
 import { NotesListDeleteDialog } from './notes-list/notes-list.component';
+import { NotesViewComponent } from './notes-view/notes-view.component';
 import { AngularMaterialModule } from "../angular-material.module";
 
 @NgModule({
@@ -15,7 +16,8 @@ import { AngularMaterialModule } from "../angular-material.module";
     NotesCreateComponent,
     NotesListComponent,
     NotesListCategoryDialog,
-    NotesListDeleteDialog
+    NotesListDeleteDialog,
+    NotesViewComponent,
   ],
   imports: [
     CommonModule,

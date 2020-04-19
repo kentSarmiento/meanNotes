@@ -41,7 +41,7 @@ export class NotesListComponent implements OnInit {
   constructor (
     public notesService: NotesService,
     private authService: AuthService,
-    public route: Router,
+    public router: Router,
     private dialog: MatDialog) {}
 
   ngOnInit() {
@@ -95,6 +95,10 @@ export class NotesListComponent implements OnInit {
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
     this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+  }
+
+  onOpenNote(note: Note) {
+    this.router.navigate(["/view/" + note.id]);
   }
 
   /* The following implementation for drag&drop feature should be improved */
@@ -207,7 +211,7 @@ export class NotesListComponent implements OnInit {
     const currentCategory = note.category.map(
                               category => { return category; });
     const dialogRef = this.dialog.open(NotesListCategoryDialog, {
-      width: '100%',
+      width: '680px', maxHeight: '240px',
       data: {category: note.category}
     });
 
@@ -224,7 +228,7 @@ export class NotesListComponent implements OnInit {
 
   onDelete(id: string) {
     const dialogRef = this.dialog.open(NotesListDeleteDialog, {
-      width: '50%',
+      width: '240px', maxHeight: '240px'
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
