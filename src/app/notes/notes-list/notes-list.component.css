@@ -47,13 +47,19 @@
 .mat-standard-chip {
   min-height: 24px;
 }
-
+.mat-chip-input {
+  flex: 1 1 auto !important;
+  margin: 4px 1px 0 0 !important;
+}
+.mat-input-element {
+  width: auto !important;
+}
 .mat-title {
   margin: 0 0 8px 0 !important;
 }
 .mat-form-field {
   width: 100%;
-  font-size: 10px;
+  font-size: 12px;
 }
 .mat-button {
   width: 12%;

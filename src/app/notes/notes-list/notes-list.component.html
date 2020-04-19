@@ -17,9 +17,11 @@
 
     <mat-card-actions>
         <mat-chip-list #chipList>
-          <mat-chip *ngFor="let category of note.category">
-            {{category}}
-          </mat-chip>
+          <span *ngFor="let category of note.category">
+            <mat-chip *ngIf="note.category.indexOf(category,0) <= 1">
+              {{category}} <!-- limit to first two categories in display -->
+            </mat-chip>
+          </span>
         </mat-chip-list>
     </mat-card-actions>
 

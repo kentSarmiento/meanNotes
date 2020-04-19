@@ -211,7 +211,7 @@ export class NotesListComponent implements OnInit {
     const currentCategory = note.category.map(
                               category => { return category; });
     const dialogRef = this.dialog.open(NotesListCategoryDialog, {
-      width: '680px', maxHeight: '240px',
+      width: '720px', maxHeight: '320px',
       data: {category: note.category}
     });
 

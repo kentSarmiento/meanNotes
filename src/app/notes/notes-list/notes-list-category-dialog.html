@@ -1,17 +1,25 @@
 <div mat-dialog-content>
-<p class="mat-title">Note labels</p>
-<mat-form-field class="category-input" appearance="fill">
+<span class="mat-title">Note labels  </span>
+<span class="mat-body-1"> ( {{data.category.length || 0}}/5 ) </span>
+<mat-form-field appearance="fill">
   <mat-chip-list #chipList>
     <mat-chip *ngFor="let category of data.category"
              (removed)="onRemoveCategory(category)">
       {{category}}
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
-    <input matInput
+    <input
+      matInput #category
+      readonly="{{data.category.length >= 5}}"
+      maxlength="10"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       (matChipInputTokenEnd)="onAddCategory($event)">
   </mat-chip-list>
+    <mat-hint
+    *ngIf="data.category.length < 5"
+    align="end">{{category?.value.length || 0}}/10
+    </mat-hint>
 </mat-form-field>
 </div>
 <div mat-dialog-actions align="end">
