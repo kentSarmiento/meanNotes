@@ -18,7 +18,7 @@
     </mat-form-field>
     <span class="spacer"></span>
     <ul>
-      <li>
+      <li *ngIf="isUserAuthenticated && userId === note.creator">
         <a mat-button [routerLink]="['/edit', note.id]">Edit</a>
       </li>
     </ul>

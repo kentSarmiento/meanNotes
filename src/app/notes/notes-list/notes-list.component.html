@@ -15,7 +15,7 @@
       <p class="mat-body-2">{{ note.title }}</p>
     </mat-card-content>
 
-    <mat-card-actions>
+    <mat-card-actions *ngIf="isUserAuthenticated && userId === note.creator">
         <mat-chip-list #chipList>
           <span *ngFor="let category of note.category">
             <mat-chip *ngIf="note.category.indexOf(category,0) <= 1">
