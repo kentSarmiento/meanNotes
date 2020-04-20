@@ -22,17 +22,35 @@ mat-spinner {
 .mat-input-element {
   white-space: pre;
 }
+.background-toolbar {
+  background: #ccc;
+  width: 100%;
+  top: 48px;
+  height: 44px;
+  position: fixed;
+  z-index: 99;
+}
 .new-body {
   width: 100%;
-  padding: 0;
-  padding-top: 1rem;
   margin: auto;
-}
-.content {
   font-size: 14px !important;
-  width: 100%;
   padding: 0;
 }
-.textarea {
-  resize: none;
+
+:host ::ng-deep .ql-toolbar {
+  top: 60px;
+  position: fixed !important;
+  z-index: 100;
+  background: #ccc;
+  border: 0 !important;
+  padding: 4px !important;
+}
+:host ::ng-deep .ql-container {
+  width: 100% !important;
+  border: 0 !important;
+}
+:host ::ng-deep .ql-editor {
+  white-space: pre-wrap !important;
+  padding: 40px 8px 8px 8px !important;
+  margin: 0 !important;
 }

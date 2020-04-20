@@ -10,25 +10,32 @@
     *ngFor="let note of notes"
     cdkDrag
     cdkDragLockAxis="y"
-    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator || isOngoingOperation"
+    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator ||
+                       isOngoingOperation || panel.expanded"
+    hideToggle
     #panel>
-
     <mat-expansion-panel-header
       *ngIf="isUserAuthenticated && userId === note.creator">
         <div *ngIf="!panel.expanded">
-          {{ note.title.substring(0,24) }}<span *ngIf="note.title.length >24">...</span>
+          {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
         </div>
     </mat-expansion-panel-header>
     <mat-expansion-panel-header
       class="unauth-title"
       *ngIf="!isUserAuthenticated || userId !== note.creator">
         <div *ngIf="!panel.expanded">
-        {{ note.title.substring(0,24) }}<span *ngIf="note.title.length >24">...</span>
+        {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
         </div>
     </mat-expansion-panel-header>
 
     <p class="mat-title">{{ note.title }}</p>
-    <p class="wrapping">{{ note.content.substring(0,140) }}<span *ngIf="note.content.length >140">...</span></p>
+
+    <div class="scrolling-container">
+    <quill-view
+      [content]="note.content"
+      format="text"
+      preserveWhitespace=true></quill-view>
+    </div>
 
     <mat-action-row *ngIf="isUserAuthenticated && userId === note.creator">
       <a mat-button color="primary" [routerLink]="['/edit', note.id]">Edit</a>

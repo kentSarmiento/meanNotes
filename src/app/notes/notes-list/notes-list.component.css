@@ -12,9 +12,8 @@ mat-spinner {
   margin-right: 0 !important;
   padding: 0 !important;
 }
-:host ::ng-deep mat-expansion-panel-body {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+:host ::ng-deep .mat-expansion-panel-body {
+  padding: 0 0 0 24px !important;
 }
 mat-expansion-panel-header.mat-expanded,
 mat-expansion-panel-header.mat-expanded:hover,
@@ -35,15 +34,13 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
   background: white !important;
   color: black !important;
 }
+.mat-title {
+  margin: 0 0 8px 0 !important;
+}
 .mat-button {
   width: 12%;
   min-width: 81px;
-  border-radius: 48px;
   margin: 0;
-}
-.wrapping {
-  white-space: pre-wrap;
-  word-break: normal;
 }
 .for-caption {
   padding-top: 0;
@@ -54,6 +51,9 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
   margin-top: 0;
   margin-bottom: 0;
 }
+.mat-action-row {
+  padding: 0 8px 0 0;
+}
 .paginator-container, .small-spinner-container,
 .error-message-container,
 .accordion-container {
@@ -62,4 +62,16 @@ mat-expansion-panel-header.mat-expanded.unauth-title:hover {
 .paginator-container, .small-spinner-container,
 .error-message-container {
   margin-top: 2px;
+}
+.scrolling-container {
+  height: 124px;
+}
+
+:host ::ng-deep .ql-container {
+  border: 0 !important;
+}
+:host ::ng-deep .ql-editor {
+  white-space: pre-wrap !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
