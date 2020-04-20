@@ -79,6 +79,10 @@ export class NotesCreateComponent implements OnInit {
     });
   }
 
+  focusEditor(event) {
+    event.focus();
+  }
+
   onSaveNote() {
     if (this.form.invalid) {
       return;

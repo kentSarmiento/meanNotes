@@ -39,7 +39,8 @@
       formControlName="content"
       preserveWhitespace=true
       scrollingContainer=true
-      sanitize="true">
+      sanitize="true"
+      (onEditorCreated)="focusEditor($event)">
     </quill-editor>
   </div>
 
