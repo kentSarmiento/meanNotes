@@ -1,11 +1,14 @@
-import { Component , OnInit, OnDestroy, Inject } from "@angular/core";
+import { Component , OnInit, OnDestroy, Inject, ViewChild, ElementRef } from "@angular/core";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PageEvent } from '@angular/material/paginator';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
 
 import { Note } from "../notes.model"
 import { NotesService } from '../notes.service';
@@ -24,9 +27,9 @@ export class NotesListComponent implements OnInit {
   private notesSub : Subscription;
   notes: Note[] = [];
   page = 1;
-  limit = 5;
+  limit = 4;
   total = 0;
-  options = [1, 2, 5, 10];
+  options = [1, 2, 4, 10];
   isLoading = false;
 
   errorOccurred = false;
@@ -255,24 +258,75 @@ export class NotesListComponent implements OnInit {
   templateUrl: './notes-list-category-dialog.html',
   styleUrls: ['./notes-list.component.css'],
 })
-export class NotesListCategoryDialog {
+export class NotesListCategoryDialog implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+  readonly labels: string[] = [ /* Temporary only as Fixed array */
+    "Reminder",
+    "Task",
+    "Todo",
+    "Manual",
+    "Message",
+    "Notice",
+    "Important",
+    "Link",
+    "Reference",
+    "Wikipedia",
+    "Howto",
+    "SourceCode",
+    "Contact",
+    "Article",
+    "Research",
+    "Music"
+  ];
+
+  categoryCtrl = new FormControl();
+  filteredLabels: Observable<string[]>;
+
+  @ViewChild("categoryInput", {read: ElementRef}) input: ElementRef;
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
 
   constructor(
     public dialogRef: MatDialogRef<NotesListCategoryDialog>,
     @Inject(MAT_DIALOG_DATA) public data: CategoryData) {}
 
-  onAddCategory(event: MatChipInputEvent) {
-    this.data.category.push(event.value.trim());
-    event.input.value = '';
+  ngOnInit() {
+    this.filteredLabels = this.categoryCtrl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filter(value))
+      );
+  }
+  private filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.labels
+      .filter(
+        option =>
+          option.toLowerCase().includes(filterValue));
   }
 
-  onRemoveCategory(category: string) {
-    const index = this.data.category.indexOf(category);
+  addCategory(event: MatChipInputEvent) {
+    if (!this.matAutocomplete.isOpen) {
+      if ((event.value || '').trim()) {
+        if(!this.data.category.includes(event.value.trim())) {
+          this.data.category.push(event.value.trim());
+        }
+      }
+      this.input.nativeElement.value = '';
+    }
+  }
 
+  removeCategory(category: string) {
+    const index = this.data.category.indexOf(category);
     if (index >= 0) {
       this.data.category.splice(index, 1);
     }
+  }
+
+  onSelectedCategory(category: string) {
+    if(!this.data.category.includes(category.trim())) {
+      this.data.category.push(category.trim());
+    }
+    this.input.nativeElement.value = '';
   }
 }
 

@@ -15,7 +15,9 @@
       <p class="mat-body-2">{{ note.title }}</p>
     </mat-card-content>
 
-    <mat-card-actions *ngIf="isUserAuthenticated && userId === note.creator">
+    <mat-card-actions
+      *ngIf="isUserAuthenticated && userId === note.creator"
+      (click)="onOpenNote(note)">
         <mat-chip-list #chipList>
           <span *ngFor="let category of note.category">
             <mat-chip *ngIf="note.category.indexOf(category,0) <= 1">
@@ -25,11 +27,14 @@
         </mat-chip-list>
     </mat-card-actions>
 
-    <mat-card-footer *ngIf="!isUserAuthenticated || userId !== note.creator">
+    <mat-card-footer
+      *ngIf="!isUserAuthenticated || userId !== note.creator"
+      (click)="onOpenNote(note)">
       <span class="spacer"></span>
       <p class="mat-caption">By user {{ note.creator.substring(0,8) }}</p>
     </mat-card-footer>
-    <mat-card-footer *ngIf="isUserAuthenticated && userId === note.creator">
+    <mat-card-footer
+      *ngIf="isUserAuthenticated && userId === note.creator">
       <button mat-icon-button (click)="onLabelNote(note)">
         <mat-icon>label</mat-icon>
       </button>

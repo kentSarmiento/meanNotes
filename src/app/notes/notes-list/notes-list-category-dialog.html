@@ -1,28 +1,55 @@
 <div mat-dialog-content>
+
 <span class="mat-title">Note labels  </span>
 <span class="mat-body-1"> ( {{data.category.length || 0}}/5 ) </span>
-<mat-form-field appearance="fill">
-  <mat-chip-list #chipList>
-    <mat-chip *ngFor="let category of data.category"
-             (removed)="onRemoveCategory(category)">
-      {{category}}
-      <mat-icon matChipRemove>cancel</mat-icon>
-    </mat-chip>
-    <input
-      matInput #category
-      readonly="{{data.category.length >= 5}}"
-      maxlength="10"
-      [matChipInputFor]="chipList"
-      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (matChipInputTokenEnd)="onAddCategory($event)">
-  </mat-chip-list>
+
+  <mat-form-field appearance="fill">
+    <mat-chip-list #chipList>
+      <mat-chip
+        *ngFor="let categoryInput of data.category"
+        (removed)="removeCategory(categoryInput)">
+        {{categoryInput}}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+
+      <input
+        matInput #categoryInput
+        type="text"
+        readonly="{{data.category.length >= 5}}"
+        maxlength="10"
+        [formControl]="categoryCtrl"
+        [matChipInputFor]="chipList"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="addCategory($event)"
+        [matAutocomplete]="auto">
+    </mat-chip-list>
+
+    <mat-autocomplete
+      #auto="matAutocomplete"
+      (optionSelected)="onSelectedCategory($event.option.value)">
+      <mat-option
+        *ngFor="let label of filteredLabels | async | slice : 0 : 2"
+        [value]="label">{{label}}</mat-option>
+    </mat-autocomplete>
+
     <mat-hint
-    *ngIf="data.category.length < 5"
-    align="end">{{category?.value.length || 0}}/10
+      *ngIf="data.category.length < 5"
+      align="end">
+      {{categoryInput?.value.length || 0}}/10
     </mat-hint>
-</mat-form-field>
+  </mat-form-field>
+
 </div>
+
 <div mat-dialog-actions align="end">
-<button mat-button [mat-dialog-close]="">Cancel</button>
-<button mat-button color="primary" [mat-dialog-close]="data.category" cdkFocusInitial>Save</button>
+  <button
+    mat-button
+    [mat-dialog-close]="">Cancel
+  </button>
+  <button
+    mat-button
+    color="primary"
+    [mat-dialog-close]="data.category"
+    cdkFocusInitial>Save
+  </button>
 </div>

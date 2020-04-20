@@ -42,7 +42,7 @@
 }
 .mat-chip {
   background: #ccc;
-  font-size: 10px;
+  font-size: 12px;
 }
 .mat-standard-chip {
   min-height: 24px;
@@ -69,6 +69,12 @@
   padding: 0;
 }
 
+.mat-option {
+  font-size: 12px;
+}
+.mat-option:hover {
+  background: #ccc;
+}
 .mat-caption {
   font-size: 10px;
   margin-right: 8px;
