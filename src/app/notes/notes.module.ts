@@ -6,12 +6,16 @@ import { QuillModule } from 'ngx-quill';
 
 import { NotesCreateComponent } from './notes-create/notes-create.component';
 import { NotesListComponent } from './notes-list/notes-list.component';
+import { NotesListCategoryDialog } from './notes-list/notes-list.component';
+import { NotesListDeleteDialog } from './notes-list/notes-list.component';
 import { AngularMaterialModule } from "../angular-material.module";
 
 @NgModule({
   declarations: [
     NotesCreateComponent,
-    NotesListComponent
+    NotesListComponent,
+    NotesListCategoryDialog,
+    NotesListDeleteDialog
   ],
   imports: [
     CommonModule,

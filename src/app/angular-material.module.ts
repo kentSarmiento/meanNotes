@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -28,7 +29,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatMenuModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    DragDropModule
+    DragDropModule,
+    MatChipsModule
   ]
 })
 export class AngularMaterialModule {}

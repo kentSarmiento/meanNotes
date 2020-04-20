@@ -1,12 +1,19 @@
-import { Component , OnInit, OnDestroy } from "@angular/core";
+import { Component , OnInit, OnDestroy, Inject } from "@angular/core";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
 
 import { Note } from "../notes.model"
 import { NotesService } from '../notes.service';
 import { AuthService } from '../../auth/auth.service';
+
+export interface CategoryData {
+  category: string[];
+}
 
 @Component({
   selector: 'app-notes-list',
@@ -34,7 +41,8 @@ export class NotesListComponent implements OnInit {
   constructor (
     public notesService: NotesService,
     private authService: AuthService,
-    public route: Router) {}
+    public route: Router,
+    private dialog: MatDialog) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -87,16 +95,6 @@ export class NotesListComponent implements OnInit {
     this.page = pageInfo.pageIndex + 1;
     this.limit = pageInfo.pageSize;
     this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-  }
-
-  onDelete(id: string) {
-    this.isOngoingOperation = true;
-    this.errorOccurred = false;
-    this.notesService.deleteNote(id).subscribe(() => {
-      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    }, () => {
-      this.isOngoingOperation = false;
-    });
   }
 
   /* The following implementation for drag&drop feature should be improved */
@@ -193,8 +191,93 @@ export class NotesListComponent implements OnInit {
     }
   }
 
+  onUpdateNoteLabel(note: Note) {
+    this.isOngoingOperation = true;
+    this.notesService.updateNoteLabel(note.id, note.category)
+      .subscribe(result => {
+        this.isOngoingOperation = false;
+      }, () => {
+        this.isOngoingOperation = false;
+      });
+  }
+  onLabelNote(note: Note) {
+    if (note.category === undefined) {
+      note.category = [];
+    }
+    const currentCategory = note.category.map(
+                              category => { return category; });
+    const dialogRef = this.dialog.open(NotesListCategoryDialog, {
+      width: '100%',
+      data: {category: note.category}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (JSON.stringify(currentCategory) !== JSON.stringify(result.category)) {
+          note.category = result.map(
+                            category => { return category; });
+          this.onUpdateNoteLabel(note);
+        }
+      }
+    });
+  }
+
+  onDelete(id: string) {
+    const dialogRef = this.dialog.open(NotesListDeleteDialog, {
+      width: '50%',
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed == true) {
+        this.isOngoingOperation = true;
+        this.errorOccurred = false;
+        this.notesService.deleteNote(id).subscribe(() => {
+          this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+        }, () => {
+          this.isOngoingOperation = false;
+        });
+      }
+    });
+  }
+
   ngOnDestroy() {
     this.authListener.unsubscribe();
     this.notesSub.unsubscribe();
   }
+}
+
+@Component({
+  selector: 'notes-list-category-dialog',
+  templateUrl: './notes-list-category-dialog.html',
+  styleUrls: ['./notes-list.component.css'],
+})
+export class NotesListCategoryDialog {
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+
+  constructor(
+    public dialogRef: MatDialogRef<NotesListCategoryDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: CategoryData) {}
+
+  onAddCategory(event: MatChipInputEvent) {
+    this.data.category.push(event.value.trim());
+    event.input.value = '';
+  }
+
+  onRemoveCategory(category: string) {
+    const index = this.data.category.indexOf(category);
+
+    if (index >= 0) {
+      this.data.category.splice(index, 1);
+    }
+  }
+}
+
+@Component({
+  selector: 'notes-list-delete-dialog',
+  templateUrl: './notes-list-delete-dialog.html',
+  styleUrls: ['./notes-list.component.css'],
+})
+export class NotesListDeleteDialog {
+
+  constructor(public dialogRef: MatDialogRef<NotesListDeleteDialog>) {}
 }
