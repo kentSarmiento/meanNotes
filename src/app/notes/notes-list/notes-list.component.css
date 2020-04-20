@@ -1,85 +1,95 @@
-@media only screen and (min-width: 680px) {
-  .accordion-container,.paginator-container { width: 62%; }
-}
-@media only screen and (max-width: 680px) {
-  .accordion-container,.paginator-container { width: 72%; }
-}
-mat-spinner {
+.mat-spinner, .card-container {
   margin: auto;
 }
+@media only screen and (min-width: 680px) {
+  .mat-card { width: 10%; }
+}
+@media only screen and (max-width: 680px) {
+  .mat-card { width: 18%; }
+}
 
-:host ::ng-deep .mat-paginator-container .mat-paginator-outer-container {
-  margin-right: 0 !important;
-  padding: 0 !important;
+.mat-card {
+  margin: 8px;
+  background: #f0f0f0;
+  min-height: 181px;
+  min-width: 124px;
+  display: flex;
+  flex-direction: column;
 }
-:host ::ng-deep .mat-expansion-panel-body {
-  padding: 0 0 0 24px !important;
+.mat-card-header {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
 }
-mat-expansion-panel-header.mat-expanded,
-mat-expansion-panel-header.mat-expanded:hover,
-mat-expansion-panel-header.mat-expanded:focus {
-  height: 24px !important;
-  font-size: 24px;
-  font-weight: 500;
+.mat-card-content{
+  flex-grow: 1;
+  overflow: auto
 }
-mat-expansion-panel-header.unauth-title,
-mat-expansion-panel-header.unauth-title:hover,
-mat-expansion-panel-header.unauth-title:focus {
-  background: #696969 !important;
-  color: white !important;
+.mat-card-actions {
+  padding: 0;
+  margin-bottom: 0;
 }
-mat-expansion-panel-header.mat-expanded.unauth-title,
-mat-expansion-panel-header.mat-expanded.unauth-title:focus,
-mat-expansion-panel-header.mat-expanded.unauth-title:hover {
-  background: white !important;
-  color: black !important;
+.mat-card-footer {
+  display: flex;
+  flex-direction: row;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+
+:host ::ng-deep .mat-chip-list-wrapper {
+  margin: 0 !important;
+}
+.mat-chip {
+  background: #ccc;
+  font-size: 12px;
+}
+.mat-standard-chip {
+  min-height: 24px;
+}
+.mat-chip-input {
+  flex: 1 1 auto !important;
+  margin: 4px 1px 0 0 !important;
+}
+.mat-input-element {
+  width: auto !important;
 }
 .mat-title {
   margin: 0 0 8px 0 !important;
+}
+.mat-form-field {
+  width: 100%;
+  font-size: 12px;
 }
 .mat-button {
   width: 12%;
   margin: 0;
 }
-.for-caption {
-  padding-top: 0;
-  padding-bottom: 0;
-  background: gray;
-}
-.mat-caption {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.mat-action-row {
-  padding: 0 8px 0 0;
-}
 .mat-dialog-actions {
   padding: 0;
 }
-.paginator-container, .small-spinner-container,
-.error-message-container,
-.accordion-container {
-  margin: auto;
+
+.mat-option {
+  font-size: 12px;
 }
-.paginator-container, .small-spinner-container,
-.error-message-container {
-  margin-top: 2px;
+.mat-option:hover {
+  background: #ccc;
 }
-.scrolling-container {
-  height: 124px;
-}
-.spacer {
-  flex: 1 1 auto;
-}
-.category-input {
-  width: 100%;
+.mat-caption {
+  font-size: 10px;
+  margin-right: 8px;
 }
 
-:host ::ng-deep .ql-container {
-  border: 0 !important;
+.mat-paginator-container, .small-spinner-container,
+.error-message-container {
+  margin: auto;
+  margin-top: 8px !important;
 }
-:host ::ng-deep .ql-editor {
-  white-space: pre-wrap !important;
-  padding: 0 !important;
-  margin: 0 !important;
+:host ::ng-deep .mat-paginator-outer-container {
+  justify-content: center !important;
+  display: block;
+}
+:host ::ng-deep .mat-paginator-container {
+  justify-content: center !important;
+  width: auto;
 }

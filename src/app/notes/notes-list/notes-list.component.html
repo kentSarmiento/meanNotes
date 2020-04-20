@@ -4,58 +4,50 @@
    align="center"
    *ngIf="notes.length == 0 && !isLoading">Add your first note!</p>
 
-<div class="accordion-container">
-<mat-accordion *ngIf="!isLoading" cdkDropList (cdkDropListDropped)="onDrop($event)">
-  <mat-expansion-panel
-    *ngFor="let note of notes"
-    cdkDrag
-    cdkDragLockAxis="y"
-    [cdkDragDisabled]="!isUserAuthenticated || userId !== note.creator ||
-                       isOngoingOperation || panel.expanded"
-    hideToggle
-    #panel>
-    <mat-expansion-panel-header
+<div class="card-container"
+  *ngIf="!isLoading"
+  fxLayout="row wrap"
+  fxLayoutAlign="center center">
+
+  <mat-card *ngFor="let note of notes">
+
+    <mat-card-content (click)="onOpenNote(note)">
+      <p class="mat-body-2">{{ note.title }}</p>
+    </mat-card-content>
+
+    <mat-card-actions
+      *ngIf="isUserAuthenticated && userId === note.creator"
+      (click)="onOpenNote(note)">
+        <mat-chip-list #chipList>
+          <span *ngFor="let category of note.category">
+            <mat-chip *ngIf="note.category.indexOf(category,0) <= 1">
+              {{category}} <!-- limit to first two categories in display -->
+            </mat-chip>
+          </span>
+        </mat-chip-list>
+    </mat-card-actions>
+
+    <mat-card-footer
+      *ngIf="!isUserAuthenticated || userId !== note.creator"
+      (click)="onOpenNote(note)">
+      <span class="spacer"></span>
+      <p class="mat-caption">By user {{ note.creator.substring(0,8) }}</p>
+    </mat-card-footer>
+    <mat-card-footer
       *ngIf="isUserAuthenticated && userId === note.creator">
-        <div *ngIf="!panel.expanded">
-          {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
-        </div>
-    </mat-expansion-panel-header>
-    <mat-expansion-panel-header
-      class="unauth-title"
-      *ngIf="!isUserAuthenticated || userId !== note.creator">
-        <div *ngIf="!panel.expanded">
-        {{ note.title.substring(0,40) }}<span *ngIf="note.title.length >40">...</span>
-        </div>
-    </mat-expansion-panel-header>
-
-    <p class="mat-title">{{ note.title }}</p>
-
-    <div class="scrolling-container">
-    <quill-view
-      [content]="note.content"
-      format="text"
-      preserveWhitespace=true></quill-view>
-    </div>
-
-    <mat-action-row *ngIf="isUserAuthenticated && userId === note.creator">
       <button mat-icon-button (click)="onLabelNote(note)">
         <mat-icon>label</mat-icon>
       </button>
       <span class="spacer"></span>
-
       <a mat-icon-button [routerLink]="['/edit', note.id]">
         <mat-icon>create</mat-icon>
       </a>
       <button mat-icon-button color="warn" (click)="onDelete(note.id)">
         <mat-icon>delete</mat-icon>
       </button>
-    </mat-action-row>
-    <mat-action-row class="for-caption" *ngIf="!isUserAuthenticated || userId !== note.creator">
-      <p class="mat-caption"><font color="white">By user {{ note.creator }}</font></p>
-    </mat-action-row>
+    </mat-card-footer>
 
-  </mat-expansion-panel>
-</mat-accordion>
+  </mat-card>
 </div>
 
 <div class="error-message-container">
