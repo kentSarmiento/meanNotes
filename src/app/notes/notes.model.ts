@@ -4,6 +4,7 @@ export interface Note {
   content: string;
   personal: boolean;
   creator: string;
+  category: string[];
   created: Date;
   updated: Date;
   rank: Number;

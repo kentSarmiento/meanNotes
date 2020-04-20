@@ -11,7 +11,6 @@ import { AuthService } from "../auth.service";
 export class SignupComponent implements OnInit, OnDestroy {
   private authStatusSub: Subscription;
   isLoading = false;
-  hide=true;
 
   constructor(private authService: AuthService) {}
 

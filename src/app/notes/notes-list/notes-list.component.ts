@@ -1,12 +1,22 @@
-import { Component , OnInit, OnDestroy } from "@angular/core";
+import { Component , OnInit, OnDestroy, Inject, ViewChild, ElementRef } from "@angular/core";
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { PageEvent } from '@angular/material/paginator';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatAutocomplete } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
+import { FormControl } from '@angular/forms';
+import { map, startWith } from 'rxjs/operators';
 
 import { Note } from "../notes.model"
 import { NotesService } from '../notes.service';
 import { AuthService } from '../../auth/auth.service';
+
+export interface CategoryData {
+  category: string[];
+}
 
 @Component({
   selector: 'app-notes-list',
@@ -17,9 +27,9 @@ export class NotesListComponent implements OnInit {
   private notesSub : Subscription;
   notes: Note[] = [];
   page = 1;
-  limit = 5;
+  limit = 4;
   total = 0;
-  options = [1, 2, 5, 10];
+  options = [1, 2, 4, 10];
   isLoading = false;
 
   errorOccurred = false;
@@ -34,11 +44,14 @@ export class NotesListComponent implements OnInit {
   constructor (
     public notesService: NotesService,
     private authService: AuthService,
-    public route: Router) {}
+    public router: Router,
+    private dialog: MatDialog) {}
 
   ngOnInit() {
     this.isLoading = true;
+    this.isOngoingOperation = false
     this.errorOccurred = false;
+
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     this.userId = this.authService.getUserId();
 
@@ -51,8 +64,14 @@ export class NotesListComponent implements OnInit {
       .getNotesUpdatedListener()
       .subscribe( (notebook: { notes: Note[], total: number }) => {
         this.isLoading = false;
-        this.total = notebook.total;
-        this.notes = notebook.notes;
+        this.isOngoingOperation = false
+          if (this.isUserAuthenticated) {
+            this.total = notebook.total;
+            this.notes = notebook.notes;
+          } else {
+            this.notes = [];
+            this.total = 0;
+          }
       });
 
      this.authListener = this.authService
@@ -66,6 +85,7 @@ export class NotesListComponent implements OnInit {
             this.notesService.getNotesByUser(this.userId, this.page, this.limit);
           else {
             this.isLoading = false;
+            this.isOngoingOperation = false
             this.notes = [];
             this.total = 0;
           }
@@ -80,15 +100,8 @@ export class NotesListComponent implements OnInit {
     this.notesService.getNotesByUser(this.userId, this.page, this.limit);
   }
 
-  onDelete(id: string) {
-    this.isLoading = true;
-    this.errorOccurred = false;
-    this.notesService.deleteNote(id).subscribe(() => {
-      this.isLoading = true;
-      this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    }, () => {
-      this.isLoading = false;
-    });
+  onOpenNote(note: Note) {
+    this.router.navigate(["/view/" + note.id]);
   }
 
   /* The following implementation for drag&drop feature should be improved */
@@ -185,8 +198,144 @@ export class NotesListComponent implements OnInit {
     }
   }
 
+  onUpdateNoteLabel(note: Note) {
+    this.isOngoingOperation = true;
+    this.notesService.updateNoteLabel(note.id, note.category)
+      .subscribe(result => {
+        this.isOngoingOperation = false;
+      }, () => {
+        this.isOngoingOperation = false;
+      });
+  }
+  onLabelNote(note: Note) {
+    if (note.category === undefined) {
+      note.category = [];
+    }
+    const currentCategory = note.category.map(
+                              category => { return category; });
+    const dialogRef = this.dialog.open(NotesListCategoryDialog, {
+      width: '720px', maxHeight: '320px',
+      data: {category: note.category}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (JSON.stringify(currentCategory) !== JSON.stringify(result.category)) {
+          note.category = result.map(
+                            category => { return category; });
+          this.onUpdateNoteLabel(note);
+        }
+      }
+    });
+  }
+
+  onDelete(id: string) {
+    const dialogRef = this.dialog.open(NotesListDeleteDialog, {
+      width: '240px', maxHeight: '240px'
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed == true) {
+        this.isOngoingOperation = true;
+        this.errorOccurred = false;
+        this.notesService.deleteNote(id).subscribe(() => {
+          this.notesService.getNotesByUser(this.userId, this.page, this.limit);
+        }, () => {
+          this.isOngoingOperation = false;
+        });
+      }
+    });
+  }
+
   ngOnDestroy() {
     this.authListener.unsubscribe();
     this.notesSub.unsubscribe();
   }
+}
+
+@Component({
+  selector: 'notes-list-category-dialog',
+  templateUrl: './notes-list-category-dialog.html',
+  styleUrls: ['./notes-list.component.css'],
+})
+export class NotesListCategoryDialog implements OnInit {
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA, SPACE];
+  readonly labels: string[] = [ /* Temporary only as Fixed array */
+    "Reminder",
+    "Task",
+    "Todo",
+    "Manual",
+    "Message",
+    "Notice",
+    "Important",
+    "Link",
+    "Reference",
+    "Wikipedia",
+    "Howto",
+    "SourceCode",
+    "Contact",
+    "Article",
+    "Research",
+    "Music"
+  ];
+
+  categoryCtrl = new FormControl();
+  filteredLabels: Observable<string[]>;
+
+  @ViewChild("categoryInput", {read: ElementRef}) input: ElementRef;
+  @ViewChild('auto') matAutocomplete: MatAutocomplete;
+
+  constructor(
+    public dialogRef: MatDialogRef<NotesListCategoryDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: CategoryData) {}
+
+  ngOnInit() {
+    this.filteredLabels = this.categoryCtrl.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this.filter(value))
+      );
+  }
+  private filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.labels
+      .filter(
+        option =>
+          option.toLowerCase().includes(filterValue));
+  }
+
+  addCategory(event: MatChipInputEvent) {
+    if (!this.matAutocomplete.isOpen) {
+      if ((event.value || '').trim()) {
+        if(!this.data.category.includes(event.value.trim())) {
+          this.data.category.push(event.value.trim());
+        }
+      }
+      this.input.nativeElement.value = '';
+    }
+  }
+
+  removeCategory(category: string) {
+    const index = this.data.category.indexOf(category);
+    if (index >= 0) {
+      this.data.category.splice(index, 1);
+    }
+  }
+
+  onSelectedCategory(category: string) {
+    if(!this.data.category.includes(category.trim())) {
+      this.data.category.push(category.trim());
+    }
+    this.input.nativeElement.value = '';
+  }
+}
+
+@Component({
+  selector: 'notes-list-delete-dialog',
+  templateUrl: './notes-list-delete-dialog.html',
+  styleUrls: ['./notes-list.component.css'],
+})
+export class NotesListDeleteDialog {
+
+  constructor(public dialogRef: MatDialogRef<NotesListDeleteDialog>) {}
 }

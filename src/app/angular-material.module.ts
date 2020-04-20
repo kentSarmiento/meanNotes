@@ -11,8 +11,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
   exports: [
@@ -28,7 +31,10 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     MatMenuModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    DragDropModule
+    DragDropModule,
+    FlexLayoutModule,
+    MatChipsModule,
+    MatAutocompleteModule
   ]
 })
 export class AngularMaterialModule {}

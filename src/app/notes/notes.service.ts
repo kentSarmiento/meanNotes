@@ -36,6 +36,7 @@ export class NotesService {
                 updated: data.updated,
                 rank: data.rank,
                 creator: data.creator,
+                category: data.category,
               };
             }),
             total: response.total
@@ -67,6 +68,7 @@ export class NotesService {
                 updated: data.updated,
                 rank: data.rank,
                 creator: data.creator,
+                category: data.category,
               };
             }),
             total: response.total
@@ -90,11 +92,10 @@ export class NotesService {
     return this.notesUpdated.asObservable(); // provide listener for emitter
   }
 
-  addNote(title: string, content: string, personal: boolean) {
+  addNote(title: string, content: string) {
     const note = {  id: null,
                     title: title,
                     content: content,
-                    personal: personal,
                     created: new Date(),
                   };
     this.http
@@ -106,11 +107,10 @@ export class NotesService {
       });
   }
 
-  updateNote(id: string, title: string, content: string, personal: boolean) {
+  updateNote(id: string, title: string, content: string) {
     const note = {  id: id,
                     title: title,
                     content: content,
-                    personal: personal,
                     updated: new Date()
                   };
     this.http
@@ -127,8 +127,15 @@ export class NotesService {
       id: id,
       rank: rank
     };
-    return this.http
-      .put(SERVER_URL + id, note);
+    return this.http.put(SERVER_URL + id, note);
+  }
+
+  updateNoteLabel(id: string, category: string[]) {
+    const note = {
+      id: id,
+      category: category
+    };
+    return this.http.put(SERVER_URL + id, note);
   }
 
   deleteNote(id: string) {
