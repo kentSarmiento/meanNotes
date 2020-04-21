@@ -9,6 +9,7 @@ import { NotesListComponent } from './notes-list/notes-list.component';
 import { NotesListCategoryDialog } from './notes-list/notes-list.component';
 import { NotesListDeleteDialog } from './notes-list/notes-list.component';
 import { NotesViewComponent } from './notes-view/notes-view.component';
+import { NotesRoutingModule } from './notes-routing.module';
 import { AngularMaterialModule } from "../angular-material.module";
 
 @NgModule({
@@ -24,6 +25,7 @@ import { AngularMaterialModule } from "../angular-material.module";
     ReactiveFormsModule,
     AngularMaterialModule,
     RouterModule,
+    NotesRoutingModule,
     QuillModule.forRoot({
       modules: {
         toolbar: [

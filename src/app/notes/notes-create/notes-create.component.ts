@@ -3,9 +3,12 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { NotesService } from '../notes.service';
-import { Note } from '../notes.model';
-import { AuthService } from '../../auth/auth.service';
+import { NotesConfig } from "../notes.config";
+import { NotesService } from "../notes.service";
+import { Note } from "../notes.model";
+import { AuthService } from "../../auth/auth.service";
+
+const NOTES_ROUTE = NotesConfig.rootRoute;
 
 @Component({
   selector: 'app-notes-create',
@@ -16,6 +19,8 @@ import { AuthService } from '../../auth/auth.service';
   ]
 })
 export class NotesCreateComponent implements OnInit {
+  readonly noteRoute = NOTES_ROUTE;
+
   private mode = 'create';
   private id: string;
   private personal = true;
@@ -66,7 +71,7 @@ export class NotesCreateComponent implements OnInit {
           });
         }, () => {
             this.isLoading = false;
-            this.router.navigate(["/"]);
+            this.router.navigate([NOTES_ROUTE]);
         });
       } else {
         this.mode = 'create';

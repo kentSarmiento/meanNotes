@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { environment } from "../../environments/environment";
-import { Note } from './notes.model';
+import { NotesConfig } from "./notes.config";
+import { Note } from "./notes.model";
 
 const SERVER_URL = environment.serverUrl + "/notes/";
+const NOTES_ROUTE = NotesConfig.rootRoute;
 
 @Injectable({providedIn: "root"}) // ensure only one instance
 export class NotesService {
@@ -101,9 +103,9 @@ export class NotesService {
     this.http
       .post<any>(SERVER_URL, note)
       .subscribe(() => {
-        this.router.navigate(["/"]);
+        this.router.navigate([NOTES_ROUTE]);
       }, () => {
-        this.router.navigate(["/"]);
+        this.router.navigate([NOTES_ROUTE]);
       });
   }
 
@@ -116,9 +118,9 @@ export class NotesService {
     this.http
       .put(SERVER_URL + id, note)
       .subscribe(() => {
-        this.router.navigate(["/"]);
+        this.router.navigate([NOTES_ROUTE]);
       }, () => {
-        this.router.navigate(["/"]);
+        this.router.navigate([NOTES_ROUTE]);
       });
   }
 

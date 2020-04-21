@@ -10,11 +10,14 @@ import { COMMA, ENTER, SPACE } from '@angular/cdk/keycodes';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 
+import { NotesConfig } from "../notes.config";
 import { Note } from "../notes.model"
-import { NotesService } from '../notes.service';
-import { AuthService } from '../../auth/auth.service';
+import { NotesService } from "../notes.service";
+import { AuthService } from "../../auth/auth.service";
 
-export interface CategoryData {
+const NOTES_ROUTE = NotesConfig.rootRoute;
+
+interface CategoryData {
   category: string[];
 }
 
@@ -24,6 +27,8 @@ export interface CategoryData {
   styleUrls: ['./notes-list.component.css'],
 })
 export class NotesListComponent implements OnInit {
+  readonly noteRoute = NOTES_ROUTE;
+
   private notesSub : Subscription;
   notes: Note[] = [];
   page = 1;
@@ -101,7 +106,7 @@ export class NotesListComponent implements OnInit {
   }
 
   onOpenNote(note: Note) {
-    this.router.navigate(["/view/" + note.id]);
+    this.router.navigate([NOTES_ROUTE, "view", note.id]);
   }
 
   /* The following implementation for drag&drop feature should be improved */

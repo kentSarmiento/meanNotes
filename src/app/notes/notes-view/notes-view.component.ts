@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
-import { NotesService } from '../notes.service';
-import { Note } from '../notes.model';
-import { AuthService } from '../../auth/auth.service';
+import { NotesConfig } from "../notes.config";
+import { NotesService } from "../notes.service";
+import { Note } from "../notes.model";
+import { AuthService } from "../../auth/auth.service";
+
+const NOTES_ROUTE = NotesConfig.rootRoute;
 
 @Component({
   selector: 'app-notes-view',
@@ -15,6 +18,8 @@ import { AuthService } from '../../auth/auth.service';
   ]
 })
 export class NotesViewComponent implements OnInit {
+  readonly noteRoute = NOTES_ROUTE;
+
   private id: string;
   note: Note;
   isLoading = false;
@@ -47,7 +52,7 @@ export class NotesViewComponent implements OnInit {
                          rank: noteData.rank };
         }, () => {
             this.isLoading = false;
-            this.router.navigate(["/"]);
+            this.router.navigate([NOTES_ROUTE]);
         });
       }
     });

@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AngularMaterialModule } from "./angular-material.module";
 import { NotesModule } from "./notes/notes.module";
+import { MainModule } from "./main/main.module";
 import { HeaderComponent } from './header/header.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { ErrorInterceptor } from "./error/error-interceptor";
@@ -25,7 +26,8 @@ import { ErrorComponent } from "./error/error.component";
     BrowserAnimationsModule,
     HttpClientModule,
     AngularMaterialModule,
-    NotesModule
+    NotesModule,
+    MainModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},
