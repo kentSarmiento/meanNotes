@@ -32,10 +32,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe( isAuthenticated => {
         this.isUserAuthenticated = isAuthenticated;
       });
-    this.router.events.pipe(
-      filter(e => e instanceof RouterEvent)
-    ).subscribe(e => {
-      this.activatedUrl = e.url;
+    this.router.events.subscribe(e => {
+      if (e instanceof RouterEvent) {
+        this.activatedUrl = e.url;
+      }
     });
   }
 
