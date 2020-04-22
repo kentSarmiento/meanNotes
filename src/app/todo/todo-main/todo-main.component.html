@@ -1,0 +1,12 @@
+<app-todo-header></app-todo-header>
+<mat-sidenav-container class="todo-main-container">
+  <mat-sidenav
+    #sidenav
+    mode="over">
+    <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,7 @@
+.todo-main-container {
+  position: absolute;
+  width: 100%;
+  top: 48px;
+  bottom: 0;
+  margin: auto;
+}

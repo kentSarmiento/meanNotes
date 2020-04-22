@@ -1,0 +1,8 @@
+.mat-toolbar {
+  top: 0;
+  position: fixed;
+  z-index: 9001;
+  font-size: 18px;
+  font-weight: 400;
+  height: 48px;
+}
