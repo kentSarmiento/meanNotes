@@ -18,6 +18,8 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
   isUserAuthenticated = false;
   private authListener: Subscription;
 
+  readonly todoRoute = TODO_ROUTE;
+
   constructor(
     private authService: AuthService) {}
 

@@ -2,11 +2,39 @@
 <mat-sidenav-container class="todo-main-container">
   <mat-sidenav
     #sidenav
-    mode="over">
-    <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>
+    class="todo-side-container"
+    mode="side">
+
+    <div class="todo-list-container">
+    <mat-list>
+      <mat-list-item *ngFor="let list of lists">
+        <button mat-button>{{list}}</button>
+      </mat-list-item>
+    </mat-list>
+    </div>
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <p><button mat-button (click)="sidenav.toggle()">Toggle</button></p>
+    <div class="sidenav-toggle">
+      <button
+        mat-icon-button
+        (click)="sidenav.toggle()">
+        <span *ngIf="!sidenav.opened">></span>
+        <span *ngIf="sidenav.opened"><</span>
+      </button>
+    </div>
+
+    <div class="todo-content-container">
+      <mat-accordion>
+        <mat-expansion-panel
+          *ngFor="let todo of todos"
+          hideToggle=true>
+          <mat-expansion-panel-header>
+            {{todo.title}}
+          </mat-expansion-panel-header>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+
   </mat-sidenav-content>
 </mat-sidenav-container>

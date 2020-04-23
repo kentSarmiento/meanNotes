@@ -6,3 +6,11 @@
   font-weight: 400;
   height: 48px;
 }
+
+.title {
+  font-size: 14px !important;
+  height: 81%;
+  width: 90%;
+  margin: auto;
+  margin-left: 2%;
+}

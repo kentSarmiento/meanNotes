@@ -1,6 +1,21 @@
 <mat-toolbar color="primary">
-  <span>
-    <a mat-raised-button [routerLink]="[todoRoute]"><font color="#3f51b5"><b>t</b></font></a>
-  </span>
+  <a mat-raised-button [routerLink]="[todoRoute]"><font color="#3f51b5"><b>t</b></font></a>
+
+  <mat-form-field class="title">
+    <input
+      matInput
+      type="text"
+      placeholder="I want to..."
+      #title>
+  </mat-form-field>
   <span class="spacer"></span>
+  <ul>
+    <li>
+      <button
+        class="submit"
+        mat-button
+        color="white"
+        type="submit">Add</button>
+    </li>
+  </ul>
 </mat-toolbar>

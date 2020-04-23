@@ -14,6 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -36,7 +38,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     FlexLayoutModule,
     MatChipsModule,
     MatAutocompleteModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatDividerModule,
+    MatListModule
   ]
 })
 export class AngularMaterialModule {}

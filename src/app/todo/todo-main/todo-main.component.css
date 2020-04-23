@@ -1,7 +1,46 @@
+
 .todo-main-container {
   position: absolute;
   width: 100%;
   top: 48px;
   bottom: 0;
+  margin: auto;
+}
+.todo-side-container {
+  width: 16%;
+  background: #ccc;
+}
+.todo-list-container {
+  margin-top: 22px;
+}
+.todo-content-container {
+  margin: auto;
+  margin-top: 24px;
+  margin-left: 24px;
+}
+.sidenav-toggle {
+  position: fixed;
+  height: 100vh;
+}
+.mat-expansion-panel {
+  width: 62%;
+  margin: 8px;
+  border-radius: 8px !important;
+  background: #f0f0f0;
+}
+.mat-button {
+  width: 94%;
+  text-align: left;
+}
+.mat-icon-button {
+  height: 100%;
+  width: 8px;
+  border-radius: 0;
+  background: #ccc;
+  text-align: center;
+  font-size: 14px;
+  color: rgba(0,0,0,.12);
+}
+.mat-list {
   margin: auto;
 }
