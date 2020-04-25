@@ -50,15 +50,8 @@
 
             <span
               *ngIf="!todo.finished"
-              class="title">
-              <input
-                matInput
-                class="title-form"
-                type="text"
-                value="{{todo.title}}"
-                (click)="openEditDialog(todo.id, todo.title)"
-                #title>
-            </span>
+              class="title"
+              (click)="openEditDialog(todo.id, todo.title)">{{todo.title}}</span>
             <span
               *ngIf="todo.finished"
               class="title-finished">{{todo.title}}</span>

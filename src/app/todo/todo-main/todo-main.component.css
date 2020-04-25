@@ -23,6 +23,9 @@
   margin-left: 8px;
   width: 81%;
 }
+.title:focus, .title:hover {
+  border-bottom: 2px solid #3f51b5;
+}
 .title-finished {
   color: rgba(0,0,0,.48);
 }
@@ -34,13 +37,6 @@
   line-height: 0;
   width: 24px;
   height: 24px;
-}
-.title-form {
-  width: 100%;
-}
-.title-form:focus, .title-form:hover {
-  width: 100%;
-  border-bottom: 2px solid #3f51b5;
 }
 .add-empty {
   float: right;
