@@ -1,32 +1,30 @@
 
 .todo-main-container {
-  position: absolute;
-  width: 100%;
-  top: 48px;
+  width: 81%;
+  height: 81vh;
   bottom: 0;
   margin: auto;
+  background: #e9ebee;
 }
 .todo-side-container {
   width: 16%;
-  background: #ccc;
-}
-.todo-list-container {
-  margin-top: 22px;
+  background: #e9ebee;
 }
 .todo-content-container {
   margin: auto;
   margin-top: 24px;
   margin-left: 24px;
 }
-.sidenav-toggle {
-  position: fixed;
-  height: 100vh;
+.mat-sidenav-container {
+  margin: auto;
+}
+.mat-drawer-side {
+  border-right: 0px;
 }
 .mat-expansion-panel {
   width: 62%;
   margin: 8px;
   border-radius: 8px !important;
-  background: #f0f0f0;
 }
 .mat-button {
   width: 94%;
