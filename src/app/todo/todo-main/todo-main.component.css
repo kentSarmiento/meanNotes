@@ -15,25 +15,26 @@
   margin-top: 24px;
   margin-left: 24px;
 }
-.title {
+.title, .title-finished {
   margin: auto;
+  margin-left: 8px;
+  width: 75%;
+}
+.title-finished {
+  text-decoration: line-through;
+  color: rgba(0,0,0,.48);
 }
 .spacer {
   flex: 1 1 auto;
 }
-.delete {
+.delete, .checked {
   line-height: 0;
   width: 24px;
   height: 24px;
 }
-.todo-content-accordion .mat-expansion-panel-header-title,
-.todo-content-accordion .mat-expansion-panel-header-description {
-  flex-basis: 0;
-}
-.todo-content-accordion .mat-expansion-panel-header-description {
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 0;
+
+.mat-expansion-panel-header[aria-disabled="true"] {
+  color: rgba(0,0,0,.81);
 }
 .mat-sidenav-container {
   margin: auto;

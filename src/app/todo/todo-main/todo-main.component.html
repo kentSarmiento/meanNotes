@@ -22,23 +22,42 @@
       <mat-accordion class="todo-content-accordion">
         <mat-expansion-panel
           *ngFor="let todo of todos"
+          class="todo-content-panel"
           hideToggle=true
+          disabled=true
           #panel>
           <mat-expansion-panel-header>
-            <mat-panel-title>
 
-            <span class="title">{{todo.title}}</span>
-            </mat-panel-title>
+            <button
+              mat-icon-button
+              class="checked"
+              color="primary"
+              (click)="toggleTask(todo.id)">
+              <span *ngIf="todo.finished">
+                <mat-icon>check_box</mat-icon>
+              </span>
+              <span *ngIf="!todo.finished">
+                <mat-icon>check_box_outline_blank</mat-icon>
+              </span>
+            </button>
 
-            <mat-panel-description>
+            <span
+              *ngIf="!todo.finished"
+              class="title">{{todo.title}}</span>
+            <span
+              *ngIf="todo.finished"
+              class="title-finished">{{todo.title}}</span>
+
             <span class="spacer"></span>
+
             <button
               mat-icon-button
               class="delete"
+              color="warn"
               (click)="deleteTask(todo.id)">
               <mat-icon>delete</mat-icon>
             </button>
-            </mat-panel-description>
+
           </mat-expansion-panel-header>
         </mat-expansion-panel>
       </mat-accordion>
