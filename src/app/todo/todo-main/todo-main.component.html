@@ -49,7 +49,7 @@
                 class="title-form"
                 type="text"
                 value="{{todo.title}}"
-                (keydown.enter)="updateTask(todo.id, title.value)"
+                (click)="openEditDialog(todo.id, todo.title)"
                 #title>
             </span>
             <span
@@ -69,6 +69,16 @@
           </mat-expansion-panel-header>
         </mat-expansion-panel>
       </mat-accordion>
+
+      <div class="todo-add">
+        <button
+          mat-icon-button
+          class="add-empty"
+          color="primary"
+          (click)="addEmptyTask()">
+          <mat-icon>add_circle</mat-icon>
+        </button>
+      </div>
     </div>
 
   </mat-sidenav-content>

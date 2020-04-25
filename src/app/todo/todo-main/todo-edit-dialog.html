@@ -1,0 +1,13 @@
+<mat-form-field class="title-dialog" appearance="fill">
+  <input
+    matInput
+    type="text"
+    value="{{data.title}}"
+    cdkFocusInitial
+    #title>
+</mat-form-field>
+  <button
+    mat-button
+    class="submit-dialog"
+    color="primary"
+    [mat-dialog-close]="title.value">Save</button>
