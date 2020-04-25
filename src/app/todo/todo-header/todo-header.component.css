@@ -6,14 +6,6 @@
   font-weight: 400;
   height: 48px;
 }
-:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
-  padding: 0 !important;
-  border-radius: 0 !important;
-  background-color: rgba(0,0,0,.24);
-}
-:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
-  padding: .25em 0 .75em 8px !important;
-}
 
 .title {
   font-size: 14px !important;

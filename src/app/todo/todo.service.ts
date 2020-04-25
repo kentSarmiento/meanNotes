@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
-import { Todo } from './todo.model';
+import { Todo, List } from './todo.model';
 
 @Injectable({providedIn: "root"})
 export class TodoService {
   private todos: Todo[] = [];
   private todoUpdated = new Subject<{ todos: Todo[], total: number }>();
 
+  private lists: List[] = [];
+  private listUpdated = new Subject<{ lists: List[] }>();
+
   constructor() {
     if (JSON.parse(localStorage.getItem("todos")))
       this.todos = JSON.parse(localStorage.getItem("todos"));
+
+    if (JSON.parse(localStorage.getItem("lists")))
+      this.lists = JSON.parse(localStorage.getItem("lists"));
   }
 
   getTasks() {
@@ -91,6 +97,60 @@ export class TodoService {
     this.todoUpdated.next({
       todos: [...this.todos],
       total: this.todos.length
+    });
+  }
+
+  getLists() {
+    this.listUpdated.next({
+      lists: [...this.lists]
+    });
+  }
+
+  getListUpdatedListener() {
+    return this.listUpdated.asObservable();
+  }
+
+  addList(title: string) {
+    let highrank = +localStorage.getItem("highrank");
+    if (!highrank) highrank = 1;
+
+    const list = {
+      id: Math.random().toString(36).substr(2, 9), // temporary id
+      title: title,
+      rank: highrank
+    };
+
+    this.lists.push(list);
+
+    highrank++;
+    localStorage.setItem("highrank", highrank.toString());
+
+    localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.listUpdated.next({
+      lists: [...this.lists],
+    });
+  }
+
+  updateList(id: string, title: string) {
+    const index = this.lists.findIndex(list => id === list.id);
+    if (index > -1) {
+      this.lists[index].title = title;
+    }
+
+    localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.listUpdated.next({
+      lists: [...this.lists],
+    });
+  }
+
+  deleteList(id: string) {
+    const index = this.lists.findIndex(list => id === list.id);
+    if (index > -1)
+      this.lists.splice(index, 1);
+
+    localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.listUpdated.next({
+      lists: [...this.lists],
     });
   }
 }

@@ -10,3 +10,9 @@ export interface Todo {
   //updated: Date;
   rank: Number;
 }
+
+export interface List {
+  id: string;
+  title: string;
+  rank: Number;
+}

@@ -8,7 +8,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
-import { Todo } from "../todo.model";
+import { Todo, List } from "../todo.model";
 
 export interface TodoData {
   title: string;
@@ -22,15 +22,10 @@ export interface TodoData {
 export class TodoMainComponent implements OnInit {
   private todoListener : Subscription;
   todos : Todo[] = [];
+  lists : List[] = [];
 
-  lists: string[] = [
-    "All Tasks",
-    "Personal",
-    "Work",
-    "Today",
-    "Others",
-    "+ New List",
-  ];
+  listEdit = false;
+  enabledList: List;
 
   constructor(
     private todoService: TodoService,
@@ -40,13 +35,27 @@ export class TodoMainComponent implements OnInit {
     this.todoService
       .getTodoUpdatedListener()
       .subscribe( (list: { todos: Todo[], total: number }) => {
-        this.tempSortTasks(list.todos);
+        this.tempSort(list.todos);
         this.todos = list.todos;
       });
     this.todoService.getTasks();
+
+    this.todoService
+      .getListUpdatedListener()
+      .subscribe( (list: { lists: List[] }) => {
+        if (list.lists.length == 0) {
+          this.addList("Personal");
+          this.addList("Work");
+        } else {
+          this.tempSort(list.lists);
+          this.lists = list.lists;
+          this.enabledList = this.lists[0];
+        }
+      })
+    this.todoService.getLists();
   }
 
-  tempSortTasks(list: Todo[]) {
+  tempSort(list: any) {
     list.sort(this._tempSorter("rank"));
   }
   private _tempSorter(criteria) {
@@ -94,11 +103,10 @@ export class TodoMainComponent implements OnInit {
     });
   }
 
-  dropList(event: CdkDragDrop<string[]>) {
+  sortTasks(event: CdkDragDrop<string[]>) {
     const ranks = this.todos.map(todo => { return todo.rank; });
 
     if (event.previousIndex == event.currentIndex) {
-      console.log("Not moved!");
       return;
     } else if (event.previousIndex < event.currentIndex) {
       moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
@@ -119,6 +127,23 @@ export class TodoMainComponent implements OnInit {
           );
       }
     }
+  }
+
+  addList(title: string) {
+    this.todoService.addList(title);
+  }
+
+  updateList(id: string, title: string) {
+    this.todoService.updateList(id, title);
+  }
+
+  toggleEditList() {
+    if (this.listEdit) this.listEdit = false;
+    else this.listEdit = true;
+  }
+
+  deleteList(id: string) {
+    this.todoService.deleteList(id);
   }
 }
 

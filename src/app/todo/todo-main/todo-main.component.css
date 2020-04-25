@@ -7,14 +7,23 @@
   background: #e9ebee;
 }
 .todo-side-container {
-  width: 16%;
+  width: 24%;
   background: #e9ebee;
+}
+.list-drag-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
 }
 .todo-content-container {
   margin: auto;
   margin-left: 24px;
 }
-.list-button {
+.list-button, .new-list-button {
   width: 94%;
   text-align: left;
 }
@@ -37,6 +46,18 @@
   line-height: 0;
   width: 24px;
   height: 24px;
+}
+.add-list {
+  font-size: 14px;
+}
+.display-list {
+  font-size: 24px;
+}
+.edit-list {
+  line-height: 0;
+  width: 24px;
+  height: 24px;
+  margin: auto;
 }
 .add-empty {
   float: right;
@@ -63,6 +84,16 @@
 }
 .mat-list {
   margin: auto;
+}
+
+:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-top: 12px !important;
+  background-color: #e9ebee;
+}
+:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: .25em 0 .75em 8px !important;
 }
 
 .title-dialog {
