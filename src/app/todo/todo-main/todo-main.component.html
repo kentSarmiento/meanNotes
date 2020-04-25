@@ -1,9 +1,11 @@
 <app-todo-header></app-todo-header>
+
 <mat-sidenav-container class="todo-main-container">
   <mat-sidenav
     #sidenav
     class="todo-side-container"
-    mode="side">
+    mode="side"
+    opened>
 
     <div class="todo-list-container">
     <mat-list>
@@ -15,14 +17,6 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
-    <div class="sidenav-toggle">
-      <button
-        mat-icon-button
-        (click)="sidenav.toggle()">
-        <span *ngIf="!sidenav.opened">></span>
-        <span *ngIf="sidenav.opened"><</span>
-      </button>
-    </div>
 
     <div class="todo-content-container">
       <mat-accordion>

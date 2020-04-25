@@ -1,9 +1,11 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
 import { MatDividerModule } from "@angular/material/divider";
 
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
+import { TodoService } from "../todo.service";
 import { Todo } from "../todo.model";
 
 @Component({
@@ -11,12 +13,9 @@ import { Todo } from "../todo.model";
   templateUrl: './todo-main.component.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoMainComponent {
-  todos : Todo[] = [
-    { id: "", title: "First todo" },
-    { id: "", title: "Second todo" },
-    { id: "", title: "Third todo" },
-  ];
+export class TodoMainComponent implements OnInit {
+  private todoListener : Subscription;
+  todos : Todo[] = [];
 
   lists: string[] = [
     "All Tasks",
@@ -26,4 +25,15 @@ export class TodoMainComponent {
     "Others",
     "+ New List",
   ];
+
+  constructor(private todoService: TodoService) {}
+
+  ngOnInit () {
+    this.todoService
+      .getTodoUpdatedListener()
+      .subscribe( (list: { todos: Todo[], total: number }) => {
+        this.todos = list.todos;
+      });
+    this.todoService.getTasks();
+  }
 }

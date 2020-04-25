@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 
 import { TodoConfig } from "../todo.config";
+import { TodoService } from "../todo.service";
 import { AuthService } from "../../auth/auth.service";
 
 const TODO_ROUTE = TodoConfig.rootRoute;
@@ -21,7 +22,8 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
   readonly todoRoute = TODO_ROUTE;
 
   constructor(
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private todoService: TodoService) {}
 
   ngOnInit() {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
@@ -30,6 +32,14 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
       .subscribe( isAuthenticated => {
         this.isUserAuthenticated = isAuthenticated;
       });
+  }
+
+  addTask(title: string) {
+    this.todoService.addTask(title);
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 
   ngOnDestroy() {
