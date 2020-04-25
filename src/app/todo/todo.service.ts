@@ -26,11 +26,24 @@ export class TodoService {
 
   addTask(title: string) {
     const todo = {
-      id: null,
+      id: Math.random().toString(36).substr(2, 9), // temporary id
       title: title,
     };
 
     this.todos.push(todo);
+
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.todoUpdated.next({
+      todos: [...this.todos],
+      total: this.todos.length
+    });
+  }
+
+  deleteTask(id: string) {
+    const index = this.todos.findIndex(todo => id === todo.id);
+    if (index > -1)
+      this.todos.splice(index, 1);
+
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.todoUpdated.next({
       todos: [...this.todos],
