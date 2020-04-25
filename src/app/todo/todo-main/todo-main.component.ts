@@ -4,6 +4,7 @@ import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
@@ -39,9 +40,21 @@ export class TodoMainComponent implements OnInit {
     this.todoService
       .getTodoUpdatedListener()
       .subscribe( (list: { todos: Todo[], total: number }) => {
+        this.tempSortTasks(list.todos);
         this.todos = list.todos;
       });
     this.todoService.getTasks();
+  }
+
+  tempSortTasks(list: Todo[]) {
+    list.sort(this._tempSorter("rank"));
+  }
+  private _tempSorter(criteria) {
+    return function(a, b) {
+      if (a[criteria] > b[criteria]) return 1;
+      else if (a[criteria] < b[criteria]) return -1;
+      return 0;
+    }
   }
 
   addEmptyTask() {
@@ -79,6 +92,33 @@ export class TodoMainComponent implements OnInit {
         this.todoService.deleteTask(id);
       }
     });
+  }
+
+  dropList(event: CdkDragDrop<string[]>) {
+    const ranks = this.todos.map(todo => { return todo.rank; });
+
+    if (event.previousIndex == event.currentIndex) {
+      console.log("Not moved!");
+      return;
+    } else if (event.previousIndex < event.currentIndex) {
+      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        this.todos[idx].rank = ranks[idx];
+        this.todoService.updateRank(
+          this.todos[idx].id,
+          this.todos[idx].rank
+          );
+      }
+    } else {
+      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        this.todos[idx].rank = ranks[idx];
+        this.todoService.updateRank(
+          this.todos[idx].id,
+          this.todos[idx].rank
+          );
+      }
+    }
   }
 }
 

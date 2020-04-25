@@ -8,5 +8,5 @@ export interface Todo {
   //category: string[];
   //created: Date;
   //updated: Date;
-  //rank: Number;
+  rank: Number;
 }

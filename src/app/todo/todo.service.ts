@@ -25,13 +25,20 @@ export class TodoService {
   }
 
   addTask(title: string) {
+    let highrank = +localStorage.getItem("highrank");
+    if (!highrank) highrank = 1;
+
     const todo = {
       id: Math.random().toString(36).substr(2, 9), // temporary id
       title: title,
       finished: false,
+      rank: highrank
     };
 
     this.todos.push(todo);
+
+    highrank++;
+    localStorage.setItem("highrank", highrank.toString());
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.todoUpdated.next({
@@ -65,6 +72,14 @@ export class TodoService {
       todos: [...this.todos],
       total: this.todos.length
     });
+  }
+
+  updateRank(id: string, rank: Number) {
+    const index = this.todos.findIndex(todo => id === todo.id);
+    if (index > -1) {
+      this.todos[index].rank = rank;
+    }
+    localStorage.setItem("todos", JSON.stringify(this.todos));
   }
 
   deleteTask(id: string) {

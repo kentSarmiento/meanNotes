@@ -12,7 +12,6 @@
 }
 .todo-content-container {
   margin: auto;
-  margin-top: 24px;
   margin-left: 24px;
 }
 .list-button {
@@ -30,7 +29,8 @@
 .spacer {
   flex: 1 1 auto;
 }
-.delete, .checked, .edit {
+.delete, .checked, .edit,
+.add-empty, .drag-handle {
   line-height: 0;
   width: 24px;
   height: 24px;
@@ -44,10 +44,15 @@
 }
 .add-empty {
   float: right;
+  margin: 8px;
+}
+.drag-handle {
+  cursor: move;
 }
 
 .mat-expansion-panel-header[aria-disabled="true"] {
   color: rgba(0,0,0,.81);
+  padding: 0 8px;
 }
 .mat-sidenav-container {
   margin: auto;
