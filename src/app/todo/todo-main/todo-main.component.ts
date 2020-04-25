@@ -70,7 +70,15 @@ export class TodoMainComponent implements OnInit {
   }
 
   deleteTask(id: string) {
-    this.todoService.deleteTask(id);
+    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+      width: '240px', maxHeight: '240px'
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTask(id);
+      }
+    });
   }
 }
 
@@ -83,4 +91,13 @@ export class TodoEditDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<TodoEditDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TodoData) {}
+}
+
+@Component({
+  selector: 'todo-delete-dialog',
+  templateUrl: './todo-delete-dialog.html',
+  styleUrls: [ './todo-main.component.css' ]
+})
+export class TodoDeleteDialogComponent {
+  constructor(public dialogRef: MatDialogRef<TodoDeleteDialogComponent>) {}
 }
