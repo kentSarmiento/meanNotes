@@ -43,7 +43,15 @@
 
             <span
               *ngIf="!todo.finished"
-              class="title">{{todo.title}}</span>
+              class="title">
+              <input
+                matInput
+                class="title-form"
+                type="text"
+                value="{{todo.title}}"
+                (keydown.enter)="updateTask(todo.id, title.value)"
+                #title>
+            </span>
             <span
               *ngIf="todo.finished"
               class="title-finished">{{todo.title}}</span>

@@ -41,6 +41,10 @@ export class TodoMainComponent implements OnInit {
     this.todoService.toggleTask(id);
   }
 
+  updateTask(id: string, title: string) {
+    this.todoService.updateTask(id, title);
+  }
+
   deleteTask(id: string) {
     this.todoService.deleteTask(id);
   }

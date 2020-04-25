@@ -54,6 +54,19 @@ export class TodoService {
     });
   }
 
+  updateTask(id: string, title: string) {
+    const index = this.todos.findIndex(todo => id === todo.id);
+    if (index > -1) {
+      this.todos[index].title = title;
+    }
+
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.todoUpdated.next({
+      todos: [...this.todos],
+      total: this.todos.length
+    });
+  }
+
   deleteTask(id: string) {
     const index = this.todos.findIndex(todo => id === todo.id);
     if (index > -1)
