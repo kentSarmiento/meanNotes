@@ -27,6 +27,8 @@ export class TodoMainComponent implements OnInit {
   listEdit = false;
   enabledList: List;
 
+  taskEdit = false;
+
   constructor(
     private todoService: TodoService,
     private dialog: MatDialog) {}
@@ -128,6 +130,11 @@ export class TodoMainComponent implements OnInit {
     }
   }
 
+  getListName() {
+    if (this.enabledList) return this.enabledList.title;
+    return "All Tasks";
+  }
+
   addList(title: string) {
     this.todoService.addList(title);
   }
@@ -149,6 +156,11 @@ export class TodoMainComponent implements OnInit {
   toggleEditList() {
     if (this.listEdit) this.listEdit = false;
     else this.listEdit = true;
+  }
+
+  toggleEditTasks() {
+    if (this.taskEdit) this.taskEdit = false;
+    else this.taskEdit = true;
   }
 
   deleteList(id: string) {

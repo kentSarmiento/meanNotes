@@ -17,12 +17,26 @@
       </mat-list-item>
       <mat-divider></mat-divider>
 
+      <mat-list-item>
+      Task Lists
+        <span class="spacer"></span>
+        <button
+          mat-icon-button
+          class="edit-list"
+          [color]="listEdit ? 'accent' : 'black'"
+          (click)="toggleEditList()">
+          <span *ngIf="!listEdit"><mat-icon>edit</mat-icon></span>
+          <span *ngIf="listEdit"><mat-icon>done</mat-icon></span>
+        </button>
+      </mat-list-item>
+
       <mat-list-item
         *ngFor="let list of lists">
         <div
           class="list-drag-container"
           cdkDragLockAxis="y"
-          cdkDrag>
+          cdkDrag
+          [cdkDragDisabled]="!listEdit">
         <span
           *ngIf="listEdit"
           class="drag-handle"
@@ -31,7 +45,7 @@
         </span>
         <button
           mat-button
-          class="list-button"
+          class="list-button list-button-{{listEdit}}"
           (click)="changeEnabledList(list)">{{list.title}}</button>
         <span *ngIf="listEdit">
         <button
@@ -59,13 +73,6 @@
         </mat-form-field>
       </mat-list-item>
 
-      <mat-list-item>
-        <span class="spacer"></span>
-        <button
-          mat-icon-button
-          class="edit-list"
-          (click)="toggleEditList()"><mat-icon>edit</mat-icon></button>
-      </mat-list-item>
     </mat-list>
     </div>
   </mat-sidenav>
@@ -74,22 +81,27 @@
 
     <div class="todo-content-container">
 
-      <span *ngIf="enabledList!=null">
-      <input
-        matInput
-        class="display-list"
-        type="text"
-        value="{{enabledList.title}}"
-        (keyup)="updateList(enabledList.id, display.value)"
-        #display>
-      </span>
-      <span *ngIf="enabledList==null">
-      <input
-        matInput
-        class="display-list"
-        type="text"
-        value="All Tasks">
-      </span>
+      <div class="todo-content-header">
+        <input
+          matInput
+          class="display-list display-list-{{taskEdit}}"
+          type="text"
+          [value]="getListName()"
+          readonly="{{enabledList==null || !taskEdit}}"
+          (keyup)="updateList(enabledList.id, display.value)"
+          #display>
+
+        <span *ngIf="enabledList!=null">
+        <button
+          mat-icon-button
+          class="edit-list"
+          [color]="taskEdit ? 'accent' : 'black'"
+          (click)="toggleEditTasks()">
+          <span *ngIf="!taskEdit"><mat-icon>edit</mat-icon></span>
+          <span *ngIf="taskEdit"><mat-icon>done</mat-icon></span>
+        </button>
+        </span>
+      </div>
 
       <div
         class="todo-content-accordion"
@@ -99,18 +111,19 @@
         <div
           *ngFor="let todo of todos"
           class="todo-content-panel"
-          hideToggle=true
-          disabled=true
           cdkDrag
+          [cdkDragDisabled]="!taskEdit"
           #panel>
 
+            <span *ngIf="taskEdit">
             <div class="drag-handle" cdkDragHandle>
               <mat-icon>drag_indicator</mat-icon>
             </div>
+            </span>
 
             <button
               mat-icon-button
-              class="checked"
+              class="checked-{{taskEdit}}"
               color="primary"
               (click)="toggleTask(todo.id)">
               <span *ngIf="todo.finished">
@@ -122,23 +135,21 @@
             </button>
 
             <span
-              *ngIf="!todo.finished"
-              class="title">
+              class="title-{{taskEdit}}">
               <input
                 matInput
-                class="title-form"
+                class="title-form-{{taskEdit}} title-form-fin-{{todo.finished}}"
                 type="text"
                 value="{{todo.title}}"
+                readonly="{{!(!todo.finished && taskEdit)}}"
                 (keyup)="updateTask(todo.id, todoTitle.value)"
                 (keyup.enter)="todoTitle.blur()"
                 #todoTitle>
             </span>
-            <span
-              *ngIf="todo.finished"
-              class="title-finished">{{todo.title}}</span>
 
             <span class="spacer"></span>
 
+            <span *ngIf="taskEdit">
             <button
               mat-icon-button
               class="delete"
@@ -146,6 +157,7 @@
               (click)="deleteTask(todo.id)">
               <mat-icon>delete</mat-icon>
             </button>
+            </span>
 
         </div>
       </div>
@@ -158,8 +170,9 @@
           class="add-empty"
           color="primary"
           (click)="addEmptyTask()">
-          <mat-icon>add_circle</mat-icon>
+          <mat-icon>add_circle_outline</mat-icon>
         </button>
+        <span class="mat-caption">Add new task</span>
       </div>
     </div>
 
