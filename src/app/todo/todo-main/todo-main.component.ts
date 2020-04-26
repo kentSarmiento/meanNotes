@@ -38,7 +38,7 @@ export class TodoMainComponent implements OnInit {
         this.tempSort(list.todos);
         this.todos = list.todos;
       });
-    this.todoService.getTasks();
+    this.viewAllTask();
 
     this.todoService
       .getListUpdatedListener()
@@ -49,7 +49,6 @@ export class TodoMainComponent implements OnInit {
         } else {
           this.tempSort(list.lists);
           this.lists = list.lists;
-          this.enabledList = this.lists[0];
         }
       })
     this.todoService.getLists();
@@ -67,7 +66,7 @@ export class TodoMainComponent implements OnInit {
   }
 
   addEmptyTask() {
-    this.todoService.addTask("");
+    this.todoService.addTask("", this.enabledList.title);
   }
 
   toggleTask(id: string) {
@@ -135,6 +134,16 @@ export class TodoMainComponent implements OnInit {
 
   updateList(id: string, title: string) {
     this.todoService.updateList(id, title);
+  }
+
+  viewAllTask() {
+    this.enabledList = null;
+    this.todoService.changeEnabledList(null);
+  }
+
+  changeEnabledList(list: List) {
+    this.enabledList = list;
+    this.todoService.changeEnabledList(list);
   }
 
   toggleEditList() {

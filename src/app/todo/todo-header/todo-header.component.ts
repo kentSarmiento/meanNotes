@@ -34,10 +34,6 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
       });
   }
 
-  addTask(title: string) {
-    this.todoService.addTask(title);
-  }
-
   onLogout() {
     this.authService.logout();
   }

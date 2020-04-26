@@ -23,6 +23,25 @@
   margin: auto;
   margin-left: 24px;
 }
+.todo-content-accordion {
+  margin: 8px;
+  background: transparent;
+  overflow: hidden;
+  display: block;
+}
+.todo-content-panel {
+  padding: 8px;
+  margin: 8px;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.81);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: white;
+  font-size: 14px;
+}
 .list-button, .new-list-button {
   width: 94%;
   text-align: left;
@@ -32,7 +51,8 @@
   margin-left: 8px;
   width: 81%;
 }
-.title:focus, .title:hover {
+.title-form:focus, .title-form:hover {
+  width: 100%;
   border-bottom: 2px solid #3f51b5;
 }
 .title-finished {
@@ -49,6 +69,7 @@
 }
 .add-list {
   font-size: 14px;
+  padding-left: 8px;
 }
 .display-list {
   font-size: 24px;

@@ -10,6 +10,7 @@ export class TodoService {
 
   private lists: List[] = [];
   private listUpdated = new Subject<{ lists: List[] }>();
+  private enabledList: List;
 
   constructor() {
     if (JSON.parse(localStorage.getItem("todos")))
@@ -19,26 +20,40 @@ export class TodoService {
       this.lists = JSON.parse(localStorage.getItem("lists"));
   }
 
-  getTasks() {
+  private getTasks() {
     this.todoUpdated.next({
       todos: [...this.todos],
       total: this.todos.length
     });
   }
 
+  private getTasksByList() {
+    if (!this.enabledList) this.getTasks();
+    else {
+      const tasksByList = this.todos.filter(todo =>
+        todo.list===this.enabledList.title);
+
+      this.todoUpdated.next({
+        todos: [...tasksByList],
+        total: tasksByList.length
+      });
+    }
+  }
+
   getTodoUpdatedListener() {
     return this.todoUpdated.asObservable();
   }
 
-  addTask(title: string) {
+  addTask(title: string, list: string) {
     let highrank = +localStorage.getItem("highrank");
     if (!highrank) highrank = 1;
 
-    const todo = {
+    const todo: Todo = {
       id: Math.random().toString(36).substr(2, 9), // temporary id
       title: title,
       finished: false,
-      rank: highrank
+      rank: highrank,
+      list: list
     };
 
     this.todos.push(todo);
@@ -47,10 +62,7 @@ export class TodoService {
     localStorage.setItem("highrank", highrank.toString());
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.todoUpdated.next({
-      todos: [...this.todos],
-      total: this.todos.length
-    });
+    this.getTasksByList();
   }
 
   toggleTask(id: string) {
@@ -61,10 +73,6 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.todoUpdated.next({
-      todos: [...this.todos],
-      total: this.todos.length
-    });
   }
 
   updateTask(id: string, title: string) {
@@ -74,10 +82,6 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.todoUpdated.next({
-      todos: [...this.todos],
-      total: this.todos.length
-    });
   }
 
   updateRank(id: string, rank: Number) {
@@ -94,10 +98,7 @@ export class TodoService {
       this.todos.splice(index, 1);
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.todoUpdated.next({
-      todos: [...this.todos],
-      total: this.todos.length
-    });
+    this.getTasksByList();
   }
 
   getLists() {
@@ -141,6 +142,12 @@ export class TodoService {
     this.listUpdated.next({
       lists: [...this.lists],
     });
+  }
+
+  changeEnabledList(list: List) {
+    this.enabledList = list;
+    if (list) this.getTasksByList();
+    else this.getTasks();
   }
 
   deleteList(id: string) {
