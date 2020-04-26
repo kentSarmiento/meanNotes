@@ -8,7 +8,9 @@
     opened>
 
     <div class="todo-list-container">
-    <mat-list cdkDropList>
+    <mat-list
+      cdkDropList
+      (cdkDropListDropped)="sortLists($event)">
       <mat-list-item>
         <button
           mat-button

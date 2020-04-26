@@ -144,6 +144,14 @@ export class TodoService {
     });
   }
 
+  updateListRank(id: string, rank: Number) {
+    const index = this.lists.findIndex(list => id === list.id);
+    if (index > -1) {
+      this.lists[index].rank = rank;
+    }
+    localStorage.setItem("lists", JSON.stringify(this.lists));
+  }
+
   changeEnabledList(list: List) {
     this.enabledList = list;
     if (list) this.getTasksByList();

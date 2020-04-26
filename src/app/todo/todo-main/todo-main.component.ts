@@ -166,6 +166,32 @@ export class TodoMainComponent implements OnInit {
   deleteList(id: string) {
     this.todoService.deleteList(id);
   }
+
+  sortLists(event: CdkDragDrop<string[]>) {
+    const ranks = this.lists.map(list => { return list.rank; });
+
+    if (event.previousIndex == event.currentIndex) {
+      return;
+    } else if (event.previousIndex < event.currentIndex) {
+      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        this.lists[idx].rank = ranks[idx];
+        this.todoService.updateListRank(
+          this.lists[idx].id,
+          this.lists[idx].rank
+          );
+      }
+    } else {
+      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        this.lists[idx].rank = ranks[idx];
+        this.todoService.updateListRank(
+          this.lists[idx].id,
+          this.lists[idx].rank
+          );
+      }
+    }
+  }
 }
 
 @Component({
