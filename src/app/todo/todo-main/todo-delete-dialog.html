@@ -1,6 +1,17 @@
 <div mat-dialog-content>
-  <p class="mat-title">Delete task</p>
-  <p class="mat-body-1">Are you sure you want to delete this task?</p>
+  <p
+    class="mat-title"
+    *ngIf="!data.isList">Delete task</p>
+  <p
+    class="mat-title"
+    *ngIf="data.isList">Delete List and Tasks</p>
+
+  <p
+    class="mat-body-1"
+    *ngIf="!data.isList">Are you sure you want to delete this task?</p>
+  <p
+    class="mat-body-1"
+    *ngIf="data.isList">Are you sure you want to delete this list and all of its tasks??</p>
 </div>
 <div mat-dialog-actions align="end">
 <button mat-button [mat-dialog-close]=false cdkFocusInitial>No</button>

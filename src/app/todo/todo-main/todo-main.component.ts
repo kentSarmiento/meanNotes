@@ -14,6 +14,9 @@ import { AuthService } from "../../auth/auth.service";
 export interface TodoData {
   title: string;
 }
+export interface DeleteDialogData {
+  isList: boolean;
+}
 
 @Component({
   selector: 'app-todo-main',
@@ -127,7 +130,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   deleteTask(id: string) {
     const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
-      width: '240px', maxHeight: '240px'
+      width: '240px', maxHeight: '240px',
+      data: { isList: false }
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -199,7 +203,17 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteList(id: string) {
-    this.todoService.deleteList(id, this.userId);
+    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+      width: '240px', maxHeight: '240px',
+      data: { isList: true }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteList(id, this.userId);
+        this.changeEnabledList(null);
+      }
+    });
   }
 
   sortLists(event: CdkDragDrop<string[]>) {
@@ -252,5 +266,7 @@ export class TodoEditDialogComponent {
   styleUrls: [ './todo-main.component.css' ]
 })
 export class TodoDeleteDialogComponent {
-  constructor(public dialogRef: MatDialogRef<TodoDeleteDialogComponent>) {}
+  constructor(
+    public dialogRef: MatDialogRef<TodoDeleteDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DeleteDialogData) {}
 }

@@ -127,6 +127,18 @@ export class TodoService {
     this.getTasksByListAndUser(user);
   }
 
+  deleteTasksByList(list: string, user: string) {
+    for (var idx = this.todos.length - 1; idx >= 0; idx--) {
+      if (this.todos[idx].list === list &&
+          this.todos[idx].creator === user) {
+        this.todos.splice(idx, 1);
+      }
+    }
+
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.getTasksByListAndUser(user);
+  }
+
   getLists() {
     this.listUpdated.next({
       lists: [...this.lists]
@@ -192,8 +204,10 @@ export class TodoService {
 
   deleteList(id: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
-    if (index > -1)
+    if (index > -1) {
+      this.deleteTasksByList(this.lists[index].title, user);
       this.lists.splice(index, 1);
+    }
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
     this.getListsByUser(user);
