@@ -1,15 +1,17 @@
-import { Component, Inject, OnInit, OnDestroy } from "@angular/core";
+import { Component, Inject, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import { Subscription } from "rxjs";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
 import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { MatSidenav } from '@angular/material/sidenav';
 
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
 import { Todo, List } from "../todo.model";
 import { AuthService } from "../../auth/auth.service";
+import { TodoSidebarService } from "./todo-sidebar.service";
 
 export interface TodoData {
   title: string;
@@ -40,9 +42,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   isLoading = false;
 
+  @ViewChild('sidenav') sidenav: MatSidenav;
+
   constructor(
     private todoService: TodoService,
     private authService: AuthService,
+    private sidebarService: TodoSidebarService,
     private dialog: MatDialog) {}
 
   ngOnInit () {
@@ -82,6 +87,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     } else {
       this.isLoading = false;
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.sidebarService.setSidenav(this.sidenav);
   }
 
   tempSort(list: any) {
@@ -190,6 +199,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   changeEnabledList(list: List) {
     this.enabledList = list;
     this.todoService.changeEnabledListByUser(list, this.userId);
+    this.sidenav.close();
   }
 
   toggleEditList() {

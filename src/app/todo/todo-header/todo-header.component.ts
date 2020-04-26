@@ -4,6 +4,7 @@ import { Subscription } from "rxjs";
 import { TodoConfig } from "../todo.config";
 import { TodoService } from "../todo.service";
 import { AuthService } from "../../auth/auth.service";
+import { TodoSidebarService } from "../todo-main/todo-sidebar.service";
 
 const TODO_ROUTE = TodoConfig.rootRoute;
 
@@ -23,7 +24,8 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private todoService: TodoService) {}
+    private todoService: TodoService,
+    private sidebarService: TodoSidebarService) {}
 
   ngOnInit() {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
@@ -32,6 +34,10 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
       .subscribe( isAuthenticated => {
         this.isUserAuthenticated = isAuthenticated;
       });
+  }
+
+  toggleMenu() {
+    this.sidebarService.toggleSidebar();
   }
 
   onLogout() {

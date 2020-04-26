@@ -1,13 +1,20 @@
+@media only screen and (min-width: 680px) {
+  .todo-side-container { width: 25%; }
+}
+@media only screen and (max-width: 680px) {
+  .todo-side-container { width: 75%; }
+}
 
 .todo-main-container {
-  width: 81%;
-  min-height: 81vh;
+  position: fixed;
+  overflow: hidden;
+  top: 48px;
   bottom: 0;
+  width: 100%;
   margin: auto;
   background: #e9ebee;
 }
 .todo-side-container {
-  width: 24%;
   background: #e9ebee;
 }
 .list-drag-container {
@@ -21,17 +28,29 @@
 }
 .todo-content-container {
   margin: auto;
-  margin-left: 24px;
+  width: 100%;
+}
+.todo-content-header, .todo-content-footer {
+  width: 81%;
+  margin: auto;
+  margin-top: 24px;
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+}
+.todo-content-footer {
+  margin-top: auto;
+  padding-left: calc(24px + 24px + 8px + 8px);
 }
 .todo-content-accordion {
   margin: 8px;
   background: transparent;
-  overflow: hidden;
   display: block;
 }
 .todo-content-panel {
+  width: 81%;
   padding: 8px;
-  margin: 8px;
+  margin: 8px auto;
   border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.81);
   display: flex;
@@ -42,15 +61,17 @@
   background: white;
   font-size: 14px;
 }
-.todo-add {
-  padding: 0 0 0 8px;
-  margin: 0 0 0 16px;
-  display: flex;
-  flex-direction: row;
+.all-task-button {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0;
 }
 .list-button, .new-list-button {
   width: 94%;
   text-align: left;
+  font-weight: 400;
 }
 .list-button-false {
   margin-left: 24px;
@@ -85,12 +106,13 @@
 }
 .add-list {
   font-size: 14px;
-  padding-left: 8px;
+  width: 100%;
 }
 .display-list {
   font-size: 24px;
   width: 81%;
   max-width: 240px;
+  padding-left: 8px;
 }
 .display-list-true {
   border-bottom: 2px solid #3f51b5;
@@ -100,9 +122,6 @@
   width: 24px;
   height: 24px;
   margin: auto;
-}
-.add-empty {
-  margin: 8px 1px 8px 24px;
 }
 .drag-handle {
   cursor: move;

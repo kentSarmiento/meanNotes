@@ -1,3 +1,5 @@
+<app-todo-header></app-todo-header>
+
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 
 <p class="mat-caption"
@@ -11,7 +13,8 @@
   <mat-sidenav
     #sidenav
     class="todo-side-container"
-    mode="side"
+    mode="over"
+    position="end"
     opened>
 
     <div class="todo-list-container">
@@ -21,7 +24,7 @@
       <mat-list-item>
         <button
           mat-button
-          class="list-button"
+          class="all-task-button"
           (click)="changeEnabledList(null)">All Tasks</button>
       </mat-list-item>
       <mat-divider></mat-divider>
@@ -78,6 +81,7 @@
             name="list"
             placeholder="Add new list"
             (keydown.enter)="[addList(list.value), list.value='']"
+            cdkFocusInitial
             #list>
         </mat-form-field>
       </mat-list-item>
@@ -86,9 +90,8 @@
     </div>
   </mat-sidenav>
 
-  <mat-sidenav-content>
-
-    <div class="todo-content-container">
+  <mat-sidenav-content
+    class="todo-content-container">
 
       <div
         class="todo-content-header"
@@ -179,18 +182,16 @@
       </div>
 
       <div
-        class="todo-add"
+        class="todo-content-footer"
         *ngIf="enabledList!=null">
         <button
           mat-icon-button
-          class="add-empty"
           color="primary"
           (click)="addEmptyTask()">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
         <span class="mat-caption">Add new task</span>
       </div>
-    </div>
 
   </mat-sidenav-content>
 </mat-sidenav-container>
