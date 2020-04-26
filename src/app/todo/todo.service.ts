@@ -27,6 +27,16 @@ export class TodoService {
     });
   }
 
+  private getTasksByUser(user: string) {
+    const tasksByUser = this.todos.filter(todo =>
+      todo.creator===user);
+
+    this.todoUpdated.next({
+      todos: [...tasksByUser],
+      total: tasksByUser.length
+    });
+  }
+
   private getTasksByList() {
     if (!this.enabledList) this.getTasks();
     else {
@@ -40,11 +50,25 @@ export class TodoService {
     }
   }
 
+  private getTasksByListAndUser(user: string) {
+    if (!this.enabledList) this.getTasksByUser(user);
+    else {
+      const tasksByListAndUser = this.todos.filter(todo =>
+        todo.list===this.enabledList.title &&
+        todo.creator===user);
+
+      this.todoUpdated.next({
+        todos: [...tasksByListAndUser],
+        total: tasksByListAndUser.length
+      });
+    }
+  }
+
   getTodoUpdatedListener() {
     return this.todoUpdated.asObservable();
   }
 
-  addTask(title: string, list: string) {
+  addTask(title: string, list: string, user: string) {
     let highrank = +localStorage.getItem("highrank");
     if (!highrank) highrank = 1;
 
@@ -53,7 +77,8 @@ export class TodoService {
       title: title,
       finished: false,
       rank: highrank,
-      list: list
+      list: list,
+      creator: user
     };
 
     this.todos.push(todo);
@@ -62,7 +87,7 @@ export class TodoService {
     localStorage.setItem("highrank", highrank.toString());
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.getTasksByList();
+    this.getTasksByListAndUser(user);
   }
 
   toggleTask(id: string) {
@@ -75,10 +100,11 @@ export class TodoService {
     localStorage.setItem("todos", JSON.stringify(this.todos));
   }
 
-  updateTask(id: string, title: string) {
+  updateTask(id: string, title: string, user: string) {
     const index = this.todos.findIndex(todo => id === todo.id);
     if (index > -1) {
       this.todos[index].title = title;
+      this.todos[index].creator = user;
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
@@ -92,13 +118,13 @@ export class TodoService {
     localStorage.setItem("todos", JSON.stringify(this.todos));
   }
 
-  deleteTask(id: string) {
+  deleteTask(id: string, user: string) {
     const index = this.todos.findIndex(todo => id === todo.id);
     if (index > -1)
       this.todos.splice(index, 1);
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.getTasksByList();
+    this.getTasksByListAndUser(user);
   }
 
   getLists() {
@@ -107,18 +133,28 @@ export class TodoService {
     });
   }
 
+  getListsByUser(user: string) {
+    const listByUser = this.lists.filter(list =>
+      list.creator===user);
+
+    this.listUpdated.next({
+      lists: [...listByUser]
+    });
+  }
+
   getListUpdatedListener() {
     return this.listUpdated.asObservable();
   }
 
-  addList(title: string) {
+  addList(title: string, user: string) {
     let highrank = +localStorage.getItem("highrank");
     if (!highrank) highrank = 1;
 
     const list = {
       id: Math.random().toString(36).substr(2, 9), // temporary id
       title: title,
-      rank: highrank
+      rank: highrank,
+      creator: user
     };
 
     this.lists.push(list);
@@ -127,21 +163,17 @@ export class TodoService {
     localStorage.setItem("highrank", highrank.toString());
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
-    this.listUpdated.next({
-      lists: [...this.lists],
-    });
+    this.getListsByUser(user);
   }
 
-  updateList(id: string, title: string) {
+  updateList(id: string, title: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
     if (index > -1) {
       this.lists[index].title = title;
+      this.lists[index].creator = user;
     }
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
-    this.listUpdated.next({
-      lists: [...this.lists],
-    });
   }
 
   updateListRank(id: string, rank: Number) {
@@ -152,20 +184,18 @@ export class TodoService {
     localStorage.setItem("lists", JSON.stringify(this.lists));
   }
 
-  changeEnabledList(list: List) {
+  changeEnabledListByUser(list: List, user: string) {
     this.enabledList = list;
-    if (list) this.getTasksByList();
-    else this.getTasks();
+    if (list) this.getTasksByListAndUser(user);
+    else this.getTasksByUser(user);
   }
 
-  deleteList(id: string) {
+  deleteList(id: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
     if (index > -1)
       this.lists.splice(index, 1);
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
-    this.listUpdated.next({
-      lists: [...this.lists],
-    });
+    this.getListsByUser(user);
   }
 }

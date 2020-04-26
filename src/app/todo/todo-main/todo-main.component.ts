@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatListModule } from "@angular/material/list";
@@ -9,6 +9,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
 import { Todo, List } from "../todo.model";
+import { AuthService } from "../../auth/auth.service";
 
 export interface TodoData {
   title: string;
@@ -19,8 +20,9 @@ export interface TodoData {
   templateUrl: './todo-main.component.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoMainComponent implements OnInit {
+export class TodoMainComponent implements OnInit, OnDestroy {
   private todoListener : Subscription;
+  private listListener : Subscription;
   todos : Todo[] = [];
   lists : List[] = [];
 
@@ -29,31 +31,54 @@ export class TodoMainComponent implements OnInit {
 
   taskEdit = false;
 
+  private authListener : Subscription;
+  isUserAuthenticated = false;
+  userId: string;
+
+  isLoading = false;
+
   constructor(
     private todoService: TodoService,
+    private authService: AuthService,
     private dialog: MatDialog) {}
 
   ngOnInit () {
-    this.todoService
+    this.isLoading = true;
+
+    this.authListener = this.authService
+      .getAuthStatusListener()
+      .subscribe( isAuthenticated => {
+        this.isUserAuthenticated = this.authService.getIsAuthenticated();
+        this.userId = this.authService.getUserId();
+      });
+
+    this.todoListener = this.todoService
       .getTodoUpdatedListener()
       .subscribe( (list: { todos: Todo[], total: number }) => {
+        this.isLoading = false;
         this.tempSort(list.todos);
         this.todos = list.todos;
       });
-    this.viewAllTask();
 
-    this.todoService
+    this.listListener = this.todoService
       .getListUpdatedListener()
       .subscribe( (list: { lists: List[] }) => {
-        if (list.lists.length == 0) {
-          this.addList("Personal");
-          this.addList("Work");
-        } else {
-          this.tempSort(list.lists);
-          this.lists = list.lists;
-        }
-      })
-    this.todoService.getLists();
+        this.isLoading = false;
+        this.tempSort(list.lists);
+        this.lists = list.lists;
+      });
+
+    this.isUserAuthenticated = this.authService.getIsAuthenticated();
+    if (this.isUserAuthenticated) {
+      this.userId = this.authService.getUserId();
+
+      this.enabledList = null;
+      this.todoService.changeEnabledListByUser(null, this.userId);
+
+      this.todoService.getListsByUser(this.userId);
+    } else {
+      this.isLoading = false;
+    }
   }
 
   tempSort(list: any) {
@@ -68,7 +93,11 @@ export class TodoMainComponent implements OnInit {
   }
 
   addEmptyTask() {
-    this.todoService.addTask("", this.enabledList.title);
+    this.todoService.addTask(
+      "",
+      this.enabledList.title,
+      this.userId
+    );
   }
 
   toggleTask(id: string) {
@@ -89,7 +118,11 @@ export class TodoMainComponent implements OnInit {
   }
 
   updateTask(id: string, title: string) {
-    this.todoService.updateTask(id, title);
+    this.todoService.updateTask(
+      id,
+      title,
+      this.userId
+    );
   }
 
   deleteTask(id: string) {
@@ -99,7 +132,7 @@ export class TodoMainComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        this.todoService.deleteTask(id);
+        this.todoService.deleteTask(id, this.userId);
       }
     });
   }
@@ -136,21 +169,23 @@ export class TodoMainComponent implements OnInit {
   }
 
   addList(title: string) {
-    this.todoService.addList(title);
+    this.todoService.addList(
+      title,
+      this.userId
+    );
   }
 
   updateList(id: string, title: string) {
-    this.todoService.updateList(id, title);
-  }
-
-  viewAllTask() {
-    this.enabledList = null;
-    this.todoService.changeEnabledList(null);
+    this.todoService.updateList(
+      id,
+      title,
+      this.userId
+    );
   }
 
   changeEnabledList(list: List) {
     this.enabledList = list;
-    this.todoService.changeEnabledList(list);
+    this.todoService.changeEnabledListByUser(list, this.userId);
   }
 
   toggleEditList() {
@@ -164,7 +199,7 @@ export class TodoMainComponent implements OnInit {
   }
 
   deleteList(id: string) {
-    this.todoService.deleteList(id);
+    this.todoService.deleteList(id, this.userId);
   }
 
   sortLists(event: CdkDragDrop<string[]>) {
@@ -191,6 +226,12 @@ export class TodoMainComponent implements OnInit {
           );
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.listListener.unsubscribe();
+    this.todoListener.unsubscribe();
+    this.authListener.unsubscribe();
   }
 }
 

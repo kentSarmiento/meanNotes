@@ -1,4 +1,13 @@
-<mat-sidenav-container class="todo-main-container">
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+
+<p class="mat-caption"
+   align="center"
+   *ngIf="!isUserAuthenticated && !isLoading">Add your first task!</p>
+
+<mat-sidenav-container
+  class="todo-main-container"
+  *ngIf="isUserAuthenticated && !isLoading">
+
   <mat-sidenav
     #sidenav
     class="todo-side-container"
@@ -13,7 +22,7 @@
         <button
           mat-button
           class="list-button"
-          (click)="viewAllTask()">All Tasks</button>
+          (click)="changeEnabledList(null)">All Tasks</button>
       </mat-list-item>
       <mat-divider></mat-divider>
 
@@ -81,7 +90,9 @@
 
     <div class="todo-content-container">
 
-      <div class="todo-content-header">
+      <div
+        class="todo-content-header"
+        *ngIf="lists.length!=0">
         <input
           matInput
           class="display-list display-list-{{taskEdit}}"
@@ -101,12 +112,17 @@
           <span *ngIf="taskEdit"><mat-icon>done</mat-icon></span>
         </button>
         </span>
+
       </div>
 
       <div
         class="todo-content-accordion"
         cdkDropList
         (cdkDropListDropped)="sortTasks($event)">
+
+      <span class="mat-caption"
+         align="center"
+         *ngIf="lists.length==0">Add your first task by creating a list!</span>
 
         <div
           *ngFor="let todo of todos"

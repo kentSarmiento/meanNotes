@@ -61,9 +61,6 @@
   margin-left: 8px;
   width: 81%;
 }
-.title-false, .title-finished-false {
-  /*padding-left: 24px;*/
-}
 .title-form-true:focus, .title-form-true:hover,
 .title-form-false:focus, .title-form-false:hover {
   width: 100%;
@@ -124,6 +121,9 @@
   margin: auto;
   margin-left: 8px;
   color: rgba(0,0,0,.48);
+}
+.mat-spinner {
+  margin: auto;
 }
 
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {

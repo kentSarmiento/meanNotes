@@ -3,9 +3,9 @@ export interface Todo {
   title: string;
   finished: boolean;
   list: string;
+  creator: string;
   //note: string;
   //personal: boolean;
-  //creator: string;
   //category: string[];
   //created: Date;
   //updated: Date;
@@ -15,5 +15,6 @@ export interface Todo {
 export interface List {
   id: string;
   title: string;
+  creator: string;
   rank: Number;
 }
