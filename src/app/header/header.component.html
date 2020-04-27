@@ -7,15 +7,36 @@
   </span>
   <span class="spacer"></span>
   <span>
-  <ul>
+  <ul *ngIf="isNotesApp()">
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/auth/login" >Log in</a>
+      <a
+        mat-button
+        routerLink="/auth/login"
+        [queryParams]="{ redirectUrl:activatedUrl.substring(1) }">Log in</a>
     </li>
     <li *ngIf="!isUserAuthenticated">
     <span class="divider">|</span>
     </li>
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/auth/signup" >Sign up</a>
+      <a
+        mat-button
+        routerLink="/auth/signup"
+        [queryParams]="{ redirectUrl:activatedUrl.substring(1) }">Sign up</a>
+    </li>
+    <li *ngIf="isUserAuthenticated">
+      <button mat-button (click)="onLogout()">Log out</button>
+    </li>
+  </ul>
+
+  <ul *ngIf="!isNotesApp()">
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/auth/login">Log in</a>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+    <span class="divider">|</span>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/auth/signup">Sign up</a>
     </li>
     <li *ngIf="isUserAuthenticated">
       <button mat-button (click)="onLogout()">Log out</button>
