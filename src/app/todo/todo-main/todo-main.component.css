@@ -81,10 +81,16 @@
 .title-finished-true, .title-finished-false {
   margin: auto;
   margin-left: 8px;
-  width: 81%;
+  width: 100%;
 }
-.title-form-true:focus, .title-form-true:hover,
+.title-form-false,
 .title-form-false:focus, .title-form-false:hover {
+  margin-right: calc(24px + 8px);
+  width: calc(100% - 24px);
+}
+.title-form-true,
+.title-form-true:focus, .title-form-true:hover {
+  margin-right: 8px;
   width: 100%;
 }
 .title-form-true.title-form-fin-false:focus {
@@ -112,7 +118,7 @@
 .display-list {
   font-size: 24px;
   width: 81%;
-  max-width: 240px;
+  max-width: calc(24px * (8 + 8));
   padding-left: 8px;
 }
 .display-list-true {
@@ -160,6 +166,10 @@
   font-size: 14px !important;
   width: 100%;
   margin: auto;
+}
+.title-dialog-input {
+  width: calc(100% - 62px);
+  padding-right: 62px;
 }
 .submit-dialog {
   margin-left: -62px;

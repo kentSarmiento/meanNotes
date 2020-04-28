@@ -6,10 +6,16 @@
 <mat-form-field class="title-dialog" appearance="fill">
   <input
     matInput
+    class="title-dialog-input"
     type="text"
+    maxlength="81"
     value="{{data.title}}"
     cdkFocusInitial
     #title>
+  <mat-hint
+    *ngIf="title.value.length > 48 && (81 - ((title?.value) ? title.value.length : 0)) > 0"
+    align="end">
+    {{ 81 - ((title?.value) ? title.value.length : 0) }} characters remaining</mat-hint>
 </mat-form-field>
   <button
     mat-button

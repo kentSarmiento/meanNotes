@@ -79,10 +79,15 @@
             matInput
             type="text"
             name="list"
+            maxlength="24"
             placeholder="Add new list"
             (keydown.enter)="[addList(list.value), list.value='']"
             cdkFocusInitial
             #list>
+  <mat-hint
+    *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
+    align="end">
+    {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining</mat-hint>
         </mat-form-field>
       </mat-list-item>
 
@@ -159,6 +164,7 @@
                 matInput
                 class="title-form-{{taskEdit}} title-form-fin-{{todo.finished}}"
                 type="text"
+                maxlength="140"
                 value="{{todo.title}}"
                 readonly="{{!(!todo.finished && taskEdit)}}"
                 (keyup)="updateTask(todo.id, todoTitle.value)"
