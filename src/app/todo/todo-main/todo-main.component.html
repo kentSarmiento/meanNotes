@@ -121,7 +121,9 @@
           type="text"
           [value]="getListName()"
           readonly="{{enabledList==null || !taskEdit}}"
-          (keyup)="updateList(enabledList.id, display.value)"
+          (keydown.enter)="updateList(enabledList.id, display.value)"
+          (keyup.enter)="display.blur()"
+          (blur)="updateList(enabledList.id, display.value)"
           #display>
 
         <span class="spacer"></span>

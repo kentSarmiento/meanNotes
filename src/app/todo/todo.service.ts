@@ -121,15 +121,6 @@ export class TodoService {
     localStorage.setItem("todos", JSON.stringify(this.todos));
   }
 
-  deleteTask(id: string, user: string) {
-    const index = this.todos.findIndex(todo => id === todo.id);
-    if (index > -1)
-      this.todos.splice(index, 1);
-
-    localStorage.setItem("todos", JSON.stringify(this.todos));
-    this.getTasksByListAndUser(user);
-  }
-
   deleteTasksByList(list: string, user: string) {
     for (var idx = this.todos.length - 1; idx >= 0; idx--) {
       if (this.todos[idx].list === list &&
@@ -140,6 +131,26 @@ export class TodoService {
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.getTasksByListAndUser(user);
+  }
+
+  deleteTask(id: string, user: string) {
+    const index = this.todos.findIndex(todo => id === todo.id);
+    if (index > -1)
+      this.todos.splice(index, 1);
+
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.getTasksByListAndUser(user);
+  }
+
+  updateTaskLists(currListName: string, newListName: string, user: string) {
+    for (var idx = this.todos.length - 1; idx >= 0; idx--) {
+      if (this.todos[idx].list === currListName &&
+          this.todos[idx].creator === user) {
+        this.todos[idx].list = newListName;
+      }
+    }
+
+    localStorage.setItem("todos", JSON.stringify(this.todos));
   }
 
   getLists() {
@@ -184,11 +195,13 @@ export class TodoService {
   updateList(id: string, title: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
     if (index > -1) {
+      this.updateTaskLists(this.lists[index].title, title, user);
       this.lists[index].title = title;
       this.lists[index].creator = user;
     }
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.getTasksByListAndUser(user); // tasks should be loaded at this point
   }
 
   updateListRank(id: string, rank: Number) {
