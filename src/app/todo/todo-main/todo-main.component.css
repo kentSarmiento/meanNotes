@@ -51,7 +51,7 @@
   width: 81%;
   padding: 8px;
   margin: auto;
-  margin-top: calc(24px / 8px);
+  margin-top: calc(24px / 8);
   border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.81);
   display: flex;
