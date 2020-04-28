@@ -297,6 +297,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  logout() {
+    this.authService.logout();
+  }
+
   ngOnDestroy() {
     this.listListener.unsubscribe();
     this.todoListener.unsubscribe();
