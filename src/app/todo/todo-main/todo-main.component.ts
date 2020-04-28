@@ -92,6 +92,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.sidebarService.setSidenav(this.sidenav);
+    this.sidenav.openedChange.subscribe((open: boolean) => {
+      // When sidenav is opened, task edit should be disabled
+      if (open) this.taskEdit = false;
+      // When sidenav is closed, list edit should be disabled
+      else this.listEdit = false;
+    });
   }
 
   tempSort(list: any) {
