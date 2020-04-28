@@ -48,6 +48,9 @@
   bottom: 0;
   display: block;
 }
+.todo-content-list-title {
+  padding-top: 8px;
+}
 .todo-content-add-task, .todo-content-list-title {
   width: 81%;
   height: calc(24px + 8px + 8px);
