@@ -15,6 +15,7 @@ import { TodoSidebarService } from "./todo-sidebar.service";
 
 export interface TodoData {
   title: string;
+  isNew: boolean;
 }
 export interface DeleteDialogData {
   isList: boolean;
@@ -117,16 +118,29 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   openEditDialog(id: string, title: string) {
+    const isNew = id ? false : true;
     const dialogRef = this.dialog.open(TodoEditDialogComponent, {
       width: '480px', maxHeight: '320px',
-      data: {title: title}
+      data: { title: title, isNew: isNew }
     });
 
     dialogRef.afterClosed().subscribe(title => {
       if (title) {
-        this.updateTask(id, title);
+        if (id) {
+          this.updateTask(id, title);
+        } else {
+          this.addTask(title);
+        }
       }
     });
+  }
+
+  addTask(title: string) {
+    this.todoService.addTask(
+      title,
+      this.enabledList.title,
+      this.userId
+    );
   }
 
   updateTask(id: string, title: string) {

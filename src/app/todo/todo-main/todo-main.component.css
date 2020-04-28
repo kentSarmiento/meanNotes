@@ -50,7 +50,8 @@
 .todo-content-panel {
   width: 81%;
   padding: 8px;
-  margin: 8px auto;
+  margin: auto;
+  margin-top: calc(24px / 8px);
   border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.81);
   display: flex;
