@@ -56,11 +56,14 @@
   height: calc(24px + 8px + 8px);
   margin: auto;
   padding: 0;
-  padding-top: 8px;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
   background: #e9ebee;
+}
+.todo-content-list-title {
+  padding-top: 8px;
+  width: calc(94% - 8%);
 }
 .todo-content-add-list {
   height: calc(24px * 3);
