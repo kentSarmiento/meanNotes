@@ -164,6 +164,7 @@
 
         <div
           *ngFor="let todo of todos"
+          id="panel-{{todo.id}}"
           class="todo-content-panel"
           cdkDrag
           [cdkDragDisabled]="!taskEdit"

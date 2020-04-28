@@ -6,6 +6,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
+import { Router, NavigationEnd } from '@angular/router';
 
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
@@ -49,7 +50,22 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
-    private dialog: MatDialog) {}
+    private dialog: MatDialog,
+    private router: Router) {
+    router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+          const tree = router.parseUrl(router.url);
+          if (tree.fragment) {
+            setTimeout(() => {
+              const element = document.querySelector("#" + tree.fragment);
+              if (element) {
+                element.scrollIntoView(true);
+              }
+            }, 100); // another hack here to consider delay in page render
+          }
+       }
+      });
+}
 
   ngOnInit () {
     this.isLoading = true;
@@ -135,14 +151,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     }
   }
 
-  addEmptyTask() {
-    this.todoService.addTask(
-      "",
-      this.enabledList.title,
-      this.userId
-    );
-  }
-
   toggleTask(id: string) {
     this.todoService.toggleTask(id);
   }
@@ -159,14 +167,15 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         if (id) {
           this.updateTask(id, title);
         } else {
-          this.addTask(title);
+          const taskId = this.addTask(title);
+          this.router.navigate( ['/todo'], {fragment: 'panel-' + taskId});
         }
       }
     });
   }
 
   addTask(title: string) {
-    this.todoService.addTask(
+    return this.todoService.addTask(
       title,
       this.enabledList.title,
       this.userId

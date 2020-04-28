@@ -72,8 +72,9 @@ export class TodoService {
     let highrank = +localStorage.getItem("highrank");
     if (!highrank) highrank = 1;
 
+    const taskId = Math.random().toString(36).substr(2, 9); // temporary id
     const todo: Todo = {
-      id: Math.random().toString(36).substr(2, 9), // temporary id
+      id: taskId,
       title: title,
       finished: false,
       rank: highrank,
@@ -88,6 +89,8 @@ export class TodoService {
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
     this.getTasksByListAndUser(user);
+
+    return taskId;
   }
 
   toggleTask(id: string) {
