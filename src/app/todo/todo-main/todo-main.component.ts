@@ -235,7 +235,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.todoService.deleteList(id, this.userId);
-        this.changeEnabledList(null);
+        this.todoService.changeEnabledListByUser(null, this.userId);
       }
     });
   }
