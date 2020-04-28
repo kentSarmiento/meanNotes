@@ -1,8 +1,11 @@
 @media only screen and (min-width: 680px) {
   .todo-side-container { width: 25%; }
+  .display-list { width: 81%; }
 }
 @media only screen and (max-width: 680px) {
   .todo-side-container { width: 75%; }
+  .todo-content-list-title { width: 94% !important; }
+  .display-list { width: 50%; }
 }
 
 .todo-main-container {
@@ -48,13 +51,13 @@
   bottom: 0;
   display: block;
 }
-.todo-content-list-title {
-  padding-top: 8px;
-}
 .todo-content-add-task, .todo-content-list-title {
   width: 81%;
   height: calc(24px + 8px + 8px);
   margin: auto;
+  padding: 0;
+  padding-top: 8px;
+  display: flex;
   flex-direction: row;
   box-sizing: border-box;
   background: #e9ebee;
@@ -64,10 +67,10 @@
   background: #e9ebee;
 }
 .add-task-button {
-  margin-left: calc(24px + 8px);
+  margin-left: 24px;
 }
 .todo-content-accordion {
-  margin: 8px;
+  width: 100%;
   padding-top: calc(24px * 2);
   background: transparent;
   display: block;
@@ -142,7 +145,6 @@
 }
 .display-list {
   font-size: 24px;
-  width: 81%;
   max-width: calc(24px * (8 + 8));
   padding-left: 8px;
 }
@@ -151,9 +153,9 @@
 }
 .edit-list {
   line-height: 0;
-  width: 24px;
   height: 24px;
   margin: auto;
+  padding: 0;
 }
 .drag-handle {
   cursor: move;
@@ -175,6 +177,9 @@
 }
 .mat-spinner {
   margin: auto;
+}
+.mat-button {
+  font-weight: 400;
 }
 
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {

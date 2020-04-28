@@ -65,7 +65,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       .getTodoUpdatedListener()
       .subscribe( (list: { todos: Todo[], total: number }) => {
         this.isLoading = false;
-        this.tempSort(list.todos);
+        this.rankSort(list.todos);
         this.todos = list.todos;
       });
 
@@ -73,7 +73,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       .getListUpdatedListener()
       .subscribe( (list: { lists: List[] }) => {
         this.isLoading = false;
-        this.tempSort(list.lists);
+        this.rankSort(list.lists);
         this.lists = list.lists;
       });
 
@@ -100,10 +100,34 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  tempSort(list: any) {
-    list.sort(this._tempSorter("rank"));
+  rankSort(list: any) {
+    list.sort(this._rankSorter("rank"));
   }
-  private _tempSorter(criteria) {
+  private _rankSorter(criteria) {
+    return function(a, b) {
+      if (a[criteria] > b[criteria]) return 1;
+      else if (a[criteria] < b[criteria]) return -1;
+      return 0;
+    }
+  }
+
+  sortFinishedTasks() {
+    this.doneSort(this.todos);
+  }
+  doneSort(list: any) {
+    const ranks = this.todos.map(todo => { return todo.rank; });
+
+    list.sort(this._doneSorter("finished"));
+
+    for (let idx = 0; idx < this.todos.length; idx++) {
+      this.todos[idx].rank = ranks[idx];
+      this.todoService.updateRank(
+        this.todos[idx].id,
+        this.todos[idx].rank
+        );
+    }
+  }
+  private _doneSorter(criteria) {
     return function(a, b) {
       if (a[criteria] > b[criteria]) return 1;
       else if (a[criteria] < b[criteria]) return -1;

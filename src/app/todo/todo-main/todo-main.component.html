@@ -114,15 +114,31 @@
           (keyup)="updateList(enabledList.id, display.value)"
           #display>
 
+        <span class="spacer"></span>
         <span *ngIf="enabledList!=null">
-        <button
-          mat-icon-button
-          class="edit-list"
-          [color]="taskEdit ? 'accent' : 'black'"
-          (click)="toggleEditTasks()">
-          <span *ngIf="!taskEdit"><mat-icon>edit</mat-icon></span>
-          <span *ngIf="taskEdit"><mat-icon>done</mat-icon></span>
-        </button>
+          <span *ngIf="taskEdit">
+          <button
+            mat-button
+            class="edit-list"
+            (click)="sortFinishedTasks()">
+            Sort<mat-icon>sort</mat-icon>
+          </button>
+          <button
+            mat-button
+            class="edit-list"
+            color="accent"
+            (click)="toggleEditTasks()">
+            Save<mat-icon>done</mat-icon>
+          </button>
+          </span>
+          <span *ngIf="!taskEdit">
+          <button
+            mat-button
+            class="edit-list"
+            (click)="toggleEditTasks()">
+            Edit <mat-icon>edit</mat-icon>
+          </button>
+          </span>
         </span>
       </div>
       </div>
