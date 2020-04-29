@@ -254,6 +254,7 @@ export class TodoService {
 
     this.markUpdated(true);
     this.getListsByUser(user);
+    return list;
   }
 
   updateList(id: string, title: string, user: string) {

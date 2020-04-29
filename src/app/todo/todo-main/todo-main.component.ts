@@ -265,10 +265,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   addList(title: string) {
-    this.todoService.addList(
-      title,
-      this.userId
-    );
+    const list = this.todoService.addList(title, this.userId);
+    this.changeEnabledList(list);
   }
 
   updateList(id: string, title: string) {
