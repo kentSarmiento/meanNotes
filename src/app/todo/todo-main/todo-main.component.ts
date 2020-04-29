@@ -69,7 +69,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
           }
        }
       });
-}
+  }
 
   ngOnInit () {
     this.isLoading = true;
@@ -84,10 +84,11 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.todoListener = this.todoService
       .getTodoUpdatedListener()
       .subscribe( (list: { todos: Todo[], total: number }) => {
-        this.isLoading = false;
         this.rankSort(list.todos);
+        if (!this.enabledList) this.listSort(list.todos);
         this.todos = list.todos;
 
+        this.isLoading = false;
         if (this.isFirstLoad) {
           this.sidenav.open();
           this.isFirstLoad = false;
@@ -133,6 +134,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  listSort(list: any) {
+    list.sort(this._rankSorter("list"));
+  }
   rankSort(list: any) {
     list.sort(this._rankSorter("rank"));
   }
@@ -194,7 +198,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   addTask(title: string) {
     return this.todoService.addTask(
       title,
-      this.enabledList.title,
+      this.enabledList.id,
       this.userId
     );
   }
@@ -251,6 +255,15 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     return "All Tasks";
   }
 
+  getTodoListName(listId: string) {
+    const index = this.lists.findIndex(list => listId === list.id);
+    if (index > -1) {
+      const name = this.lists[index].title.substring(0,8);
+      if (this.lists[index].title.length > 8) return name + "...";
+      return name;
+    }
+  }
+
   addList(title: string) {
     this.todoService.addList(
       title,
@@ -270,6 +283,13 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.enabledList = list;
     this.todoService.changeEnabledListByUser(list, this.userId);
     this.sidenav.close();
+  }
+
+  changeEnabledListById(listId: string) {
+    const index = this.lists.findIndex(list => listId === list.id);
+    if (index > -1) {
+      this.changeEnabledList(this.lists[index]);
+    }
   }
 
   toggleEditList() {

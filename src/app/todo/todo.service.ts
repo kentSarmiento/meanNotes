@@ -103,15 +103,19 @@ export class TodoService {
   }
 
   private getTasks() {
+    const ongoingTasks = this.todos.filter(todo =>
+      todo.finished === false);
+
     this.todoUpdated.next({
-      todos: [...this.todos],
+      todos: [...ongoingTasks],
       total: this.todos.length
     });
   }
 
   private getTasksByUser(user: string) {
     const tasksByUser = this.todos.filter(todo =>
-      todo.creator===user);
+      todo.creator === user &&
+      todo.finished === false);
 
     this.todoUpdated.next({
       todos: [...tasksByUser],
@@ -123,7 +127,7 @@ export class TodoService {
     if (!this.enabledList) this.getTasks();
     else {
       const tasksByList = this.todos.filter(todo =>
-        todo.list===this.enabledList.title);
+        todo.list===this.enabledList.id);
 
       this.todoUpdated.next({
         todos: [...tasksByList],
@@ -136,7 +140,7 @@ export class TodoService {
     if (!this.enabledList) this.getTasksByUser(user);
     else {
       const tasksByListAndUser = this.todos.filter(todo =>
-        todo.list===this.enabledList.title &&
+        todo.list===this.enabledList.id &&
         todo.creator===user);
 
       this.todoUpdated.next({
@@ -219,16 +223,6 @@ export class TodoService {
     this.getTasksByListAndUser(user);
   }
 
-  updateTaskLists(currListName: string, newListName: string, user: string) {
-    for (var idx = this.todos.length - 1; idx >= 0; idx--) {
-      if (this.todos[idx].list === currListName &&
-          this.todos[idx].creator === user) {
-        this.todos[idx].list = newListName;
-      }
-    }
-    this.markUpdated(true);
-  }
-
   getLists() {
     this.listUpdated.next({
       lists: [...this.lists]
@@ -265,7 +259,6 @@ export class TodoService {
   updateList(id: string, title: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
     if (index > -1) {
-      this.updateTaskLists(this.lists[index].title, title, user);
       this.lists[index].title = title;
       this.lists[index].creator = user;
     }
@@ -297,7 +290,7 @@ export class TodoService {
   deleteList(id: string, user: string) {
     const index = this.lists.findIndex(list => id === list.id);
     if (index > -1) {
-      this.deleteTasksByList(this.lists[index].title, user);
+      this.deleteTasksByList(this.lists[index].id, user);
       this.lists.splice(index, 1);
     }
 

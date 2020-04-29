@@ -204,6 +204,19 @@
   font-weight: 400;
 }
 
+.todo-label {
+  width: 81px;
+}
+.todo-label-button {
+  background: #ccc;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0;
+  width: 64px;
+  height: 24px;
+  line-height: 24px;
+}
+
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
   padding: 0 !important;
   border-radius: 0 !important;

@@ -36,7 +36,7 @@
         <button
           mat-icon-button
           class="edit-list"
-          [color]="listEdit ? 'accent' : 'black'"
+          [color]="listEdit ? 'primary' : 'black'"
           (click)="toggleEditList()">
           <span *ngIf="!listEdit"><mat-icon>edit</mat-icon></span>
           <span *ngIf="listEdit"><mat-icon>done</mat-icon></span>
@@ -140,9 +140,9 @@
           <button
             mat-button
             class="edit-list"
-            color="accent"
+            color="primary"
             (click)="toggleEditTasks()">
-            Save<mat-icon>done</mat-icon>
+            Done<mat-icon>done</mat-icon>
           </button>
           </span>
           <span *ngIf="!taskEdit">
@@ -150,7 +150,7 @@
             mat-button
             class="edit-list"
             (click)="toggleEditTasks()">
-            Edit <mat-icon>edit</mat-icon>
+            Edit<mat-icon>edit</mat-icon>
           </button>
           </span>
         </span>
@@ -180,6 +180,7 @@
             </div>
             </span>
 
+            <span *ngIf="enabledList">
             <button
               mat-icon-button
               class="checked-{{taskEdit}}"
@@ -192,6 +193,18 @@
                 <mat-icon>check_box_outline_blank</mat-icon>
               </span>
             </button>
+            </span>
+
+            <span
+              class="todo-label"
+              *ngIf="!enabledList">
+              <button
+                mat-button
+                class="todo-label-button"
+                (click)="changeEnabledListById(todo.list)">
+                {{getTodoListName(todo.list)}}
+              </button>
+            </span>
 
             <span
               class="title-{{taskEdit}}">
