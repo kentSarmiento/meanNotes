@@ -45,6 +45,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   isLoading = false;
   isFirstLoad = true;
 
+  private syncListener : Subscription;
+  isSyncing = false;
+
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   constructor(
@@ -98,12 +101,23 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.lists = list.lists;
       });
 
+    this.syncListener = this.todoService
+      .getSyncUpdatedListener()
+      .subscribe( (sync: { isOngoing: boolean, isManual: boolean }) => {
+        this.isSyncing = sync.isOngoing;
+        if (!this.isSyncing && !sync.isManual) {
+          setTimeout(() => {
+            this.triggerSync(false);
+          }, 8000); // trigger periodic sync every 8 secs
+        }
+      });
+
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     if (this.isUserAuthenticated) {
       this.userId = this.authService.getUserId();
 
       this.enabledList = null;
-      this.todoService.retrieveTasksFromServer();
+      this.todoService.retrieveDataFromServer();
     } else {
       this.isLoading = false;
     }
@@ -309,12 +323,16 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  triggerSync(isManual: boolean) {
+    this.todoService.syncDataWithServer(isManual);
+  }
+
   logout() {
-    this.todoService.clearCacheData();
     this.authService.logout();
   }
 
   ngOnDestroy() {
+    this.syncListener.unsubscribe();
     this.listListener.unsubscribe();
     this.todoListener.unsubscribe();
     this.authListener.unsubscribe();

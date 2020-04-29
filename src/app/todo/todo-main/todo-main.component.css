@@ -87,6 +87,9 @@
 .add-task-button {
   margin-left: 24px;
 }
+.sync-button {
+  margin-right: 24px;
+}
 .todo-content-accordion {
   width: 100%;
   padding-top: calc(24px * 2);
