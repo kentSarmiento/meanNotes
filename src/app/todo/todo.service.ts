@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+import { HttpClient } from "@angular/common/http";
 
+import { environment } from "../../environments/environment";
 import { Todo, List } from './todo.model';
+
+const SERVER_URL = environment.serverUrl + "/tasks/";
 
 @Injectable({providedIn: "root"})
 export class TodoService {
@@ -12,12 +16,76 @@ export class TodoService {
   private listUpdated = new Subject<{ lists: List[] }>();
   private enabledList: List;
 
-  constructor() {
-    if (JSON.parse(localStorage.getItem("todos")))
-      this.todos = JSON.parse(localStorage.getItem("todos"));
+  private taskInfoId: string;
+  private highrank: number;
+  private updateTime: string;
 
-    if (JSON.parse(localStorage.getItem("lists")))
-      this.lists = JSON.parse(localStorage.getItem("lists"));
+  constructor(private http: HttpClient) {
+    localStorage.removeItem("todos");
+    localStorage.removeItem("lists");
+  }
+
+  retrieveTasksFromServer() {
+    this.http
+      .get<any>(SERVER_URL)
+      .subscribe(response => {
+        this.taskInfoId = response._id;
+        this.todos = (response.tasksInfo) ? JSON.parse(response.tasksInfo) : [];
+        this.lists = (response.listsInfo) ? JSON.parse(response.listsInfo) : [];
+        this.updateTime = response.updated;
+        this.highrank = response.highrank;
+
+        this.getLists();
+        this.changeEnabledList(null);
+      }, error => {
+        if (error.status === 404) {
+          this.addInitialEntryForUser();
+        }
+      });
+  }
+
+  private addInitialEntryForUser() {
+    const tasksInfo = {
+      highrank: 1,
+      updated: new Date()
+    };
+
+    this.http
+      .post<any>(SERVER_URL, tasksInfo)
+      .subscribe(response => {
+        this.taskInfoId = response._id;
+        this.updateTime = response.updated;
+        this.highrank = response.highrank;
+        this.todos = [];
+        this.lists = [];
+
+        this.getLists();
+        this.changeEnabledList(null);
+      });
+  }
+
+  syncTasksWithServer() {
+    const todoData = localStorage.getItem("todos");
+    const listData = localStorage.getItem("lists");
+
+    const tasksInfo = {
+      tasks: todoData,
+      lists: listData,
+      highrank: this.highrank,
+      updated: new Date(),
+    };
+
+    this.http
+      .put<any>(SERVER_URL + this.taskInfoId, tasksInfo)
+      .subscribe(response => {
+        this.updateTime = response.updated;
+        this.highrank = response.highrank;
+      });
+  }
+
+  clearCacheData() {
+    localStorage.removeItem("todos");
+    localStorage.removeItem("lists");
   }
 
   private getTasks() {
@@ -69,25 +137,22 @@ export class TodoService {
   }
 
   addTask(title: string, list: string, user: string) {
-    let highrank = +localStorage.getItem("highrank");
-    if (!highrank) highrank = 1;
-
     const taskId = Math.random().toString(36).substr(2, 9); // temporary id
     const todo: Todo = {
       id: taskId,
       title: title,
       finished: false,
-      rank: highrank,
+      rank: this.highrank,
       list: list,
       creator: user
     };
 
     this.todos.push(todo);
 
-    highrank++;
-    localStorage.setItem("highrank", highrank.toString());
+    this.highrank++;
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getTasksByListAndUser(user);
 
     return taskId;
@@ -101,6 +166,7 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
   }
 
   updateTask(id: string, title: string, user: string) {
@@ -111,6 +177,7 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
   }
 
   updateRank(id: string, rank: Number) {
@@ -119,6 +186,7 @@ export class TodoService {
       this.todos[index].rank = rank;
     }
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
   }
 
   deleteTasksByList(list: string, user: string) {
@@ -130,6 +198,7 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getTasksByListAndUser(user);
   }
 
@@ -139,6 +208,7 @@ export class TodoService {
       this.todos.splice(index, 1);
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getTasksByListAndUser(user);
   }
 
@@ -151,6 +221,7 @@ export class TodoService {
     }
 
     localStorage.setItem("todos", JSON.stringify(this.todos));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
   }
 
   getLists() {
@@ -173,22 +244,19 @@ export class TodoService {
   }
 
   addList(title: string, user: string) {
-    let highrank = +localStorage.getItem("highrank");
-    if (!highrank) highrank = 1;
-
     const list = {
       id: Math.random().toString(36).substr(2, 9), // temporary id
       title: title,
-      rank: highrank,
+      rank: this.highrank,
       creator: user
     };
 
     this.lists.push(list);
 
-    highrank++;
-    localStorage.setItem("highrank", highrank.toString());
+    this.highrank++;
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getListsByUser(user);
   }
 
@@ -201,6 +269,7 @@ export class TodoService {
     }
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getTasksByListAndUser(user); // tasks should be loaded at this point
   }
 
@@ -210,6 +279,13 @@ export class TodoService {
       this.lists[index].rank = rank;
     }
     localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
+  }
+
+  changeEnabledList(list: List) {
+    this.enabledList = list;
+    if (list) this.getTasksByList();
+    else this.getTasks();
   }
 
   changeEnabledListByUser(list: List, user: string) {
@@ -226,6 +302,7 @@ export class TodoService {
     }
 
     localStorage.setItem("lists", JSON.stringify(this.lists));
+    this.syncTasksWithServer(); /* Temporary always sync for each operation */
     this.getListsByUser(user);
   }
 }

@@ -43,6 +43,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   userId: string;
 
   isLoading = false;
+  isFirstLoad = true;
 
   @ViewChild('sidenav') sidenav: MatSidenav;
 
@@ -83,12 +84,16 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.rankSort(list.todos);
         this.todos = list.todos;
+
+        if (this.isFirstLoad) {
+          this.sidenav.open();
+          this.isFirstLoad = false;
+        }
       });
 
     this.listListener = this.todoService
       .getListUpdatedListener()
       .subscribe( (list: { lists: List[] }) => {
-        this.isLoading = false;
         this.rankSort(list.lists);
         this.lists = list.lists;
       });
@@ -98,9 +103,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       this.userId = this.authService.getUserId();
 
       this.enabledList = null;
-      this.todoService.changeEnabledListByUser(null, this.userId);
-
-      this.todoService.getListsByUser(this.userId);
+      this.todoService.retrieveTasksFromServer();
     } else {
       this.isLoading = false;
     }
@@ -307,6 +310,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   logout() {
+    this.todoService.clearCacheData();
     this.authService.logout();
   }
 

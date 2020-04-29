@@ -195,6 +195,7 @@
 }
 .mat-spinner {
   margin: auto;
+  z-index: 9001;
 }
 .mat-button {
   font-weight: 400;

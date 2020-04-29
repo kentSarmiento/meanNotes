@@ -8,16 +8,17 @@
 
 <mat-sidenav-container
   class="todo-main-container"
-  *ngIf="isUserAuthenticated && !isLoading">
+  *ngIf="isUserAuthenticated">
 
   <mat-sidenav
     #sidenav
     class="todo-side-container"
     mode="over"
-    position="end"
-    opened>
+    position="end">
 
-    <div class="todo-list-container">
+    <div
+      class="todo-list-container"
+      *ngIf="!isLoading">
     <mat-list
       cdkDropList
       (cdkDropListDropped)="sortLists($event)">
@@ -109,7 +110,8 @@
   </mat-sidenav>
 
   <mat-sidenav-content
-    class="todo-content-container">
+    class="todo-content-container"
+    *ngIf="!isLoading">
 
       <div
         class="todo-content-header"
