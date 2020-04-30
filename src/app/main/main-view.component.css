@@ -1,0 +1,17 @@
+ul {
+  margin: auto;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mat-spinner {
+  margin: auto;
+}
+.main-container {
+  width: 81%;
+  margin: auto;
+  text-align: center;
+}

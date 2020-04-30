@@ -1,13 +1,13 @@
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <div class="new-container" *ngIf="isLoading">
   <div class="new-header"><mat-toolbar color="primary">
-    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b></b></font></a>
   </mat-toolbar></div>
 </div>
 
 <div class="new-container" *ngIf="!isLoading">
   <div class="new-header"><mat-toolbar color="primary">
-    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+    <a mat-raised-button [routerLink]="[noteRoute]"><font color="#3f51b5"><b>n</b></font></a>
     <mat-form-field class="title" >
     <input
       matInput
@@ -19,7 +19,7 @@
     <span class="spacer"></span>
     <ul>
       <li *ngIf="isUserAuthenticated && userId === note.creator">
-        <a mat-button [routerLink]="['/edit', note.id]">Edit</a>
+        <a mat-button [routerLink]="[noteRoute, 'edit', note.id]">Edit</a>
       </li>
     </ul>
   </mat-toolbar></div>

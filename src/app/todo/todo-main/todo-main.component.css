@@ -1,0 +1,246 @@
+@media only screen and (min-width: 680px) {
+  .todo-side-container { width: 25%; }
+  .log-out-list { width: calc(24% - 3%); }
+  .display-list { width: 81%; }
+}
+@media only screen and (max-width: 680px) {
+  .todo-side-container { width: 75%; }
+  .log-out-list { width: calc(75% - 8%); }
+  .todo-content-list-title { width: 94% !important; }
+  .display-list { width: 50%; }
+}
+
+.todo-main-container {
+  position: fixed;
+  overflow: hidden;
+  top: 48px;
+  bottom: 0;
+  width: 100%;
+  margin: auto;
+  background: #e9ebee;
+}
+.todo-side-container {
+  background: #e9ebee;
+}
+.list-drag-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+}
+.todo-content-container {
+  margin: auto;
+  width: 100%;
+}
+.todo-content-header, .todo-content-footer {
+  margin: auto;
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  z-index: 9001;
+}
+.todo-content-header {
+  position: fixed;
+  top: 48px;
+}
+.todo-content-footer, .todo-content-add-list {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  display: block;
+}
+.todo-content-footer {
+  bottom: 0;
+}
+.todo-content-add-list {
+  bottom: calc(36px + 8px);
+}
+.log-out-list {
+  position: fixed;
+  bottom: 0;
+  background: #e9ebee;
+  margin-left: 8px;
+  padding: 8px 0;
+  padding-left: 8px;
+}
+.todo-content-add-task, .todo-content-list-title {
+  width: 81%;
+  height: calc(24px + 8px + 8px);
+  margin: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  background: #e9ebee;
+}
+.todo-content-list-title {
+  padding-top: 8px;
+  width: calc(94% - 8%);
+}
+.todo-content-add-list {
+  height: calc(24px * 3);
+  background: #e9ebee;
+}
+.add-task-button {
+  margin-left: 24px;
+}
+.sync-button {
+  margin-right: 24px;
+}
+.todo-content-accordion {
+  width: 100%;
+  padding-top: calc(24px * 2);
+  background: transparent;
+  display: block;
+}
+.todo-content-panel {
+  width: 81%;
+  padding: 8px;
+  margin: auto;
+  margin-top: calc(24px / 8);
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.81);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: white;
+  font-size: 14px;
+}
+.all-task-button {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0;
+}
+.list-button, .new-list-button {
+  width: 94%;
+  text-align: left;
+  font-weight: 400;
+}
+.list-button-false {
+  margin-left: 24px;
+}
+.title-true, .title-false,
+.title-finished-true, .title-finished-false {
+  margin: auto;
+  margin-left: 8px;
+  width: 100%;
+}
+.title-form-false,
+.title-form-false:focus, .title-form-false:hover {
+  margin-right: calc(24px + 8px);
+  width: calc(100% - 24px);
+}
+.title-form-true,
+.title-form-true:focus, .title-form-true:hover {
+  margin-right: 8px;
+  width: 100%;
+}
+.title-form-true.title-form-fin-false:focus {
+  border-bottom: 2px solid #3f51b5;
+}
+.title-form-fin-true {
+  color: rgba(0,0,0,.48);
+}
+.spacer {
+  flex: 1 1 auto;
+}
+.delete, .checked-true, .checked-false,
+.edit, .add-empty, .drag-handle {
+  line-height: 0;
+  width: 24px;
+  height: 24px;
+}
+.checked-false {
+  margin-left: 24px;
+}
+.add-list {
+  font-size: 14px;
+  width: 100%;
+}
+.display-list {
+  font-size: 24px;
+  max-width: calc(24px * (8 + 8));
+  padding-left: 8px;
+}
+.display-list-true {
+  border-bottom: 2px solid #3f51b5;
+}
+.edit-list {
+  line-height: 0;
+  height: 24px;
+  margin: auto;
+  padding: 0;
+}
+.drag-handle {
+  cursor: move;
+}
+
+.mat-sidenav-container {
+  margin: auto;
+}
+.mat-drawer-side {
+  border-right: 0px;
+}
+.mat-list {
+  margin: auto;
+}
+.mat-caption {
+  margin: auto;
+  margin-left: 8px;
+  color: rgba(0,0,0,.48);
+}
+.mat-spinner {
+  margin: auto;
+  z-index: 9001;
+}
+.mat-button {
+  font-weight: 400;
+}
+
+.todo-label {
+  width: 81px;
+}
+.todo-label-button {
+  background: #ccc;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0;
+  width: 64px;
+  height: 24px;
+  line-height: 24px;
+}
+
+:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  margin-top: 12px !important;
+  background-color: #e9ebee;
+  height: 42px;
+}
+:host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+  padding: .25em 0 .75em 8px !important;
+}
+
+.title-dialog {
+  font-size: 14px !important;
+  width: 100%;
+  margin: auto;
+}
+.title-dialog-input {
+  width: calc(100% - 62px);
+  padding-right: 62px;
+}
+.submit-dialog {
+  margin-left: -62px;
+  width: 62px;
+  min-width: 62px;
+  height: 42px;
+  border-radius: 0;
+}

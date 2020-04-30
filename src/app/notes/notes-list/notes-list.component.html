@@ -39,7 +39,7 @@
         <mat-icon>label</mat-icon>
       </button>
       <span class="spacer"></span>
-      <a mat-icon-button [routerLink]="['/edit', note.id]">
+      <a mat-icon-button [routerLink]="[noteRoute, 'edit', note.id]">
         <mat-icon>create</mat-icon>
       </a>
       <button mat-icon-button color="warn" (click)="onDelete(note.id)">

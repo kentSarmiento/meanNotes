@@ -1,19 +1,42 @@
 <mat-toolbar color="primary">
-  <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
-  <span *ngIf="isUserAuthenticated">
-    <a mat-button routerLink="/create" > Add </a>
+  <span>
+    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+  </span>
+  <span *ngIf="isUserAuthenticated && isNotesApp()">
+    <a mat-button [routerLink]="[noteRoute, 'create']">Add</a>
   </span>
   <span class="spacer"></span>
   <span>
-  <ul>
+  <ul *ngIf="isNotesApp()">
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/auth/login" >Log in</a>
+      <a
+        mat-button
+        routerLink="/auth/login"
+        [queryParams]="{ redirectUrl:activatedUrl.substring(1) }">Log in</a>
     </li>
     <li *ngIf="!isUserAuthenticated">
     <span class="divider">|</span>
     </li>
     <li *ngIf="!isUserAuthenticated">
-      <a mat-button routerLink="/auth/signup" >Sign up</a>
+      <a
+        mat-button
+        routerLink="/auth/signup"
+        [queryParams]="{ redirectUrl:activatedUrl.substring(1) }">Sign up</a>
+    </li>
+    <li *ngIf="isUserAuthenticated">
+      <button mat-button (click)="onLogout()">Log out</button>
+    </li>
+  </ul>
+
+  <ul *ngIf="!isNotesApp()">
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/auth/login">Log in</a>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+    <span class="divider">|</span>
+    </li>
+    <li *ngIf="!isUserAuthenticated">
+      <a mat-button routerLink="/auth/signup">Sign up</a>
     </li>
     <li *ngIf="isUserAuthenticated">
       <button mat-button (click)="onLogout()">Log out</button>

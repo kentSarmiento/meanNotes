@@ -23,7 +23,12 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (error.error.message) {
           errorMessage = error.error.message;
         }
-        this.dialog.open(ErrorComponent, {data: {message: errorMessage}});
+
+        const url = new URL(req.url);
+        if (url.pathname !== "/tasks/" || req.method !== "GET") {
+          this.dialog.open(ErrorComponent, {data: {message: errorMessage}});
+        }
+
         return throwError(error);
       })
     );

@@ -1,19 +1,13 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { NotesListComponent } from "./notes/notes-list/notes-list.component";
-import { NotesCreateComponent } from "./notes/notes-create/notes-create.component";
-import { NotesViewComponent } from "./notes/notes-view/notes-view.component";
-import { SignupComponent } from "./auth/signup/signup.component";
-import { LoginComponent } from "./auth/login/login.component";
 import { AuthGuard } from "./auth/auth-guard";
+import { MainViewComponent } from "./main/main-view.component";
 
 const routes: Routes = [
-  { path: '', component: NotesListComponent },
-  { path: 'personal', component: NotesListComponent, canActivate: [AuthGuard] },
-  { path: 'create', component: NotesCreateComponent, canActivate: [AuthGuard] },
-  { path: 'edit/:id', component: NotesCreateComponent, canActivate: [AuthGuard] },
-  { path: 'view/:id', component: NotesViewComponent },
+  { path: '', loadChildren: () => import('./main/main.module').then(m => m.MainModule) },
+  { path: "notes", loadChildren: () => import('./notes/notes.module').then(m => m.NotesModule) },
+  { path: "todo", loadChildren: () => import('./todo/todo.module').then(m => m.TodoModule) },
   { path: "auth", loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }
 ];
 
@@ -22,6 +16,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [AuthGuard]
 })
-export class AppRoutingModule {
-
-}
+export class AppRoutingModule {}

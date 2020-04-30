@@ -1,0 +1,34 @@
+<mat-toolbar color="primary">
+  <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+
+  <span class="spacer"></span>
+
+  <ul *ngIf="isUserAuthenticated">
+    <li>
+      <button
+        mat-icon-button
+        class="menu-icon-button"
+        (click)="toggleMenu()">
+        <mat-icon class="menu-icon">menu</mat-icon>
+      </button>
+    </li>
+  </ul>
+
+  <ul *ngIf="!isUserAuthenticated">
+    <li>
+      <a
+        mat-button
+        routerLink="/auth/login"
+        [queryParams]="{ redirectUrl:todoRoute.substring(1) }">Log in</a>
+    </li>
+    <li>
+    <span class="divider">|</span>
+    </li>
+    <li>
+      <a
+        mat-button
+        routerLink="/auth/signup"
+        [queryParams]="{ redirectUrl:todoRoute.substring(1) }">Sign up</a>
+    </li>
+  </ul>
+</mat-toolbar>

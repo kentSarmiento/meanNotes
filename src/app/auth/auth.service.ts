@@ -34,7 +34,7 @@ export class AuthService {
     return this.authStatusListener.asObservable();
   }
 
-  signup(username: string, email: string, password: string) {
+  signup(username: string, email: string, password: string, navigate: any) {
     const signupInfo = {
       username: username,
       email: email,
@@ -46,13 +46,13 @@ export class AuthService {
         signupInfo
       )
       .subscribe(response => {
-        this.login(username, password); // Login user immediately after signup
+        this.login(username, password, navigate); // Login user immediately after signup
       }, error => {
         this.authStatusListener.next(false);
       });
   }
 
-  login(username: string, password: string) {
+  login(username: string, password: string, navigate: any) {
     const authInfo: AuthInfo = {
       username: username,
       password: password
@@ -75,7 +75,7 @@ export class AuthService {
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
           this.saveAuthData(this.token, expirationDate, this.userId);
-          this.router.navigate(["/"]);
+          navigate();
         }
       }, error => {
         this.authStatusListener.next(false);
