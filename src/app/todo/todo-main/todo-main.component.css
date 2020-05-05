@@ -47,7 +47,7 @@
   position: fixed;
   top: 48px;
 }
-.todo-content-footer, .todo-content-add-list {
+.todo-content-footer {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   display: block;
@@ -55,8 +55,8 @@
 .todo-content-footer {
   bottom: 0;
 }
-.todo-content-add-list {
-  bottom: calc(36px + 8px);
+.todo-list-container {
+  margin-bottom: calc(24px + 62px);
 }
 .log-out-list {
   position: fixed;
@@ -79,10 +79,6 @@
 .todo-content-list-title {
   padding-top: 8px;
   width: calc(94% - 8%);
-}
-.todo-content-add-list {
-  height: calc(24px * 3);
-  background: #e9ebee;
 }
 .add-task-button {
   margin-left: 24px;
@@ -142,9 +138,6 @@
   margin-right: 8px;
   width: 100%;
 }
-.title-form-true.title-form-fin-false:focus {
-  border-bottom: 2px solid #3f51b5;
-}
 .title-form-fin-true {
   color: rgba(0,0,0,.48);
 }
@@ -168,9 +161,6 @@
   font-size: 24px;
   max-width: calc(24px * (8 + 8));
   padding-left: 8px;
-}
-.display-list-true {
-  border-bottom: 2px solid #3f51b5;
 }
 .edit-list {
   line-height: 0;

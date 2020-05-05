@@ -6,131 +6,123 @@
    align="center"
    *ngIf="!isUserAuthenticated && !isLoading">Add your first task!</p>
 
-<mat-sidenav-container
-  class="todo-main-container"
-  *ngIf="isUserAuthenticated">
+<mat-sidenav-container class="todo-main-container" *ngIf="isUserAuthenticated">
 
-  <mat-sidenav
-    #sidenav
+  <mat-sidenav #sidenav
     class="todo-side-container"
     mode="over"
     position="end">
 
-    <div
-      class="todo-list-container"
-      *ngIf="!isLoading">
-    <mat-list
-      cdkDropList
-      (cdkDropListDropped)="sortLists($event)">
-      <mat-list-item>
+    <div class="todo-list-container" *ngIf="!isLoading">
+
+      <mat-list cdkDropList (cdkDropListDropped)="sortLists($event)">
+
+        <mat-list-item>
+          <button
+            mat-button
+            class="all-task-button"
+            (click)="changeEnabledList('all')">All Tasks</button>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+
+        <mat-list-item>
+        Task Lists
+          <span class="spacer"></span>
+          <button
+            mat-icon-button
+            class="edit-list"
+            [color]="listsEdit ? 'primary' : 'black'"
+            (click)="toggleEditLists(!listsEdit)">
+            <span *ngIf="!listsEdit"><mat-icon>edit</mat-icon></span>
+            <span *ngIf="listsEdit"><mat-icon>done</mat-icon></span>
+          </button>
+        </mat-list-item>
+
+        <mat-list-item
+          *ngFor="let list of lists">
+          <div
+            class="list-drag-container"
+            cdkDragLockAxis="y"
+            cdkDrag
+            [cdkDragDisabled]="!listsEdit">
+          <span
+            *ngIf="listsEdit"
+            class="drag-handle"
+            cdkDragHandle>
+            <mat-icon>drag_indicator</mat-icon>
+          </span>
+          <button
+            mat-button
+            class="list-button list-button-{{listsEdit}}"
+            (click)="changeEnabledList(list._id)">{{list.title}}</button>
+          <span *ngIf="listsEdit">
+          <button
+            mat-icon-button
+            class="delete"
+            color="warn"
+            (click)="deleteList(list)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          </span>
+          </div>
+        </mat-list-item>
+
+        <mat-list-item>
+          <mat-form-field
+            class="add-list"
+            appearance="fill">
+            <input
+              matInput
+              type="text"
+              name="list"
+              maxlength="24"
+              placeholder="Add new list"
+              (keydown.enter)="[addList(list.value), list.value='']"
+              cdkFocusInitial
+              #list>
+            <mat-hint
+              *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
+              align="end">
+              {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining
+            </mat-hint>
+          </mat-form-field>
+        </mat-list-item>
+
+      </mat-list>
+    </div>
+
+      <div class="log-out-list">
         <button
           mat-button
-          class="all-task-button"
-          (click)="changeEnabledList(null)">All Tasks</button>
-      </mat-list-item>
-      <mat-divider></mat-divider>
-
-      <mat-list-item>
-      Task Lists
-        <span class="spacer"></span>
-        <button
-          mat-icon-button
-          class="edit-list"
-          [color]="listEdit ? 'primary' : 'black'"
-          (click)="toggleEditList()">
-          <span *ngIf="!listEdit"><mat-icon>edit</mat-icon></span>
-          <span *ngIf="listEdit"><mat-icon>done</mat-icon></span>
+          class="all-task-button log-out-button"
+          (click)="logout()">
+          Log out <mat-icon>exit_to_app</mat-icon>
         </button>
-      </mat-list-item>
-
-      <mat-list-item
-        *ngFor="let list of lists">
-        <div
-          class="list-drag-container"
-          cdkDragLockAxis="y"
-          cdkDrag
-          [cdkDragDisabled]="!listEdit">
-        <span
-          *ngIf="listEdit"
-          class="drag-handle"
-          cdkDragHandle>
-          <mat-icon>drag_indicator</mat-icon>
-        </span>
-        <button
-          mat-button
-          class="list-button list-button-{{listEdit}}"
-          (click)="changeEnabledList(list)">{{list.title}}</button>
-        <span *ngIf="listEdit">
-        <button
-          mat-icon-button
-          class="delete"
-          color="warn"
-          (click)="deleteList(list.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-        </span>
-        </div>
-      </mat-list-item>
-
-      <div class="todo-content-add-list">
-      <mat-list-item>
-        <mat-form-field
-          class="add-list"
-          appearance="fill">
-          <input
-            matInput
-            type="text"
-            name="list"
-            maxlength="24"
-            placeholder="Add new list"
-            (keydown.enter)="[addList(list.value), list.value='']"
-            cdkFocusInitial
-            #list>
-          <mat-hint
-            *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
-            align="end">
-            {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining
-          </mat-hint>
-        </mat-form-field>
-      </mat-list-item>
       </div>
-    </mat-list>
 
-    <div class="log-out-list">
-      <mat-divider></mat-divider>
-      <button
-        mat-button
-        class="all-task-button log-out-button"
-        (click)="logout()">
-        Log out <mat-icon>exit_to_app</mat-icon>
-      </button>
-    </div>
-
-    </div>
   </mat-sidenav>
 
-  <mat-sidenav-content
-    class="todo-content-container"
-    *ngIf="!isLoading">
+  <mat-sidenav-content class="todo-content-container" *ngIf="!isLoading">
 
-      <div
-        class="todo-content-header"
-        *ngIf="lists.length!=0">
+      <div class="todo-content-header" *ngIf="lists.length!=0">
+
         <div class="todo-content-list-title">
+
         <input
           matInput
-          class="display-list display-list-{{taskEdit}}"
+          class="display-list display-list-{{listEdit}}"
           type="text"
-          [value]="getListName()"
-          readonly="{{enabledList==null || !taskEdit}}"
-          (keydown.enter)="updateList(enabledList.id, display.value)"
-          (keyup.enter)="display.blur()"
-          (blur)="updateList(enabledList.id, display.value)"
+          [value]="enabledListName"
+          readonly="{{enabledList==null || !listEdit}}"
+          (keydown.enter)="updateListName(display.value)"
+          (blur)="updateListName(display.value)"
+          id="display-list-title"
           #display>
 
         <span class="spacer"></span>
         <span *ngIf="enabledList!=null">
-          <span *ngIf="taskEdit">
+          <span *ngIf="listEdit">
           <button
             mat-button
             class="edit-list"
@@ -141,16 +133,16 @@
             mat-button
             class="edit-list"
             color="primary"
-            (click)="toggleEditTasks()">
+            (click)="toggleEditList(!listEdit)">
             Done<mat-icon>done</mat-icon>
           </button>
           </span>
-          <span *ngIf="!taskEdit">
+          <span *ngIf="!listEdit">
           <button
             mat-button
             class="edit-list"
-            (click)="toggleEditTasks()">
-            Edit<mat-icon>edit</mat-icon>
+            (click)="toggleEditList(!listEdit)">
+            <mat-icon>edit</mat-icon>
           </button>
           </span>
         </span>
@@ -162,19 +154,19 @@
         cdkDropList
         (cdkDropListDropped)="sortTasks($event)">
 
-      <span class="mat-caption"
+      <p class="mat-caption"
          align="center"
-         *ngIf="lists.length==0">Add your first task by creating a list!</span>
+         *ngIf="lists.length==0">Add your first task by creating a list!</p>
 
         <div
           *ngFor="let todo of todos"
           id="panel-{{todo.id}}"
           class="todo-content-panel"
           cdkDrag
-          [cdkDragDisabled]="!taskEdit"
+          [cdkDragDisabled]="!listEdit"
           #panel>
 
-            <span *ngIf="taskEdit">
+            <span *ngIf="listEdit">
             <div class="drag-handle" cdkDragHandle>
               <mat-icon>drag_indicator</mat-icon>
             </div>
@@ -183,9 +175,9 @@
             <span *ngIf="enabledList">
             <button
               mat-icon-button
-              class="checked-{{taskEdit}}"
+              class="checked-{{listEdit}}"
               color="primary"
-              (click)="toggleTask(todo.id)">
+              (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
                 <mat-icon>check_box</mat-icon>
               </span>
@@ -201,28 +193,28 @@
               <button
                 mat-button
                 class="todo-label-button"
-                (click)="changeEnabledListById(todo.list)">
-                {{getTodoListName(todo.list)}}
+                (click)="changeEnabledList(todo.list)">
+                {{getListName(todo.list)}}
               </button>
             </span>
 
             <span
-              class="title-{{taskEdit}}">
+              class="title-{{listEdit}}">
               <input
                 matInput
-                class="title-form-{{taskEdit}} title-form-fin-{{todo.finished}}"
+                class="title-form-{{listEdit}} title-form-fin-{{todo.finished}}"
                 type="text"
                 maxlength="140"
                 value="{{todo.title}}"
-                readonly="{{!(!todo.finished && taskEdit)}}"
-                (keyup)="updateTask(todo.id, todoTitle.value)"
-                (keyup.enter)="todoTitle.blur()"
+                readonly="{{!(!todo.finished && listEdit)}}"
+                (keydown.enter)="updateTaskName(todo.id, todoTitle.value)"
+                (blur)="updateTaskName(todo.id, todoTitle.value)"
                 #todoTitle>
             </span>
 
             <span class="spacer"></span>
 
-            <span *ngIf="taskEdit">
+            <span *ngIf="listEdit">
             <button
               mat-icon-button
               class="delete"
@@ -242,12 +234,9 @@
         <button
           mat-icon-button
           class="add-task-button"
-          (click)="openEditDialog(null, null)">
+          (click)="openAddTaskDialog(null)">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
-        <span
-          class="mat-caption"
-          *ngIf="!isSyncing">Add new task</span>
 
         <span class="spacer"></span>
         <span

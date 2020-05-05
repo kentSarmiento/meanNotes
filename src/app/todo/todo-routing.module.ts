@@ -7,6 +7,7 @@ import { TodoMainComponent } from "./todo-main/todo-main.component";
 
 const routes: Routes = [
   { path: '', component: TodoMainComponent },
+  { path: ':id', component: TodoMainComponent },
 ];
 
 @NgModule({
