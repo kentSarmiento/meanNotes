@@ -49,8 +49,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   isLoading = false;
   isFirstLoad = true;
 
-  private isListView = false;
-
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   constructor(
@@ -82,11 +80,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.enabledList = null;
     this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
-        this.isListView = true;
         const id = paramMap.get('id');
-        this.enabledList = (id === "all") ? null : id;
-      } else {
-        this.isListView = false;
+        this.enabledList = id;
       }
     });
 
@@ -133,8 +128,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         if (!sync.isOngoing) {
           if (this.isFirstLoad) {
             this.isFirstLoad = false;
-            const firstList = (this.enabledList) ? this.enabledList : "all";
-            this.todoService.changeEnabledList(firstList);
+
+            if (this.enabledList) this.todoService.changeEnabledList(this.enabledList);
+            else this.todoService.changeEnabledListToAll();
+
             if (!this.enabledList) this.sidenav.open();
           }
           this.isLoading = false;
@@ -205,8 +202,15 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   changeEnabledList(list: string) {
     this.isLoading = true;
-    this.enabledList = (list === "all") ? null : list;
+    this.enabledList = list;
     this.todoService.changeEnabledList(list);
+    this.sidenav.close();
+  }
+
+  viewAllTasks() {
+    this.isLoading = true;
+    this.enabledList = null;
+    this.todoService.changeEnabledListToAll();
     this.sidenav.close();
   }
 
@@ -255,7 +259,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.todoService.deleteList(list._id);
-        this.todoService.changeEnabledList("all");
+        this.enabledList=null;
+        this.todoService.changeEnabledListToAll();
       }
     });
   }

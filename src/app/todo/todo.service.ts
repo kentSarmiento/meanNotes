@@ -39,8 +39,6 @@ export class TodoService {
   }
 
   retrieveDataFromServer(list: string) {
-    list = (list === "all") ? null : list;
-
     this.syncUpdated.next({ isOngoing: true, isManual: false });
     this.http
       .get<any>(LISTS_URL)
@@ -60,39 +58,39 @@ export class TodoService {
       });
   }
 
+  changeEnabledListToAll() {
+    this.router.navigate([TODO_ROUTE]);
+
+    this.enabledList = null;
+    this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+    this.todoUpdated.next({ todos: this.cachedTasks });
+    this.syncUpdated.next({ isOngoing: false, isManual: true });
+  }
+
   changeEnabledList(list: string) {
-    if (list === "all") {
-      this.router.navigate([TODO_ROUTE, "all"]);
+    this.router.navigate([TODO_ROUTE, list]);
 
-      this.enabledList = null;
-      this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-      this.todoUpdated.next({ todos: this.cachedTasks });
-      this.syncUpdated.next({ isOngoing: false, isManual: true });
-    } else {
-      this.router.navigate([TODO_ROUTE, list]);
+    this.http.get<any>(LISTS_URL + list)
+      .subscribe(response => {
 
-      this.http.get<any>(LISTS_URL + list)
-        .subscribe(response => {
+        const updated = this.updateCachedList(response);
+        if (updated) {
+          this.enabledList = response._id;
+          this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+          this.http.get<any>(LISTS_URL + list + "/tasks")
+            .subscribe(response => {
 
-          const updated = this.updateCachedList(response);
-          if (updated) {
-            this.enabledList = response._id;
-            this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-            this.http.get<any>(LISTS_URL + list + "/tasks")
-              .subscribe(response => {
-
-                this.updateCachedTasks(response.tasks);
-                this.todoUpdated.next({ todos: this.cachedTasks });
-                this.syncUpdated.next({ isOngoing: false, isManual: true });
-              });
-          } else {
-            this.enabledList = response._id;
-            this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-            this.todoUpdated.next({ todos: this.cachedTasks });
-            this.syncUpdated.next({ isOngoing: false, isManual: true });
-          }
-        });
-    }
+              this.updateCachedTasks(response.tasks);
+              this.todoUpdated.next({ todos: this.cachedTasks });
+              this.syncUpdated.next({ isOngoing: false, isManual: true });
+            });
+        } else {
+          this.enabledList = response._id;
+          this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+          this.todoUpdated.next({ todos: this.cachedTasks });
+          this.syncUpdated.next({ isOngoing: false, isManual: true });
+        }
+      });
   }
 
   private updateCachedList(list: List) {
