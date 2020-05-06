@@ -151,14 +151,16 @@ export class TodoService {
       cachedList => id === cachedList._id);
 
     if (index > -1) {
-      this.cachedLists[index].title = title;
+      if (this.cachedLists[index].title !== title) {
+        this.cachedLists[index].title = title;
 
-      this.syncUpdated.next({ isOngoing: true, isManual: true });
-      this.http.put<any>(LISTS_URL + id, this.cachedLists[index])
-        .subscribe(response => {
-          this.updateCachedList(response);
-          this.syncUpdated.next({ isOngoing: false, isManual: true });
-        });
+        this.syncUpdated.next({ isOngoing: true, isManual: true });
+        this.http.put<any>(LISTS_URL + id, this.cachedLists[index])
+          .subscribe(response => {
+            this.updateCachedList(response);
+            this.syncUpdated.next({ isOngoing: false, isManual: true });
+          });
+      }
     }
   }
 
@@ -250,20 +252,22 @@ export class TodoService {
 
     if (index > -1) {
       const task = this.cachedTasks[index];
-      task.title = title;
+      if (task.title !== title) {
+        task.title = title;
 
-      /* Background sync with backend server */
-      this.syncUpdated.next({ isOngoing: true, isManual: true });
-      this.http.put<any>(TASKS_URL + task._id, task)
-        .subscribe(response => {
+        /* Background sync with backend server */
+        this.syncUpdated.next({ isOngoing: true, isManual: true });
+        this.http.put<any>(TASKS_URL + task._id, task)
+          .subscribe(response => {
 
-          this.updateCachedTask(response);
-          this.syncUpdated.next({ isOngoing: false, isManual: true });
+            this.updateCachedTask(response);
+            this.syncUpdated.next({ isOngoing: false, isManual: true });
 
-          /* Update list version */
-          this.http.put<any>(LISTS_URL + task.list, null)
-            .subscribe(response => {});
-        });
+            /* Update list version */
+            this.http.put<any>(LISTS_URL + task.list, null)
+              .subscribe(response => {});
+          });
+      }
     }
   }
 
