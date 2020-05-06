@@ -279,6 +279,7 @@ export class TodoService {
     if (index > -1) {
       const task = this.cachedTasks[index];
       task.finished = !task.finished;
+      this.todoUpdated.next({ todos: this.cachedTasks });
 
       /* Background sync with backend server */
       this.syncUpdated.next({ isOngoing: true, isManual: true });
