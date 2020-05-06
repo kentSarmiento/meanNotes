@@ -52,10 +52,13 @@
             cdkDragHandle>
             <mat-icon>drag_indicator</mat-icon>
           </span>
-          <button
-            mat-button
-            class="list-button list-button-{{listsEdit}}"
-            (click)="changeEnabledList(list._id)">{{list.title}}</button>
+          <span *ngIf="!listsEdit" class="list-button">
+            <button
+              mat-button
+              class="list-button list-button-{{listsEdit}}"
+              (click)="changeEnabledList(list._id)">{{list.title}}</button>
+          </span>
+          <span *ngIf="listsEdit" class="list-button">{{list.title}}</span>
           <span *ngIf="listsEdit">
           <button
             mat-icon-button
@@ -67,29 +70,27 @@
           </span>
           </div>
         </mat-list-item>
-
-        <mat-list-item>
-          <mat-form-field
-            class="add-list"
-            appearance="fill">
-            <input
-              matInput
-              type="text"
-              name="list"
-              maxlength="24"
-              placeholder="Add new list"
-              (keydown.enter)="[addList(list.value), list.value='']"
-              cdkFocusInitial
-              #list>
-            <mat-hint
-              *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
-              align="end">
-              {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining
-            </mat-hint>
-          </mat-form-field>
-        </mat-list-item>
-
       </mat-list>
+
+      <mat-form-field
+        class="add-list"
+        appearance="fill">
+        <input
+          matInput
+          type="text"
+          name="list"
+          maxlength="24"
+          placeholder="Add new list"
+          (keydown.enter)="[addList(list.value), list.value='']"
+          cdkFocusInitial
+          #list>
+        <mat-hint
+          *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
+          align="end">
+          {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining
+        </mat-hint>
+      </mat-form-field>
+
     </div>
 
       <div class="log-out-list">

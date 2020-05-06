@@ -114,13 +114,16 @@
   font-weight: 400;
   padding: 0;
 }
+.task-lists-header {
+  height: 36px;
+}
 .list-button, .new-list-button {
   width: 94%;
   text-align: left;
   font-weight: 400;
 }
 .list-button-false {
-  margin-left: 24px;
+  margin-left: 8px;
 }
 .title-true, .title-false,
 .title-finished-true, .title-finished-false {
@@ -155,7 +158,8 @@
 }
 .add-list {
   font-size: 14px;
-  width: 100%;
+  width: 81%;
+  padding-left: 24px;
 }
 .display-list {
   font-size: 24px;
@@ -216,6 +220,9 @@
 }
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
   padding: .25em 0 .75em 8px !important;
+}
+:host ::ng-deep .mat-list-item {
+  height: 36px !important;
 }
 
 .title-dialog {
