@@ -127,7 +127,7 @@
               mat-icon-button
               color="primary"
               (click)="toggleEditList(!listEdit)">
-              <mat-icon>done</mat-icon>
+              <mat-icon>done_outline</mat-icon>
             </button>
             </span>
 
@@ -157,10 +157,10 @@
           id="panel-{{todo.id}}"
           class="todo-content-panel"
           cdkDrag
-          [cdkDragDisabled]="!listEdit"
+          [cdkDragDisabled]="!listEdit && !todo.localUpdate"
           #panel>
 
-            <span *ngIf="listEdit">
+            <span *ngIf="listEdit || todo.localUpdate">
             <div class="drag-handle" cdkDragHandle>
               <mat-icon>drag_indicator</mat-icon>
             </div>
@@ -169,7 +169,7 @@
             <span *ngIf="enabledList">
             <button
               mat-icon-button
-              class="checked-{{listEdit}}"
+              class="checked checked-{{listEdit || todo.localUpdate}}"
               color="primary"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
@@ -200,7 +200,7 @@
                 type="text"
                 maxlength="140"
                 value="{{todo.title}}"
-                readonly="{{!(!todo.finished && listEdit)}}"
+                readonly="{{!(!todo.finished && (listEdit || todo.localUpdate))}}"
                 (keydown.enter)="updateTaskName(todo.id, todoTitle.value)"
                 (blur)="updateTaskName(todo.id, todoTitle.value)"
                 #todoTitle>
@@ -208,13 +208,31 @@
 
             <span class="spacer"></span>
 
-            <span *ngIf="listEdit">
+            <span *ngIf="!listEdit && !todo.localUpdate && !todo.finished">
+            <button
+              mat-icon-button
+              class="edit"
+              (click)="toggleEditTask(todo)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            </span>
+
+            <span *ngIf="listEdit || todo.localUpdate">
             <button
               mat-icon-button
               class="delete"
               color="warn"
               (click)="deleteTask(todo.id)">
               <mat-icon>delete</mat-icon>
+            </button>
+            </span>
+            <span *ngIf="!listEdit && todo.localUpdate">
+            <button
+              mat-icon-button
+              class="edit"
+              color="primary"
+              (click)="toggleEditTask(todo)">
+              <mat-icon>done</mat-icon>
             </button>
             </span>
 

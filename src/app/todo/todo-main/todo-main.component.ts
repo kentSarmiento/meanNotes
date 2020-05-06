@@ -115,6 +115,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
             this.todos = updated.todos.filter(todo =>
                 todo.list===this.enabledList);
           }
+          this.todos.forEach( todo => todo.localUpdate = false );
           this.sortByRank(this.todos);
           this.sortByFinished(this.todos);
         } else {
@@ -292,6 +293,14 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   toggleEditList(isEdit: boolean) {
     this.listEdit = isEdit;
     document.getElementById('display-list-title').focus();
+
+    if (!isEdit) {
+      this.todos.forEach( todo => todo.localUpdate = false );
+    }
+  }
+
+  toggleEditTask(todo: Todo) {
+    todo.localUpdate = !todo.localUpdate;
   }
 
   updateTaskName(id: string, title: string) {

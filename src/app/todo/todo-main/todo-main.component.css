@@ -147,7 +147,7 @@
 .spacer {
   flex: 1 1 auto;
 }
-.delete, .checked-true, .checked-false,
+.delete, .checked,
 .edit, .add-empty, .drag-handle {
   line-height: 0;
   width: 24px;
