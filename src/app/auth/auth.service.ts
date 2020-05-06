@@ -108,6 +108,13 @@ export class AuthService {
     }
   }
 
+  loginUser(url: string) {
+    this.router.navigate(
+      [ "/auth/login" ],
+      { queryParams: { redirectUrl: url }}
+    );
+  }
+
   private setAuthTimer(duration: number) {
     this.tokenTimer = setTimeout(() => {
       this.logout();

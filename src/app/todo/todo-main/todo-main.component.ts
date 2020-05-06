@@ -49,6 +49,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   isLoading = false;
   isFirstLoad = true;
 
+  readonly todoRoute = TODO_ROUTE;
+
   @ViewChild('sidenav') sidenav: MatSidenav;
 
   constructor(
@@ -144,7 +146,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
       this.todoService.retrieveDataFromServer(this.enabledList);
     } else {
-      this.isLoading = false;
+      /* login first if not authenticated */
+      this.authService.loginUser(this.todoRoute.substring(1));
     }
   }
 

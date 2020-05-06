@@ -62,8 +62,10 @@ export class NotesListComponent implements OnInit {
 
     if (this.isUserAuthenticated)
       this.notesService.getNotesByUser(this.userId, this.page, this.limit);
-    else
-      this.isLoading = false;
+    else {
+      /* login first if not authenticated */
+      this.authService.loginUser(this.noteRoute.substring(1));
+    }
 
     this.notesSub = this.notesService
       .getNotesUpdatedListener()
