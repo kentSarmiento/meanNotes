@@ -147,13 +147,13 @@
 .spacer {
   flex: 1 1 auto;
 }
-.delete, .checked,
+.delete, .checked, .checked-false, .checked-,
 .edit, .add-empty, .drag-handle {
   line-height: 0;
   width: 24px;
   height: 24px;
 }
-.checked-false {
+.checked-false, .checked- {
   margin-left: 24px;
 }
 .add-list {

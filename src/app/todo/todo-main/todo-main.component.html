@@ -158,19 +158,18 @@
           id="panel-{{todo.id}}"
           class="todo-content-panel"
           cdkDrag
-          [cdkDragDisabled]="!listEdit && !todo.localUpdate"
+          [cdkDragDisabled]="!enabledList || (!listEdit && !todo.localUpdate)"
           #panel>
 
-            <span *ngIf="listEdit || todo.localUpdate">
+            <span *ngIf="enabledList && (listEdit || todo.localUpdate)">
             <div class="drag-handle" cdkDragHandle>
               <mat-icon>drag_indicator</mat-icon>
             </div>
             </span>
 
-            <span *ngIf="enabledList">
             <button
               mat-icon-button
-              class="checked checked-{{listEdit || todo.localUpdate}}"
+              class="checked checked-{{enabledList}} checked-{{listEdit || todo.localUpdate}}"
               color="primary"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
@@ -180,7 +179,6 @@
                 <mat-icon>check_box_outline_blank</mat-icon>
               </span>
             </button>
-            </span>
 
             <span
               class="todo-label"
