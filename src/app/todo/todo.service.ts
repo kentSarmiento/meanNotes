@@ -224,9 +224,7 @@ export class TodoService {
     };
 
     this.updateCachedTask(task);
-
     this.todoUpdated.next({ todos: this.cachedTasks });
-    this.router.navigate([TODO_ROUTE, this.enabledList], {fragment: 'panel-' + taskId});
 
     /* Background sync with backend server */
     this.syncUpdated.next({ isOngoing: true, isManual: true });

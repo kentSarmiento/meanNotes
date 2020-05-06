@@ -6,7 +6,7 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
-import { ActivatedRoute, ParamMap, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { TodoConfig } from "../todo.config";
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
@@ -58,23 +58,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
     private dialog: MatDialog,
-    private router: Router,
-    private activatedRoute: ActivatedRoute) {
-    router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-          const tree = router.parseUrl(router.url);
-          if (tree.fragment) {
-            setTimeout(() => {
-              const element = document.querySelector("#" + tree.fragment);
-              if (element) {
-                element.scrollIntoView(true);
-                this.router.navigate([TODO_ROUTE, this.enabledList]);
-              }
-            }, 100); // another hack here to consider delay in page render
-          }
-       }
-      });
-  }
+    private activatedRoute: ActivatedRoute) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -180,7 +164,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   private sortByRank(list: any) {
-    list.sort(this.sorter("rank"));
+    list.sort(this.reverseSort("rank"));
   }
   private sortByFinished(list: any) {
     list.sort(this.sorter("finished"));
@@ -192,6 +176,14 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       return 0;
     }
   }
+  private reverseSort(criteria) {
+     return function(a, b) {
+      if (a[criteria] < b[criteria]) return 1;
+      else if (a[criteria] > b[criteria]) return -1;
+      return 0;
+    }
+  }
+
   getListName(id: string) {
     const index = this.lists.findIndex(
       list => id === list._id);
@@ -284,6 +276,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   addTask(title: string) {
     this.todoService.addTask(title, this.enabledList);
+    setTimeout(() => {
+      const element = document.getElementById('content-accordion');
+      element.scrollIntoView();
+    }, 100);
   }
 
   updateTaskFinished(id: string) {
