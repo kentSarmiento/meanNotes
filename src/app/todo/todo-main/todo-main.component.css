@@ -6,7 +6,6 @@
 @media only screen and (max-width: 680px) {
   .todo-side-container { width: 75%; }
   .log-out-list { width: calc(75% - 8%); }
-  .todo-content-list-title { width: 94% !important; }
   .display-list { width: 50%; }
 }
 
@@ -67,7 +66,7 @@
   padding-left: 8px;
 }
 .todo-content-add-task, .todo-content-list-title {
-  width: 81%;
+  width: calc(81% - 8%);
   height: calc(24px + 8px + 8px);
   margin: auto;
   padding: 0;
@@ -77,8 +76,8 @@
   background: #e9ebee;
 }
 .todo-content-list-title {
-  padding-top: 8px;
-  width: calc(94% - 8%);
+  width: 81%;
+  margin: auto;
 }
 .add-task-button {
   margin-left: 24px;
@@ -93,7 +92,7 @@
   display: block;
 }
 .todo-content-panel {
-  width: 81%;
+  width: calc(81% - 8%);
   padding: 8px;
   margin: auto;
   margin-top: calc(24px / 8);
@@ -106,6 +105,7 @@
   box-sizing: border-box;
   background: white;
   font-size: 14px;
+  z-index: 8000;
 }
 .all-task-button {
   width: 100%;
@@ -160,7 +160,7 @@
 .display-list {
   font-size: 24px;
   max-width: calc(24px * (8 + 8));
-  padding-left: 8px;
+  padding-left: calc(24px + 24px + 8px);
 }
 .edit-list {
   line-height: 0;

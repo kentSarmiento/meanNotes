@@ -106,47 +106,40 @@
   <mat-sidenav-content class="todo-content-container" *ngIf="!isLoading">
 
       <div class="todo-content-header" *ngIf="lists.length!=0">
-
         <div class="todo-content-list-title">
 
-        <input
-          matInput
-          class="display-list display-list-{{listEdit}}"
-          type="text"
-          [value]="enabledListName"
-          readonly="{{enabledList==null || !listEdit}}"
-          (keydown.enter)="updateListName(display.value)"
-          (blur)="updateListName(display.value)"
-          id="display-list-title"
-          #display>
+          <input
+            matInput
+            class="display-list display-list-{{listEdit}}"
+            type="text"
+            [value]="enabledListName"
+            [style.width.ch]="display.value.length"
+            readonly="{{enabledList==null || !listEdit}}"
+            (keydown.enter)="updateListName(display.value)"
+            (blur)="updateListName(display.value)"
+            id="display-list-title"
+            #display>
 
-        <span class="spacer"></span>
-        <span *ngIf="enabledList!=null">
-          <span *ngIf="listEdit">
-          <button
-            mat-button
-            class="edit-list"
-            (click)="sortFinishedTasks()">
-            Sort<mat-icon>sort</mat-icon>
-          </button>
-          <button
-            mat-button
-            class="edit-list"
-            color="primary"
-            (click)="toggleEditList(!listEdit)">
-            Done<mat-icon>done</mat-icon>
-          </button>
+          <span *ngIf="enabledList!=null">
+            <span *ngIf="listEdit">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="toggleEditList(!listEdit)">
+              <mat-icon>done</mat-icon>
+            </button>
+            </span>
+
+            <span *ngIf="!listEdit">
+            <button
+              mat-icon-button
+              (click)="toggleEditList(!listEdit)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            </span>
           </span>
-          <span *ngIf="!listEdit">
-          <button
-            mat-button
-            class="edit-list"
-            (click)="toggleEditList(!listEdit)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          </span>
-        </span>
-      </div>
+
+        </div>
       </div>
 
       <div
@@ -237,18 +230,24 @@
           (click)="openAddTaskDialog(null)">
           <mat-icon>add_circle_outline</mat-icon>
         </button>
+        <span
+          class="mat-caption"
+          *ngIf="!todos || todos.length==0">Add first task!</span>
 
         <span class="spacer"></span>
         <span
           class="mat-caption"
-          *ngIf="isSyncing">Ongoing sync in the background...</span>
-        <button
-          mat-icon-button
-          class="sync-button"
-          [color]="isSyncing ? 'accent' : 'black'"
-          (click)="triggerSync(true)">
-          <mat-icon>sync</mat-icon>
-        </button>
+          *ngIf="isSyncing && todos.length!=0">Ongoing sync in the background...</span>
+        <span *ngIf="todos.length!=0">
+          <button
+            mat-icon-button
+            class="sync-button"
+            [color]="isSyncing ? 'accent' : 'black'"
+            (click)="triggerSync(true)">
+            <mat-icon>sync</mat-icon>
+          </button>
+        </span>
+
         </div>
       </div>
 
