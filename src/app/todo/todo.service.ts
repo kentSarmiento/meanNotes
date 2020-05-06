@@ -136,12 +136,12 @@ export class TodoService {
     this.syncUpdated.next({ isOngoing: true, isManual: true });
     this.http.post<any>(LISTS_URL, list)
       .subscribe(response => {
-        this.router.navigate([TODO_ROUTE, response._id]);
-
         this.updateCachedList(response);
         this.enabledList = response._id;
         this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-        this.todoUpdated.next({ todos: null });
+        this.todoUpdated.next({ todos: [] });
+
+        this.router.navigate([TODO_ROUTE, response._id]);
         this.syncUpdated.next({ isOngoing: false, isManual: true });
       });
   }

@@ -113,7 +113,7 @@
             class="display-list display-list-{{listEdit}}"
             type="text"
             [value]="enabledListName"
-            [style.width.ch]="display.value.length"
+            [style.width.ch]="(display.value.length > 0) ? display.value.length : enabledListName.length"
             readonly="{{enabledList==null || !listEdit}}"
             (keydown.enter)="updateListName(display.value)"
             (blur)="updateListName(display.value)"
@@ -232,7 +232,7 @@
         </button>
         <span
           class="mat-caption"
-          *ngIf="!todos || todos.length==0">Add first task!</span>
+          *ngIf="todos.length==0">Add first task!</span>
 
         <span class="spacer"></span>
         <span
