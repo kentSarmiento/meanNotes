@@ -119,6 +119,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
                 todo.list===this.enabledList);
           }
           this.sortByRank(this.todos);
+          this.sortByFinished(this.todos);
         } else {
           this.todos = null;
         }
@@ -179,6 +180,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   private sortByRank(list: any) {
     list.sort(this.sorter("rank"));
+  }
+  private sortByFinished(list: any) {
+    list.sort(this.sorter("finished"));
   }
   private sorter(criteria) {
     return function(a, b) {
