@@ -101,7 +101,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
           }
           this.todos.forEach( todo => todo.localUpdate = false );
           this.sortByRank(this.todos);
-          this.sortByFinished(this.todos);
+          this.sortFinishedTasks();
         } else {
           this.todos = null;
         }
@@ -165,9 +165,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   private sortByRank(list: any) {
     list.sort(this.reverseSort("rank"));
-  }
-  private sortByFinished(list: any) {
-    list.sort(this.sorter("finished"));
   }
   private sorter(criteria) {
     return function(a, b) {
@@ -310,6 +307,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     if (event.previousIndex == event.currentIndex) {
       return;
     } else if (event.previousIndex < event.currentIndex) {
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        /* block sorting which includes finished tasks */
+        if (this.todos[idx].finished) return;
+      }
       moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
       for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
         this.todos[idx].rank = ranks[idx];
