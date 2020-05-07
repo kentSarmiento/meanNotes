@@ -6,17 +6,18 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Router, NavigationEnd } from '@angular/router';
-
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { TodoConfig } from "../todo.config";
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
 import { Todo, List } from "../todo.model";
 import { AuthService } from "../../auth/auth.service";
 import { TodoSidebarService } from "./todo-sidebar.service";
 
+const TODO_ROUTE = TodoConfig.rootRoute;
+
 export interface TodoData {
   title: string;
-  isNew: boolean;
 }
 export interface DeleteDialogData {
   isList: boolean;
@@ -28,25 +29,27 @@ export interface DeleteDialogData {
   styleUrls: [ './todo-main.component.css' ]
 })
 export class TodoMainComponent implements OnInit, OnDestroy {
-  private todoListener : Subscription;
   private listListener : Subscription;
-  todos : Todo[] = [];
   lists : List[] = [];
+  listsEdit = false;
+  enabledList: string;
+  enabledListName: string;
 
+  private todoListener : Subscription;
+  todos : Todo[] = [];
   listEdit = false;
-  enabledList: List;
-
-  taskEdit = false;
 
   private authListener : Subscription;
   isUserAuthenticated = false;
   userId: string;
 
+  private syncListener : Subscription;
+  isSyncing = false;
+
   isLoading = false;
   isFirstLoad = true;
 
-  private syncListener : Subscription;
-  isSyncing = false;
+  readonly todoRoute = TODO_ROUTE;
 
   @ViewChild('sidenav') sidenav: MatSidenav;
 
@@ -55,24 +58,18 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
     private dialog: MatDialog,
-    private router: Router) {
-    router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-          const tree = router.parseUrl(router.url);
-          if (tree.fragment) {
-            setTimeout(() => {
-              const element = document.querySelector("#" + tree.fragment);
-              if (element) {
-                element.scrollIntoView(true);
-              }
-            }, 100); // another hack here to consider delay in page render
-          }
-       }
-      });
-  }
+    private activatedRoute: ActivatedRoute) {}
 
-  ngOnInit () {
+  ngOnInit() {
     this.isLoading = true;
+
+    this.enabledList = null;
+    this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
+      if (paramMap.has('id')) {
+        const id = paramMap.get('id');
+        this.enabledList = id;
+      }
+    });
 
     this.authListener = this.authService
       .getAuthStatusListener()
@@ -81,35 +78,50 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.userId = this.authService.getUserId();
       });
 
-    this.todoListener = this.todoService
-      .getTodoUpdatedListener()
-      .subscribe( (list: { todos: Todo[], total: number }) => {
-        this.rankSort(list.todos);
-        if (!this.enabledList) this.listSort(list.todos);
-        this.todos = list.todos;
-
-        this.isLoading = false;
-        if (this.isFirstLoad) {
-          this.sidenav.open();
-          this.isFirstLoad = false;
-        }
-      });
-
     this.listListener = this.todoService
       .getListUpdatedListener()
-      .subscribe( (list: { lists: List[] }) => {
-        this.rankSort(list.lists);
-        this.lists = list.lists;
+      .subscribe( (updated: { lists: List[], enabled: string }) => {
+        this.lists = updated.lists;
+        this.sortByRank(this.lists);
+        this.enabledList = updated.enabled;
+        this.enabledListName = this.getEnabledListName();
+        this.listEdit = this.getEnabledListLock();
+      });
+
+    this.todoListener = this.todoService
+      .getTodoUpdatedListener()
+      .subscribe( (updated: { todos: Todo[] }) => {
+        if (updated.todos) {
+          if (!this.enabledList) {
+            this.todos = updated.todos.filter(todo =>
+                todo.finished!==true);
+          } else {
+            this.todos = updated.todos.filter(todo =>
+                todo.list===this.enabledList);
+          }
+          this.todos.forEach( todo => todo.localUpdate = false );
+          this.sortByRank(this.todos);
+          this.sortFinishedTasks();
+        } else {
+          this.todos = null;
+        }
       });
 
     this.syncListener = this.todoService
       .getSyncUpdatedListener()
       .subscribe( (sync: { isOngoing: boolean, isManual: boolean }) => {
         this.isSyncing = sync.isOngoing;
-        if (!this.isSyncing && !sync.isManual) {
-          setTimeout(() => {
-            this.triggerSync(false);
-          }, 8000); // trigger periodic sync every 8 secs
+
+        if (!sync.isOngoing) {
+          if (this.isFirstLoad) {
+            this.isFirstLoad = false;
+
+            if (this.enabledList) this.todoService.changeEnabledList(this.enabledList);
+            else this.todoService.changeEnabledListToAll();
+
+            if (!this.enabledList) this.sidenav.open();
+          }
+          this.isLoading = false;
         }
       });
 
@@ -117,98 +129,211 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     if (this.isUserAuthenticated) {
       this.userId = this.authService.getUserId();
 
-      this.enabledList = null;
-      this.todoService.retrieveDataFromServer();
+      this.todoService.retrieveDataFromServer(this.enabledList);
     } else {
-      this.isLoading = false;
+      /* login first if not authenticated */
+      this.authService.loginUser(this.todoRoute.substring(1));
     }
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     this.sidebarService.setSidenav(this.sidenav);
+
     this.sidenav.openedChange.subscribe((open: boolean) => {
       // When sidenav is opened, task edit should be disabled
-      if (open) this.taskEdit = false;
+      if (open) this.toggleEditList(false);
       // When sidenav is closed, list edit should be disabled
-      else this.listEdit = false;
+      else this.toggleEditLists(false);
     });
   }
 
-  listSort(list: any) {
-    list.sort(this._rankSorter("list"));
+  private getEnabledListName() {
+    const index = this.lists.findIndex(
+      list => this.enabledList === list._id);
+
+    if (index > -1) return this.lists[index].title;
+    else return "All Tasks";
   }
-  rankSort(list: any) {
-    list.sort(this._rankSorter("rank"));
+
+  private getEnabledListLock() {
+    const index = this.lists.findIndex(
+      list => this.enabledList === list._id);
+
+    if (index > -1) return this.lists[index].locked;
+    else return false;
   }
-  private _rankSorter(criteria) {
+
+  private sortByRank(list: any) {
+    list.sort(this.reverseSort("rank"));
+  }
+  private sorter(criteria) {
     return function(a, b) {
       if (a[criteria] > b[criteria]) return 1;
       else if (a[criteria] < b[criteria]) return -1;
       return 0;
     }
   }
-
-  sortFinishedTasks() {
-    this.doneSort(this.todos);
-  }
-  doneSort(list: any) {
-    const ranks = this.todos.map(todo => { return todo.rank; });
-
-    list.sort(this._doneSorter("finished"));
-
-    for (let idx = 0; idx < this.todos.length; idx++) {
-      this.todos[idx].rank = ranks[idx];
-      this.todoService.updateRank(
-        this.todos[idx].id,
-        this.todos[idx].rank
-        );
-    }
-  }
-  private _doneSorter(criteria) {
-    return function(a, b) {
-      if (a[criteria] > b[criteria]) return 1;
-      else if (a[criteria] < b[criteria]) return -1;
+  private reverseSort(criteria) {
+     return function(a, b) {
+      if (a[criteria] < b[criteria]) return 1;
+      else if (a[criteria] > b[criteria]) return -1;
       return 0;
     }
   }
 
-  toggleTask(id: string) {
-    this.todoService.toggleTask(id);
+  getListName(id: string) {
+    const index = this.lists.findIndex(
+      list => id === list._id);
+
+    if (index > -1) {
+      const name = this.lists[index].title.substring(0,8);
+      if (this.lists[index].title.length > 8) return name + "...";
+      return name;
+    }
+    return "";
   }
 
-  openEditDialog(id: string, title: string) {
-    const isNew = id ? false : true;
+  changeEnabledList(list: string) {
+    this.isLoading = true;
+    this.enabledList = list;
+    this.todoService.changeEnabledList(list);
+    this.sidenav.close();
+  }
+
+  viewAllTasks() {
+    this.isLoading = true;
+    this.enabledList = null;
+    this.todoService.changeEnabledListToAll();
+    this.sidenav.close();
+  }
+
+  addList(title: string) {
+    this.isLoading = true;
+    this.todoService.addList(title);
+    this.sidenav.close();
+  }
+
+  updateListName(title: string) {
+    this.todoService.updateListName(this.enabledList, title);
+  }
+
+  toggleEditLists(isEdit: boolean) {
+    this.listsEdit = isEdit;
+  }
+
+  sortLists(event: CdkDragDrop<string[]>) {
+    const ranks = this.lists.map(list => { return list.rank; });
+    let sortedList: List[] = [];
+
+    if (event.previousIndex == event.currentIndex) {
+      return;
+    } else if (event.previousIndex < event.currentIndex) {
+      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        this.lists[idx].rank = ranks[idx];
+        sortedList.push(this.lists[idx]);
+      }
+    } else {
+      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        this.lists[idx].rank = ranks[idx];
+        sortedList.push(this.lists[idx]);
+      }
+    }
+    this.todoService.updateListRanks(sortedList);
+  }
+
+  deleteList(list: List) {
+    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+      width: '240px', maxHeight: '240px',
+      data: { isList: true }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteList(list._id);
+        this.enabledList=null;
+        this.todoService.changeEnabledListToAll();
+      }
+    });
+  }
+
+  openAddTaskDialog(title: string) {
     const dialogRef = this.dialog.open(TodoEditDialogComponent, {
       width: '480px', maxHeight: '320px',
-      data: { title: title, isNew: isNew }
+      data: { title: title }
     });
 
     dialogRef.afterClosed().subscribe(title => {
       if (title) {
-        if (id) {
-          this.updateTask(id, title);
-        } else {
-          const taskId = this.addTask(title);
-          this.router.navigate( ['/todo'], {fragment: 'panel-' + taskId});
-        }
+        this.addTask(title);
       }
     });
   }
 
   addTask(title: string) {
-    return this.todoService.addTask(
-      title,
-      this.enabledList.id,
-      this.userId
-    );
+    this.todoService.addTask(title, this.enabledList);
+    setTimeout(() => {
+      const element = document.getElementById('content-accordion');
+      element.scrollIntoView();
+    }, 100);
   }
 
-  updateTask(id: string, title: string) {
-    this.todoService.updateTask(
-      id,
-      title,
-      this.userId
-    );
+  updateTaskFinished(id: string) {
+    this.todoService.updateTaskFinished(id);
+  }
+
+  toggleEditList(isEdit: boolean) {
+    this.listEdit = isEdit;
+    document.getElementById('display-list-title').focus();
+
+    if (!isEdit) {
+      this.todos.forEach( todo => todo.localUpdate = false );
+    }
+  }
+
+  toggleEditTask(todo: Todo) {
+    todo.localUpdate = !todo.localUpdate;
+  }
+
+  updateTaskName(id: string, title: string) {
+    this.todoService.updateTaskName(id, title);
+  }
+
+  sortTasks(event: CdkDragDrop<string[]>) {
+    const ranks = this.todos.map(list => { return list.rank; });
+    let sortedTasks: Todo[] = [];
+
+    if (event.previousIndex == event.currentIndex) {
+      return;
+    } else if (event.previousIndex < event.currentIndex) {
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        /* block sorting which includes finished tasks */
+        if (this.todos[idx].finished) return;
+      }
+      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
+        this.todos[idx].rank = ranks[idx];
+        sortedTasks.push(this.todos[idx]);
+      }
+    } else {
+      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
+      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
+        this.todos[idx].rank = ranks[idx];
+        sortedTasks.push(this.todos[idx]);
+      }
+    }
+    this.todoService.updateTaskRanks(sortedTasks);
+  }
+
+  sortFinishedTasks() {
+    const ranks = this.todos.map(todo => { return todo.rank; });
+
+    this.todos.sort(this.sorter("finished"));
+    for (let idx = 0; idx < this.todos.length; idx++) {
+      this.todos[idx].rank = ranks[idx];
+    }
+    this.todoService.updateTaskRanks(this.todos);
   }
 
   deleteTask(id: string) {
@@ -219,131 +344,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        this.todoService.deleteTask(id, this.userId);
+        this.todoService.deleteTask(id);
       }
     });
   }
 
-  sortTasks(event: CdkDragDrop<string[]>) {
-    const ranks = this.todos.map(todo => { return todo.rank; });
-
-    if (event.previousIndex == event.currentIndex) {
-      return;
-    } else if (event.previousIndex < event.currentIndex) {
-      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
-      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
-        this.todos[idx].rank = ranks[idx];
-        this.todoService.updateRank(
-          this.todos[idx].id,
-          this.todos[idx].rank
-          );
-      }
-    } else {
-      moveItemInArray(this.todos, event.previousIndex, event.currentIndex);
-      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
-        this.todos[idx].rank = ranks[idx];
-        this.todoService.updateRank(
-          this.todos[idx].id,
-          this.todos[idx].rank
-          );
-      }
-    }
-  }
-
-  getListName() {
-    if (this.enabledList) return this.enabledList.title;
-    return "All Tasks";
-  }
-
-  getTodoListName(listId: string) {
-    const index = this.lists.findIndex(list => listId === list.id);
-    if (index > -1) {
-      const name = this.lists[index].title.substring(0,8);
-      if (this.lists[index].title.length > 8) return name + "...";
-      return name;
-    }
-  }
-
-  addList(title: string) {
-    const list = this.todoService.addList(title, this.userId);
-    this.changeEnabledList(list);
-  }
-
-  updateList(id: string, title: string) {
-    this.todoService.updateList(
-      id,
-      title,
-      this.userId
-    );
-  }
-
-  changeEnabledList(list: List) {
-    this.enabledList = list;
-    this.todoService.changeEnabledListByUser(list, this.userId);
-    this.sidenav.close();
-  }
-
-  changeEnabledListById(listId: string) {
-    const index = this.lists.findIndex(list => listId === list.id);
-    if (index > -1) {
-      this.changeEnabledList(this.lists[index]);
-    }
-  }
-
-  toggleEditList() {
-    if (this.listEdit) this.listEdit = false;
-    else this.listEdit = true;
-  }
-
-  toggleEditTasks() {
-    if (this.taskEdit) this.taskEdit = false;
-    else this.taskEdit = true;
-  }
-
-  deleteList(id: string) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
-      width: '240px', maxHeight: '240px',
-      data: { isList: true }
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.todoService.deleteList(id, this.userId);
-        this.enabledList = null;
-        this.todoService.changeEnabledListByUser(null, this.userId);
-      }
-    });
-  }
-
-  sortLists(event: CdkDragDrop<string[]>) {
-    const ranks = this.lists.map(list => { return list.rank; });
-
-    if (event.previousIndex == event.currentIndex) {
-      return;
-    } else if (event.previousIndex < event.currentIndex) {
-      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
-      for (let idx = event.previousIndex; idx <= event.currentIndex; idx++) {
-        this.lists[idx].rank = ranks[idx];
-        this.todoService.updateListRank(
-          this.lists[idx].id,
-          this.lists[idx].rank
-          );
-      }
-    } else {
-      moveItemInArray(this.lists, event.previousIndex, event.currentIndex);
-      for (let idx = event.previousIndex; idx >= event.currentIndex; idx--) {
-        this.lists[idx].rank = ranks[idx];
-        this.todoService.updateListRank(
-          this.lists[idx].id,
-          this.lists[idx].rank
-          );
-      }
-    }
-  }
-
-  triggerSync(isManual: boolean) {
-    this.todoService.syncDataWithServer(isManual);
-  }
+  triggerSync(isManual: boolean) {}
 
   logout() {
     this.authService.logout();
@@ -351,8 +357,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.syncListener.unsubscribe();
-    this.listListener.unsubscribe();
     this.todoListener.unsubscribe();
+    this.listListener.unsubscribe();
     this.authListener.unsubscribe();
   }
 }

@@ -1,13 +1,16 @@
 @media only screen and (min-width: 680px) {
   .todo-side-container { width: 25%; }
   .log-out-list { width: calc(24% - 3%); }
-  .display-list { width: 81%; }
+  .display-list { padding-left: calc(24px + 24px + 8px); }
+  .todo-content-panel, .todo-content-add-task { width: calc(81% - 8%); }
+  .todo-content-list-title { width: 81%; }
 }
 @media only screen and (max-width: 680px) {
   .todo-side-container { width: 75%; }
   .log-out-list { width: calc(75% - 8%); }
-  .todo-content-list-title { width: 94% !important; }
-  .display-list { width: 50%; }
+  .display-list { padding-left: 24px; }
+  .todo-content-panel, .todo-content-add-task { width: calc(81% + 8%); }
+  .todo-content-list-title { width: 94%; }
 }
 
 .todo-main-container {
@@ -47,7 +50,7 @@
   position: fixed;
   top: 48px;
 }
-.todo-content-footer, .todo-content-add-list {
+.todo-content-footer {
   position: -webkit-sticky; /* Safari */
   position: sticky;
   display: block;
@@ -55,8 +58,8 @@
 .todo-content-footer {
   bottom: 0;
 }
-.todo-content-add-list {
-  bottom: calc(36px + 8px);
+.todo-list-container {
+  margin-bottom: calc(24px + 62px);
 }
 .log-out-list {
   position: fixed;
@@ -67,21 +70,12 @@
   padding-left: 8px;
 }
 .todo-content-add-task, .todo-content-list-title {
-  width: 81%;
   height: calc(24px + 8px + 8px);
   margin: auto;
   padding: 0;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
-  background: #e9ebee;
-}
-.todo-content-list-title {
-  padding-top: 8px;
-  width: calc(94% - 8%);
-}
-.todo-content-add-list {
-  height: calc(24px * 3);
   background: #e9ebee;
 }
 .add-task-button {
@@ -97,7 +91,6 @@
   display: block;
 }
 .todo-content-panel {
-  width: 81%;
   padding: 8px;
   margin: auto;
   margin-top: calc(24px / 8);
@@ -110,6 +103,7 @@
   box-sizing: border-box;
   background: white;
   font-size: 14px;
+  z-index: 8000;
 }
 .all-task-button {
   width: 100%;
@@ -118,13 +112,16 @@
   font-weight: 400;
   padding: 0;
 }
+.task-lists-header {
+  height: 36px;
+}
 .list-button, .new-list-button {
   width: 94%;
   text-align: left;
   font-weight: 400;
 }
 .list-button-false {
-  margin-left: 24px;
+  margin-left: 8px;
 }
 .title-true, .title-false,
 .title-finished-true, .title-finished-false {
@@ -142,35 +139,35 @@
   margin-right: 8px;
   width: 100%;
 }
-.title-form-true.title-form-fin-false:focus {
-  border-bottom: 2px solid #3f51b5;
-}
 .title-form-fin-true {
   color: rgba(0,0,0,.48);
 }
 .spacer {
   flex: 1 1 auto;
 }
-.delete, .checked-true, .checked-false,
+.delete, .checked, .checked-false, .checked-,
 .edit, .add-empty, .drag-handle {
   line-height: 0;
   width: 24px;
   height: 24px;
 }
-.checked-false {
+.edit-icon, .drag-icon, .delete-icon {
+  font-size: calc(24px - 8px);
+  line-height: 24px;
+}
+.edit-icon, .drag-icon, .large-edit-icon {
+  color: #5d5e5f;
+}
+.checked-false, .checked-finished-true, .checked- {
   margin-left: 24px;
 }
 .add-list {
   font-size: 14px;
-  width: 100%;
+  width: 81%;
+  padding-left: 24px;
 }
 .display-list {
   font-size: 24px;
-  max-width: calc(24px * (8 + 8));
-  padding-left: 8px;
-}
-.display-list-true {
-  border-bottom: 2px solid #3f51b5;
 }
 .edit-list {
   line-height: 0;
@@ -226,6 +223,9 @@
 }
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
   padding: .25em 0 .75em 8px !important;
+}
+:host ::ng-deep .mat-list-item {
+  height: 36px !important;
 }
 
 .title-dialog {

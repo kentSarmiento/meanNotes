@@ -1,20 +1,28 @@
 export interface Todo {
   id: string;
+  localUpdate: boolean;
+
+  _id: string;
+  creator: string;
+  list: string;
   title: string;
   finished: boolean;
-  list: string;
-  creator: string;
-  //note: string;
-  //personal: boolean;
-  //category: string[];
-  //created: Date;
-  //updated: Date;
-  rank: Number;
+  rank: number;
+  updated: Date;
+  version: number;
+  locked: boolean;
+  personal: boolean;
 }
 
 export interface List {
-  id: string;
-  title: string;
+  localUpdate: boolean;
+
+  _id: string;
   creator: string;
-  rank: Number;
+  title: string;
+  rank: number;
+  updated: Date;
+  version: number;
+  locked: boolean;
+  personal: boolean;
 }
