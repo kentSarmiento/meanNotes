@@ -266,9 +266,9 @@
           <button
             mat-icon-button
             class="sync-button"
-            [color]="isSyncing ? 'accent' : 'black'"
             (click)="triggerSync(true)">
-            <mat-icon>sync</mat-icon>
+          <mat-icon *ngIf="!isSyncing">sync</mat-icon>
+          <mat-spinner diameter=20 color="accent" *ngIf="isSyncing"></mat-spinner>
           </button>
         </span>
 
