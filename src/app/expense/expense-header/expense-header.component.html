@@ -3,7 +3,7 @@
 
   <span class="spacer"></span>
 
-  <ul *ngIf="isUserAuthenticated">
+  <ul *ngIf="isMobileView">
     <li>
       <button
         mat-icon-button
@@ -14,21 +14,9 @@
     </li>
   </ul>
 
-  <ul *ngIf="!isUserAuthenticated">
+  <ul *ngIf="!isMobileView">
     <li>
-      <a
-        mat-button
-        routerLink="/auth/login"
-        [queryParams]="{ redirectUrl:expenseRoute.substring(1) }">Log in</a>
-    </li>
-    <li>
-    <span class="divider">|</span>
-    </li>
-    <li>
-      <a
-        mat-button
-        routerLink="/auth/signup"
-        [queryParams]="{ redirectUrl:expenseRoute.substring(1) }">Sign up</a>
+      <button mat-button (click)="logout()">Log out</button>
     </li>
   </ul>
 </mat-toolbar>

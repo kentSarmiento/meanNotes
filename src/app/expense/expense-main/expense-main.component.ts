@@ -9,6 +9,7 @@ import { UpdatedCategory, UpdatedExpense, SyncOperation } from "../expense.servi
 import { ExpenseSidebarService } from "../expense-sidebar.service";
 import { Expense, Budget } from "../expense.model";
 import { AuthService } from "../../auth/auth.service";
+import { ResponsiveService } from "../../app-responsive.service";
 
 const EXPENSE_ROUTE = ExpenseConfig.rootRoute;
 
@@ -44,6 +45,9 @@ export class ExpenseMainComponent implements OnInit {
   isLoading = false;
   isFirstLoad = true;
 
+  private viewUpdated: Subscription;
+  isMobileView: boolean;
+
   readonly expenseRoute = EXPENSE_ROUTE;
 
   @ViewChild('sidenav') sidenav: MatSidenav;
@@ -51,7 +55,8 @@ export class ExpenseMainComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private expenseService: ExpenseService,
-    private sidebarService: ExpenseSidebarService) {}
+    private sidebarService: ExpenseSidebarService,
+    private responsiveService: ResponsiveService) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -95,6 +100,14 @@ export class ExpenseMainComponent implements OnInit {
         }
       });
 
+    this.viewUpdated = this.responsiveService
+      .getViewUpdatedListener()
+      .subscribe( isMobile => {
+        this.isMobileView = isMobile;
+        if (!isMobile) this.sidenav.open();
+      })
+    this.isMobileView = this.responsiveService.checkWidth();
+
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     if (this.isUserAuthenticated) {
       this.userId = this.authService.getUserId();
@@ -105,12 +118,17 @@ export class ExpenseMainComponent implements OnInit {
       /* login first if not authenticated */
       this.authService.loginUser(this.expenseRoute.substring(1));
     }
-
-    this.isLoading = false;
   }
 
   ngAfterViewInit() {
     this.sidebarService.setSidenav(this.sidenav);
+
+    if (!this.isMobileView) this.sidenav.open();
+  }
+
+  closeSidenav() {
+    if (this.isMobileView) this.sidenav.close();
+    else this.sidenav.open();
   }
 
   private getEnabledCategoryName() {

@@ -1,15 +1,16 @@
 <app-expense-header></app-expense-header>
 
-<mat-spinner *ngIf="isLoading"></mat-spinner>
-
 <mat-sidenav-container class="expense-main-container">
 
   <mat-sidenav #sidenav
-    class="expense-side-container"
-    mode="over"
-    position="end">
+    class="expense-side-container-{{isMobileView}}"
+    mode="{{isMobileView ? 'over' : 'side' }}"
+    position="{{isMobileView ? 'end' : 'start' }}"
+    (keydown.escape)="closeSidenav()">
 
-    <mat-list>
+  <div class="expense-list-container">
+
+    <mat-list *ngIf="!isLoading">
 
       <mat-list-item>
         <button
@@ -17,8 +18,6 @@
           class="all-expense-button"
           (click)="viewAllExpenses()">All Expenses</button>
       </mat-list-item>
-
-      <mat-divider></mat-divider>
 
       <mat-list-item>
         Expense Categories
@@ -36,6 +35,7 @@
     </mat-list>
 
     <mat-form-field
+      *ngIf="!isLoading || !isFirstLoad"
       class="add-category"
       appearance="fill">
       <input
@@ -54,7 +54,11 @@
       </mat-hint>
     </mat-form-field>
 
-    <div class="log-out-container">
+  </div>
+
+    <div
+      class="log-out-container"
+      *ngIf="isMobileView">
       <button
         mat-button
         class="all-expense-button"
@@ -63,7 +67,10 @@
       </button>
     </div>
 
+
   </mat-sidenav>
+
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
 
   <mat-sidenav-content class="expense-content-container" *ngIf="!isLoading">
 
@@ -94,7 +101,9 @@
 
     </div>
 
-    <div class="expense-content-body">
+    <div
+      class="expense-content-body-table"
+      *ngIf="!isMobileView">
 
     <table
       mat-table

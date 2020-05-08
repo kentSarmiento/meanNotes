@@ -1,5 +1,4 @@
 @media only screen and (min-width: 680px) {
-  .expense-side-container { width: 25%; }
   .log-out-container { width: calc(24% - 3%); }
   .expense-content-title { width: 81%; }
   .expense-content-table { width: calc(81% - 8%); }
@@ -7,7 +6,6 @@
   .settings-button { margin-right: calc(24px + 24px + 8px); }
 }
 @media only screen and (max-width: 680px) {
-  .expense-side-container { width: 75%; }
   .log-out-container { width: calc(75% - 8%); }
   .expense-content-title { width: 94%; }
   .expense-content-table { width: calc(81% + 8%); }
@@ -24,21 +22,31 @@
   margin: auto;
   background: #e9ebee;
 }
-.expense-side-container {
+.expense-side-container-true {
   background: #e9ebee;
+  width: 62%;
+}
+.expense-side-container-false {
+  background: #ffffff;
+}
+.expense-list-container {
+  margin-bottom: calc(24px + 62px);
 }
 .expense-content-container {
-  width: 100%;
+  width: 81%;
+  margin: auto;
 }
 .expense-content-header {
+  width: 81%;
   margin: auto;
   font-size: 24px;
   display: flex;
   flex-direction: row;
-  width: 100%;
   z-index: 9001;
   position: fixed;
   top: 48px;
+  background: #e9ebee;
+  padding-top: 8px;
 }
 .expense-content-title {
   height: calc(24px + 8px + 8px);
@@ -54,7 +62,7 @@
   background: #e9ebee;
   border: 0;
 }
-.expense-content-body {
+.expense-content-body-table {
   width: 100%;
   padding-top: calc(24px * 2);
   display: block;
@@ -130,4 +138,9 @@ tr.mat-footer-row {
 }
 .mat-column-actions {
   width: calc(24px + 24px);
+}
+.mat-spinner {
+  margin: auto;
+  z-index: 9001;
+  margin-top: 24px;
 }
