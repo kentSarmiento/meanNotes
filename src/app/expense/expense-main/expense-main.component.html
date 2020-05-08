@@ -1,1 +1,162 @@
 <app-expense-header></app-expense-header>
+
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+
+<mat-sidenav-container class="expense-main-container">
+
+  <mat-sidenav #sidenav
+    class="expense-side-container"
+    mode="over"
+    position="end">
+
+    <mat-list>
+
+      <mat-list-item>
+        <button
+          mat-button
+          class="all-expense-button"
+          (click)="viewAllExpenses()">All Expenses</button>
+      </mat-list-item>
+
+      <mat-divider></mat-divider>
+
+      <mat-list-item>
+        Expense Categories
+      </mat-list-item>
+
+      <mat-list-item
+        *ngFor="let iter of categories">
+        <button
+          mat-button
+          class="category-button">
+          {{iter.category}}
+        </button>
+      </mat-list-item>
+
+    </mat-list>
+
+    <mat-form-field
+      class="add-category"
+      appearance="fill">
+      <input
+        matInput
+        type="text"
+        name="category"
+        maxlength="24"
+        placeholder="Add new category"
+        (keydown.enter)="[addCategory(category.value), category.value='']"
+        cdkFocusInitial
+        #category>
+      <mat-hint
+        *ngIf="(24 - ((category?.value) ? category.value.length : 0)) > 0"
+        align="end">
+        {{ 24 - ((category?.value) ? category.value.length : 0) }} characters remaining
+      </mat-hint>
+    </mat-form-field>
+
+    <div class="log-out-container">
+      <button
+        mat-button
+        class="all-expense-button"
+        (click)="logout()">
+        Log out <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+
+  </mat-sidenav>
+
+  <mat-sidenav-content class="expense-content-container" *ngIf="!isLoading">
+
+    <div class="expense-content-header">
+
+      <div class="expense-content-title">
+
+        <input
+          matInput
+          id="content-title"
+          class="content-title"
+          type="text"
+          [value]="enabledGroupName"
+          [style.width.ch]="(display.value.length > 0) ? display.value.length : enabledGroupName.length"
+          readonly="{{enabledGroup==null}}"
+          (keydown.enter)="updateGroupName(display.value)"
+          (blur)="updateGroupName(display.value)"
+          #display>
+
+        <span class="spacer"></span>
+
+        <button
+          mat-icon-button
+          class="settings-button">
+          <mat-icon>settings</mat-icon>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="expense-content-body">
+
+    <table
+      mat-table
+      class="mat-elevation-z4 expense-content-table"
+      [dataSource]="expenses">
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <td mat-cell *matCellDef="let element"> {{element.category}} </td>
+        <td mat-footer-cell *matFooterCellDef> Total </td>
+      </ng-container>
+
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let element"> {{element.title}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef> Amount </th>
+        <td mat-cell *matCellDef="let element"> {{element.currency}}{{element.amount}} </td>
+        <td mat-footer-cell *matFooterCellDef> {{getTotalAmount()}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element"> {{getActualDate(element.date)}} </td>
+        <td mat-footer-cell *matFooterCellDef> </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            mat-icon-button
+            class="edit-button"
+            (click)="editElement(element)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            class="delete-button"
+            color="warn"
+            (click)="deleteElement(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          <button
+            mat-icon-button
+            class="add-expense-button"
+            color="primary">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+      <tr mat-footer-row *matFooterRowDef="tableColumns"></tr>
+    </table>
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

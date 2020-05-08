@@ -1,0 +1,133 @@
+@media only screen and (min-width: 680px) {
+  .expense-side-container { width: 25%; }
+  .log-out-container { width: calc(24% - 3%); }
+  .expense-content-title { width: 81%; }
+  .expense-content-table { width: calc(81% - 8%); }
+  .content-title { padding-left: calc(24px + 24px + 8px); }
+  .settings-button { margin-right: calc(24px + 24px + 8px); }
+}
+@media only screen and (max-width: 680px) {
+  .expense-side-container { width: 75%; }
+  .log-out-container { width: calc(75% - 8%); }
+  .expense-content-title { width: 94%; }
+  .expense-content-table { width: calc(81% + 8%); }
+  .content-title { padding-left: 24px; }
+  .settings-button { margin-right: 24px; }
+}
+
+.expense-main-container {
+  position: fixed;
+  overflow: hidden;
+  top: 48px;
+  bottom: 0;
+  width: 100%;
+  margin: auto;
+  background: #e9ebee;
+}
+.expense-side-container {
+  background: #e9ebee;
+}
+.expense-content-container {
+  width: 100%;
+}
+.expense-content-header {
+  margin: auto;
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  z-index: 9001;
+  position: fixed;
+  top: 48px;
+}
+.expense-content-title {
+  height: calc(24px + 8px + 8px);
+  margin: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  background: #e9ebee;
+}
+.content-title {
+  font-size: 24px;
+  background: #e9ebee;
+  border: 0;
+}
+.expense-content-body {
+  width: 100%;
+  padding-top: calc(24px * 2);
+  display: block;
+}
+.expense-content-table {
+  margin: auto;
+}
+.log-out-container {
+  position: fixed;
+  bottom: 0;
+  background: #e9ebee;
+  margin-left: 8px;
+  padding: 8px 0;
+  padding-left: 8px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.all-expense-button {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0;
+}
+.category-button {
+  width: 94%;
+  text-align: left;
+  font-weight: 400;
+}
+.edit-button, .delete-button {
+  line-height: 0;
+  width: 24px;
+  height: 24px;
+}
+.add-expense-button {
+
+}
+.edit-button, .settings-button {
+  color: #5d5e5f;
+}
+
+.add-category {
+  font-size: 14px;
+  width: 81%;
+  padding-left: 24px;
+  margin-bottom: calc(24px + 62px);
+}
+
+:host ::ng-deep .mat-list-item {
+  height: 36px !important;
+}
+
+table {
+  width: 100%;
+}
+tr.mat-footer-row {
+  font-weight: 500;
+}
+.mat-column-category {
+  width: calc(24%);
+}
+.mat-column-title {
+  width: calc(24% - 8%);
+}
+.mat-column-amount {
+  width: calc(24% / 2);
+}
+.mat-column-amount {
+  width: calc(24% - 8%);
+}
+.mat-column-actions {
+  width: calc(24px + 24px);
+}

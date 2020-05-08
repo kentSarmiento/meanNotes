@@ -3,6 +3,7 @@ import { Subscription } from "rxjs";
 
 import { ExpenseConfig } from "../expense.config";
 import { ExpenseService } from "../expense.service";
+import { ExpenseSidebarService } from "../expense-sidebar.service";
 import { AuthService } from "../../auth/auth.service";
 
 const EXPENSE_ROUTE = ExpenseConfig.rootRoute;
@@ -21,7 +22,9 @@ export class ExpenseHeaderComponent implements OnInit, OnDestroy {
 
   readonly expenseRoute = EXPENSE_ROUTE;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private sidebarService: ExpenseSidebarService) {}
 
   ngOnInit() {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
@@ -32,7 +35,9 @@ export class ExpenseHeaderComponent implements OnInit, OnDestroy {
       });
   }
 
-  toggleMenu() {}
+  toggleMenu() {
+    this.sidebarService.toggleSidebar();
+  }
 
   ngOnDestroy() {
     this.authListener.unsubscribe();
