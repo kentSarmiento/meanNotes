@@ -13,6 +13,7 @@ import { TodoService } from "../todo.service";
 import { Todo, List } from "../todo.model";
 import { AuthService } from "../../auth/auth.service";
 import { TodoSidebarService } from "./todo-sidebar.service";
+import { ResponsiveService } from "../../app-responsive.service";
 
 const TODO_ROUTE = TodoConfig.rootRoute;
 
@@ -49,6 +50,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   isLoading = false;
   isFirstLoad = true;
 
+  private viewUpdated: Subscription;
+  isMobileView: boolean;
+
   readonly todoRoute = TODO_ROUTE;
 
   @ViewChild('sidenav') sidenav: MatSidenav;
@@ -58,7 +62,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
     private dialog: MatDialog,
-    private activatedRoute: ActivatedRoute) {}
+    private activatedRoute: ActivatedRoute,
+    private responsiveService: ResponsiveService) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -125,6 +130,14 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         }
       });
 
+    this.viewUpdated = this.responsiveService
+      .getViewUpdatedListener()
+      .subscribe( isMobile => {
+        this.isMobileView = isMobile;
+        if (!isMobile) this.sidenav.open();
+      })
+    this.isMobileView = this.responsiveService.checkWidth();
+
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
     if (this.isUserAuthenticated) {
       this.userId = this.authService.getUserId();
@@ -139,12 +152,19 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   ngAfterViewInit() {
     this.sidebarService.setSidenav(this.sidenav);
 
+    if (!this.isMobileView) this.sidenav.open();
+
     this.sidenav.openedChange.subscribe((open: boolean) => {
       // When sidenav is opened, task edit should be disabled
       if (open) this.toggleEditList(false);
       // When sidenav is closed, list edit should be disabled
       else this.toggleEditLists(false);
     });
+  }
+
+  closeSidenav() {
+    if (this.isMobileView) this.sidenav.close();
+    else this.sidenav.open();
   }
 
   private getEnabledListName() {
@@ -197,20 +217,20 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.enabledList = list;
     this.todoService.changeEnabledList(list);
-    this.sidenav.close();
+    this.closeSidenav();
   }
 
   viewAllTasks() {
     this.isLoading = true;
     this.enabledList = null;
     this.todoService.changeEnabledListToAll();
-    this.sidenav.close();
+    this.closeSidenav();
   }
 
   addList(title: string) {
     this.isLoading = true;
     this.todoService.addList(title);
-    this.sidenav.close();
+    this.closeSidenav();
   }
 
   updateListName(title: string) {
