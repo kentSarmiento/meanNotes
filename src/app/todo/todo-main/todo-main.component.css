@@ -199,8 +199,10 @@
 }
 .mat-spinner {
   margin: auto;
-  margin-top: 24px;
   z-index: 9001;
+}
+.large-spinner {
+  margin-top: 24px;
 }
 .mat-button {
   font-weight: 400;
