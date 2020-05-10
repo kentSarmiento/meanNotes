@@ -117,6 +117,12 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  openSettingsDialog() {
+    const dialogRef = this.dialog.open(ExpenseSettingsDialogComponent, {
+      width: '480px'
+    });
+  }
+
   openAddExpenseDialog() {
     const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
       width: '480px',
@@ -261,4 +267,13 @@ export class ExpenseAddDialogComponent {
 export class ExpenseDeleteDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ExpenseDeleteDialogComponent>) {}
+}
+
+@Component({
+  templateUrl: './expense-settings-dialog.html',
+  styleUrls: [ './expense-main.component.css' ]
+})
+export class ExpenseSettingsDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ExpenseSettingsDialogComponent>) {}
 }

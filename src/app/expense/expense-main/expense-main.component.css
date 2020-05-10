@@ -94,8 +94,9 @@
   width: 24px;
   height: 24px;
 }
-.add-expense-button, .settings-button {
-
+.edit-icon, .delete-icon {
+  font-size: calc(24px - 4px);
+  line-height: 24px;
 }
 .edit-button, .settings-button {
   color: #5d5e5f;
@@ -119,10 +120,10 @@ tr.mat-footer-row {
   font-weight: 500;
 }
 .mat-column-title {
-  width: calc(24%);
+  width: 24%;
 }
 .mat-column-category {
-  width: calc(24%);
+  width: 24%;
 }
 .mat-column-amount {
   width: calc(24% - 8%);

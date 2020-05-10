@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { ExpenseMainComponent } from "./expense-main/expense-main.component";
 import { ExpenseAddDialogComponent } from "./expense-main/expense-main.component";
 import { ExpenseDeleteDialogComponent } from "./expense-main/expense-main.component";
+import { ExpenseSettingsDialogComponent } from "./expense-main/expense-main.component";
 import { ExpenseHeaderComponent } from "./expense-header/expense-header.component";
 import { ExpenseRoutingModule } from './expense-routing.module';
 import { AngularMaterialModule } from "../angular-material.module";
@@ -15,7 +16,8 @@ import { AngularMaterialModule } from "../angular-material.module";
     ExpenseMainComponent,
     ExpenseHeaderComponent,
     ExpenseAddDialogComponent,
-    ExpenseDeleteDialogComponent
+    ExpenseDeleteDialogComponent,
+    ExpenseSettingsDialogComponent
   ],
   imports: [
     CommonModule,
