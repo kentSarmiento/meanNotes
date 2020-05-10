@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
 
 import { ExpenseConfig } from "../expense.config";
 import { ExpenseService } from "../expense.service";
-import { ExpenseSidebarService } from "../expense-sidebar.service";
+import { ExpenseAddDialogComponent } from "../expense-main/expense-main.component";
 import { AuthService } from "../../auth/auth.service";
 import { ResponsiveService } from "../../app-responsive.service";
 
@@ -28,8 +29,9 @@ export class ExpenseHeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private sidebarService: ExpenseSidebarService,
-    private responsiveService: ResponsiveService) {}
+    private responsiveService: ResponsiveService,
+    private expenseService: ExpenseService,
+    private dialog: MatDialog) {}
 
   ngOnInit() {
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
@@ -47,8 +49,23 @@ export class ExpenseHeaderComponent implements OnInit, OnDestroy {
     this.isMobileView = this.responsiveService.checkWidth();
   }
 
-  toggleMenu() {
-    this.sidebarService.toggleSidebar();
+  openAddExpenseDialog() {
+    this.dialog.closeAll();
+    const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
+      width: '480px',
+      data: {
+        title: "",
+        category: "Personal",
+        currency: "JPY",
+        amount: undefined,
+        description: "",
+        date: new Date()
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data) this.expenseService.addExpense(data);
+    });
   }
 
   logout() {

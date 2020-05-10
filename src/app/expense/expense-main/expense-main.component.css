@@ -3,14 +3,12 @@
   .expense-content-title { width: 81%; }
   .expense-content-table { width: calc(81% - 8%); }
   .content-title { padding-left: calc(24px + 24px + 8px); }
-  .settings-button { margin-right: calc(24px + 24px + 8px); }
 }
 @media only screen and (max-width: 680px) {
   .log-out-container { width: calc(75% - 8%); }
   .expense-content-title { width: 94%; }
   .expense-content-table { width: calc(81% + 8%); }
   .content-title { padding-left: 24px; }
-  .settings-button { margin-right: 24px; }
 }
 
 .expense-main-container {
@@ -33,16 +31,15 @@
   margin-bottom: calc(24px + 62px);
 }
 .expense-content-container {
-  width: 81%;
+  width: 100%;
   margin: auto;
 }
 .expense-content-header {
-  width: 81%;
+  width: 100%;
   margin: auto;
   font-size: 24px;
   display: flex;
   flex-direction: row;
-  z-index: 9001;
   position: fixed;
   top: 48px;
   background: #e9ebee;
@@ -62,13 +59,10 @@
   background: #e9ebee;
   border: 0;
 }
-.expense-content-body-table {
-  width: 100%;
-  padding-top: calc(24px * 2);
-  display: block;
-}
 .expense-content-table {
   margin: auto;
+  margin-top: calc(24px * 2);
+  display: block;
 }
 .log-out-container {
   position: fixed;
@@ -100,7 +94,7 @@
   width: 24px;
   height: 24px;
 }
-.add-expense-button {
+.add-expense-button, .settings-button {
 
 }
 .edit-button, .settings-button {
@@ -124,14 +118,11 @@ table {
 tr.mat-footer-row {
   font-weight: 500;
 }
-.mat-column-category {
+.mat-column-title {
   width: calc(24%);
 }
-.mat-column-title {
-  width: calc(24% - 8%);
-}
-.mat-column-amount {
-  width: calc(24% / 2);
+.mat-column-category {
+  width: calc(24%);
 }
 .mat-column-amount {
   width: calc(24% - 8%);
@@ -143,4 +134,28 @@ tr.mat-footer-row {
   margin: auto;
   z-index: 9001;
   margin-top: 24px;
+}
+.mat-dialog-title {
+  margin: 0;
+}
+.mat-dialog-actions {
+  padding: 0;
+  padding-bottom: 8px;
+}
+.name-form {
+  width: calc(81% + 8%);
+}
+.amount-form {
+  width: calc(24% * 2);
+}
+.date-form {
+  width: calc(24% + 8%);
+  margin-left: 8px;
+}
+.name-form {
+  width: 62%;
+}
+.currency-form {
+  width: 24%;
+  margin-left: -24%;
 }

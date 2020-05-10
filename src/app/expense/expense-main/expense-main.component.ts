@@ -1,13 +1,16 @@
-import { Component, ViewChild, OnInit } from "@angular/core";
+import { Component, Inject, ViewChild, OnInit, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs";
-import { MatSidenav } from "@angular/material/sidenav";
 import { MatTableDataSource } from "@angular/material/table";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { FormGroup, FormControl, Validators } from "@angular/forms";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
 import { ExpenseConfig } from "../expense.config";
 import { ExpenseHeaderComponent } from "../expense-header/expense-header.component";
 import { ExpenseService } from "../expense.service";
-import { UpdatedCategory, UpdatedExpense, SyncOperation } from "../expense.service";
-import { ExpenseSidebarService } from "../expense-sidebar.service";
-import { Expense, Budget } from "../expense.model";
+import { UpdatedExpense, SyncOperation } from "../expense.service";
+import { ExpenseData } from "../expense.service";
+import { Expense } from "../expense.model";
 import { AuthService } from "../../auth/auth.service";
 import { ResponsiveService } from "../../app-responsive.service";
 
@@ -18,22 +21,21 @@ const EXPENSE_ROUTE = ExpenseConfig.rootRoute;
   templateUrl: './expense-main.component.html',
   styleUrls: [ './expense-main.component.css' ]
 })
-export class ExpenseMainComponent implements OnInit {
+export class ExpenseMainComponent implements OnInit, OnDestroy {
   private expenseListener : Subscription;
   expenses: Expense[] = [];
 
-  private categoryListener : Subscription;
-  categories: Budget[] = [];
-  enabledGroup: string;
-  enabledGroupName: string;
-
+  dataSource = new MatTableDataSource<Expense>(this.expenses);
   tableColumns: string[] = [
-    'category',
     'title',
     'amount',
+    'category',
     'date',
     'actions'
   ];
+  totalAmount: number = 0;
+  pageIndex: number = 0;
+  pageSize: number = 5;
 
   private authListener : Subscription;
   isUserAuthenticated = false;
@@ -50,17 +52,17 @@ export class ExpenseMainComponent implements OnInit {
 
   readonly expenseRoute = EXPENSE_ROUTE;
 
-  @ViewChild('sidenav') sidenav: MatSidenav;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   constructor(
     private authService: AuthService,
     private expenseService: ExpenseService,
-    private sidebarService: ExpenseSidebarService,
-    private responsiveService: ResponsiveService) {}
+    private responsiveService: ResponsiveService,
+    private dialog: MatDialog) {}
 
   ngOnInit() {
     this.isLoading = true;
-    this.enabledGroup = null;
 
     this.authListener = this.authService
       .getAuthStatusListener()
@@ -69,18 +71,13 @@ export class ExpenseMainComponent implements OnInit {
         this.userId = this.authService.getUserId();
       });
 
-    this.categoryListener = this.expenseService
-      .getCategoryUpdatedListener()
-      .subscribe( (updated: UpdatedCategory) => {
-        this.categories = updated.categories;
-        this.enabledGroup = updated.enabled;
-        this.enabledGroupName = this.getEnabledCategoryName();
-      });
-
     this.expenseListener = this.expenseService
       .getExpenseUpdatedListener()
       .subscribe( (updated: UpdatedExpense) => {
         this.expenses = updated.expenses;
+
+        this.dataSource.data = [...this.expenses];
+        this.computeInitialTotalAmount();
       });
 
     this.syncListener = this.expenseService
@@ -89,14 +86,10 @@ export class ExpenseMainComponent implements OnInit {
         this.isSyncing = sync.isOngoing;
 
         if (!sync.isOngoing) {
-          setTimeout(() => {
           if (this.isFirstLoad) {
             this.isFirstLoad = false;
-
-            if (!this.enabledGroup) this.sidenav.open();
           }
           this.isLoading = false;
-          }, 240);
         }
       });
 
@@ -104,7 +97,6 @@ export class ExpenseMainComponent implements OnInit {
       .getViewUpdatedListener()
       .subscribe( isMobile => {
         this.isMobileView = isMobile;
-        if (!isMobile) this.sidenav.open();
       })
     this.isMobileView = this.responsiveService.checkWidth();
 
@@ -113,7 +105,7 @@ export class ExpenseMainComponent implements OnInit {
       this.userId = this.authService.getUserId();
 
       this.expenseService.setUserId(this.userId);
-      this.expenseService.retrieveDataFromServer(this.enabledGroup);
+      this.expenseService.retrieveDataFromServer();
     } else {
       /* login first if not authenticated */
       this.authService.loginUser(this.expenseRoute.substring(1));
@@ -121,41 +113,152 @@ export class ExpenseMainComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.sidebarService.setSidenav(this.sidenav);
-
-    if (!this.isMobileView) this.sidenav.open();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  closeSidenav() {
-    if (this.isMobileView) this.sidenav.close();
-    else this.sidenav.open();
+  openAddExpenseDialog() {
+    const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
+      width: '480px',
+      data: {
+        title: "",
+        category: "Personal",
+        currency: "JPY",
+        amount: undefined,
+        description: "",
+        date: new Date()
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data) this.expenseService.addExpense(data);
+    });
   }
 
-  private getEnabledCategoryName() {
-    return "All Expenses";
+  openEditExpenseDialog(expense: Expense) {
+    const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
+      width: '480px',
+      data: {
+        title: expense.title,
+        category: expense.category,
+        currency: expense.currency,
+        amount: expense.amount,
+        description: expense.description,
+        date: expense.date
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(data => {
+      if (data) this.expenseService.updateExpense(expense, data);
+    });
   }
 
-  viewAllExpenses() {}
+  deleteElement(expense: Expense) {
+    const dialogRef = this.dialog.open(ExpenseDeleteDialogComponent, {
+      width: '240px', maxHeight: '240px'
+    });
 
-  addCategory(title: string) {
-    this.isLoading = true;
-    this.expenseService.addCategory(title);
-    this.sidenav.close();
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) this.expenseService.deleteExpense(expense);
+    });
   }
 
-  updateGroupName(groupName: string) {}
+  pageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.computeTotalAmountFromEvent(event);
+  }
+  private computeTotalAmountFromEvent(event: PageEvent) {
+    let startIdx = event.pageIndex * event.pageSize;
+    let endIdx = startIdx + event.pageSize;
+    this.totalAmount = 0;
+
+    for (let idx = startIdx; idx < endIdx; idx++) {
+      if (idx >= event.length) return;
+      this.totalAmount += +this.expenses[idx].amount;
+    }
+  }
+  private computeInitialTotalAmount() {
+    const initialEvent: PageEvent = {
+      pageIndex: this.pageIndex,
+      pageSize: this.pageSize,
+      length: this.expenses.length
+    };
+    this.computeTotalAmountFromEvent(initialEvent);
+  }
+
   getActualDate(date: Date) {
     const actualDate = new Date(date);
     const dateStr = actualDate.toDateString();
     return dateStr;
   }
-  getTotalAmount() {
-    return "Coming Soon";
-  }
-  editElement(element: Expense) {}
-  deleteElement(element: Expense) {}
 
   logout() {
     this.authService.logout();
   }
+
+  ngOnDestroy() {
+    this.viewUpdated.unsubscribe();
+    this.syncListener.unsubscribe();
+    this.expenseListener.unsubscribe();
+    this.authListener.unsubscribe();
+  }
+}
+
+@Component({
+  templateUrl: './expense-add-dialog.html',
+  styleUrls: [ './expense-main.component.css' ]
+})
+export class ExpenseAddDialogComponent {
+  form: FormGroup;
+  isNew: boolean;
+
+  constructor(
+    public dialogRef: MatDialogRef<ExpenseAddDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ExpenseData) {
+      this.isNew = (data.title.length > 0) ? false : true;
+      this.form = new FormGroup({
+        title: new FormControl(data.title, {
+          validators: [Validators.required]
+        }),
+        category: new FormControl(data.category),
+        currency: new FormControl(data.currency, {
+          validators: [Validators.required]
+        }),
+        amount: new FormControl(data.amount, {
+          validators: [Validators.required]
+        }),
+        date: new FormControl(data.date, {
+          validators: [Validators.required]
+        })
+      });
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      return;
+    }
+    const expenseData: ExpenseData = {
+      title: this.form.value.title,
+      category: this.form.value.category,
+      currency: this.form.value.currency,
+      amount: this.form.value.amount,
+      description: "",
+      date: this.form.value.date,
+    }
+    this.dialogRef.close(expenseData);
+  }
+
+  closeDialog() {
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  templateUrl: './expense-delete-dialog.html',
+  styleUrls: [ './expense-main.component.css' ]
+})
+export class ExpenseDeleteDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ExpenseDeleteDialogComponent>) {}
 }

@@ -1,0 +1,79 @@
+<span *ngIf="isNew" mat-dialog-title>Add Expense</span>
+<span *ngIf="!isNew" mat-dialog-title>Update Expense</span>
+
+<div mat-dialog-content>
+
+  <form [formGroup]="form">
+
+    <mat-form-field class="name-form" appearance="standard">
+      <mat-label>Item Name</mat-label>
+      <input
+        matInput
+        class="name-input"
+        type="text"
+        formControlName="title">
+      <mat-error
+        *ngIf="form.get('title').hasError('required')">
+        Please enter name of item
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="amount-form" appearance="standard">
+      <mat-label>Amount</mat-label>
+      <input
+        matInput
+        class="amount-input"
+        placeholder="1234.56"
+        formControlName="amount">
+      <mat-error
+        *ngIf="form.get('amount').hasError('required')">
+        Please enter amount of item
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="currency-form" appearance="none">
+      <mat-select class="currency-input" formControlName="currency">
+        <mat-option value="JPY">JPY</mat-option>
+        <mat-option value="PHP">PHP</mat-option>
+        <mat-option value="USD">USD</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <br>
+
+    <mat-form-field class="category-form" appearance="standard">
+      <mat-label>Category</mat-label>
+      <input
+        matInput
+        class="category-input"
+        formControlName="category">
+    </mat-form-field>
+
+    <mat-form-field class="date-form" appearance="standard">
+      <mat-label>Date</mat-label>
+      <input matInput formControlName="date" [matDatepicker]="picker">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker touchUi #picker></mat-datepicker>
+    </mat-form-field>
+
+  </form>
+
+</div>
+
+<span mat-dialog-actions>
+  <span class="spacer"></span>
+  <button
+    mat-button
+    class="submit-dialog"
+    color="warn"
+    (click)=closeDialog()>Cancel
+  </button>
+  <button
+    mat-button
+    class="submit-dialog"
+    type="submit"
+    color="primary"
+    (click)=submit()>
+    <span *ngIf="isNew">Add</span>
+    <span *ngIf="!isNew">Update</span>
+  </button>
+</span>

@@ -1,20 +1,11 @@
 <mat-toolbar color="primary">
   <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
-
+  <span>
+    <a mat-button (click)="openAddExpenseDialog()">Add</a>
+  </span>
   <span class="spacer"></span>
 
-  <ul *ngIf="isMobileView">
-    <li>
-      <button
-        mat-icon-button
-        class="menu-icon-button"
-        (click)="toggleMenu()">
-        <mat-icon class="menu-icon">menu</mat-icon>
-      </button>
-    </li>
-  </ul>
-
-  <ul *ngIf="!isMobileView">
+  <ul>
     <li>
       <button mat-button (click)="logout()">Log out</button>
     </li>
