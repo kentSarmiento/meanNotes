@@ -5,12 +5,16 @@
 <div class="expense-content-container" *ngIf="!isLoading">
 
   <div class="expense-content-header">
+    <p class="mat-caption"
+       align="center"
+       *ngIf="expenses.length==0">Add your first Expense info!</p>
     <div class="expense-content-title">
-      <span class="spacer"></span>
     </div>
   </div>
 
-  <div class="mat-elevation-z4 expense-content-table">
+  <div
+    class="mat-elevation-z4 expense-content-table"
+    *ngIf="expenses.length!=0">
 
   <table mat-table [dataSource]="dataSource" matSort>
 

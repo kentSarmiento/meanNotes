@@ -25,7 +25,7 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
   private expenseListener : Subscription;
   expenses: Expense[] = [];
 
-  dataSource = new MatTableDataSource<Expense>(this.expenses);
+  dataSource = new MatTableDataSource<Expense>();
   tableColumns: string[] = [
     'title',
     'amount',
@@ -76,7 +76,10 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
       .subscribe( (updated: UpdatedExpense) => {
         this.expenses = updated.expenses;
 
-        this.dataSource.data = [...this.expenses];
+        this.dataSource.data = this.expenses;
+        setTimeout(() => { this.dataSource.paginator = this.paginator });
+        this.dataSource.sort = this.sort;
+
         this.computeInitialTotalAmount();
       });
 
@@ -101,20 +104,17 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
     this.isMobileView = this.responsiveService.checkWidth();
 
     this.isUserAuthenticated = this.authService.getIsAuthenticated();
-    if (this.isUserAuthenticated) {
-      this.userId = this.authService.getUserId();
-
-      this.expenseService.setUserId(this.userId);
-      this.expenseService.retrieveDataFromServer();
-    } else {
+    if (!this.isUserAuthenticated) {
       /* login first if not authenticated */
       this.authService.loginUser(this.expenseRoute.substring(1));
     }
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    if (this.isUserAuthenticated) {
+      this.userId = this.authService.getUserId();
+      this.expenseService.retrieveDataFromServer();
+    }
   }
 
   openAddExpenseDialog() {
