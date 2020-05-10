@@ -59,6 +59,7 @@
   display: block;
 }
 .todo-content-footer {
+  margin-top: 8px;
   bottom: 0;
 }
 .todo-list-container {

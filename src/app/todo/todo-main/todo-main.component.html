@@ -163,7 +163,7 @@
         <div
           *ngFor="let todo of todos"
           id="panel-{{todo.id}}"
-          class="todo-content-panel"
+          class="todo-content-panel mat-elevation-z2"
           cdkDrag
           [cdkDragDisabled]="!enabledList ||
                               (!listEdit && !todo.localUpdate) ||
