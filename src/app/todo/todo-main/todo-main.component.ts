@@ -376,6 +376,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.viewUpdated.unsubscribe();
     this.syncListener.unsubscribe();
     this.todoListener.unsubscribe();
     this.listListener.unsubscribe();
