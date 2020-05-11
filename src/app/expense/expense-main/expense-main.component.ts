@@ -16,6 +16,17 @@ import { ResponsiveService } from "../../app-responsive.service";
 
 const EXPENSE_ROUTE = ExpenseConfig.rootRoute;
 
+export interface DialogData {
+  isMobileView: boolean;
+  expense: ExpenseData;
+}
+
+interface DateData {
+  start: Date;
+  end: Date;
+  value: string;
+}
+
 @Component({
   selector: 'app-expense-main',
   templateUrl: './expense-main.component.html',
@@ -50,6 +61,8 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
   private viewUpdated: Subscription;
   isMobileView: boolean;
 
+  dateRanges: DateData[] = [];
+
   readonly expenseRoute = EXPENSE_ROUTE;
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -75,10 +88,13 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
       .getExpenseUpdatedListener()
       .subscribe( (updated: UpdatedExpense) => {
         this.expenses = updated.expenses;
+        this.sortByDate(this.expenses);
 
         this.dataSource.data = this.expenses;
-        setTimeout(() => { this.dataSource.paginator = this.paginator });
-        this.dataSource.sort = this.sort;
+        setTimeout(() => {
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        });
 
         this.computeInitialTotalAmount();
       });
@@ -108,6 +124,8 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
       /* login first if not authenticated */
       this.authService.loginUser(this.expenseRoute.substring(1));
     }
+
+    this.generateListOfDates();
   }
 
   ngAfterViewInit() {
@@ -117,27 +135,25 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  private sortByDate(list: any) {
+    list.sort(this.desc('date'));
+  }
+  private asc(criteria) {
+    return function(a, b) {
+      if (a[criteria] > b[criteria]) return 1;
+      else return -1;
+    }
+  }
+  private desc(criteria) {
+    return function(a, b) {
+      if (a[criteria] < b[criteria]) return 1;
+      else return -1;
+    }
+  }
+
   openSettingsDialog() {
     const dialogRef = this.dialog.open(ExpenseSettingsDialogComponent, {
       width: '480px'
-    });
-  }
-
-  openAddExpenseDialog() {
-    const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
-      width: '480px',
-      data: {
-        title: "",
-        category: "Personal",
-        currency: "JPY",
-        amount: undefined,
-        description: "",
-        date: new Date()
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(data => {
-      if (data) this.expenseService.addExpense(data);
     });
   }
 
@@ -145,12 +161,15 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
       width: '480px',
       data: {
-        title: expense.title,
-        category: expense.category,
-        currency: expense.currency,
-        amount: expense.amount,
-        description: expense.description,
-        date: expense.date
+        isMobileView: this.isMobileView,
+        expense: {
+          title: expense.title,
+          category: expense.category,
+          currency: expense.currency,
+          amount: expense.amount,
+          description: expense.description,
+          date: expense.date
+        }
       }
     });
 
@@ -193,6 +212,55 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
     this.computeTotalAmountFromEvent(initialEvent);
   }
 
+  private generateListOfDates() {
+    const multiplier = 24 * 60 * 60 * 1000;
+
+    const today = new Date();
+    const yesterday = new Date(Date.now() - 1 * multiplier);
+    const endOfWeek = new Date(Date.now() - 2 * multiplier);
+    const startOfWeek = new Date(Date.now() - 7 * multiplier);
+    const endOfMonth = new Date(Date.now() - 8 * multiplier);
+    const startOfMonth = new Date(Date.now() - 30 * multiplier);
+
+    this.dateRanges = [{
+      "start": new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+      "end": new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+      "value": "Today",
+    }, {
+      "start": new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
+      "end": new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
+      "value": "Yesterday",
+    }, {
+      "start": new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate()),
+      "end": new Date(endOfWeek.getFullYear(), endOfWeek.getMonth(), endOfWeek.getDate()),
+      "value": "Last 7 Days",
+    },{
+      "start": new Date(startOfMonth.getFullYear(), startOfMonth.getMonth(), startOfMonth.getDate()),
+      "end": new Date(endOfMonth.getFullYear(), endOfMonth.getMonth(), endOfMonth.getDate()),
+      "value": "Last 30 Days",
+    }];
+  }
+
+  isWithinRange(date: Date, start: Date, end: Date) {
+    const actualDate = new Date(date);
+    const cleanDate = new Date(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate());
+
+    if ((cleanDate.getTime() >= start.getTime()) &&
+        (cleanDate.getTime() <= end.getTime())) return true;
+    return false;
+  }
+
+  rangeHasElement(start: Date, end: Date) {
+    const index = this.expenses.findIndex(expense => {
+      const actualDate = new Date(expense.date);
+      const cleanDate = new Date(actualDate.getFullYear(), actualDate.getMonth(), actualDate.getDate());
+        if ((cleanDate.getTime() >= start.getTime()) &&
+            (cleanDate.getTime() <= end.getTime())) return expense;
+     });
+
+    return index;
+  }
+
   getActualDate(date: Date) {
     const actualDate = new Date(date);
     const dateStr = actualDate.toDateString();
@@ -218,26 +286,33 @@ export class ExpenseMainComponent implements OnInit, OnDestroy {
 export class ExpenseAddDialogComponent {
   form: FormGroup;
   isNew: boolean;
+  isMobileView: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<ExpenseAddDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ExpenseData) {
-      this.isNew = (data.title.length > 0) ? false : true;
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+      this.isMobileView = data.isMobileView;
+      this.isNew = (data.expense.title.length > 0) ? false : true;
       this.form = new FormGroup({
-        title: new FormControl(data.title, {
+        title: new FormControl(data.expense.title, {
           validators: [Validators.required]
         }),
-        category: new FormControl(data.category),
-        currency: new FormControl(data.currency, {
+        category: new FormControl(data.expense.category),
+        currency: new FormControl(data.expense.currency, {
           validators: [Validators.required]
         }),
-        amount: new FormControl(data.amount, {
+        amount: new FormControl(data.expense.amount, {
           validators: [Validators.required]
         }),
-        date: new FormControl(data.date, {
+        date: new FormControl(data.expense.date, {
           validators: [Validators.required]
         })
       });
+  }
+
+  dateFilter = (d: Date | null): boolean => {
+    const today = (new Date());
+    return d < today;
   }
 
   submit() {

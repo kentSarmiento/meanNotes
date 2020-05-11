@@ -54,12 +54,15 @@ export class ExpenseHeaderComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(ExpenseAddDialogComponent, {
       width: '480px',
       data: {
-        title: "",
-        category: "Personal",
-        currency: "JPY",
-        amount: undefined,
-        description: "",
-        date: new Date()
+        isMobileView: this.isMobileView,
+        expense: {
+          title: "",
+          category: "Personal",
+          currency: "JPY",
+          amount: undefined,
+          description: "",
+          date: new Date()
+        }
       }
     });
 
