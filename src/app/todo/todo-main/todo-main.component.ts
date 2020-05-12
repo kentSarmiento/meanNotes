@@ -72,7 +72,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         const id = paramMap.get('id');
-        this.enabledList = id;
+        if (id !== "all") this.enabledList = id;
       }
     });
 
