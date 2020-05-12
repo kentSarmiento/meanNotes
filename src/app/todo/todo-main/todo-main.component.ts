@@ -283,6 +283,19 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  openEditTaskDialog(todo: Todo) {
+    const dialogRef = this.dialog.open(TodoAddDialogComponent, {
+      width: '480px',
+      data: { title: todo.title, list: todo.list }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.todoService.updateTask(todo._id, result.title, result.list);
+      }
+    });
+  }
+
   updateTaskFinished(id: string) {
     this.todoService.updateTaskFinished(id);
   }

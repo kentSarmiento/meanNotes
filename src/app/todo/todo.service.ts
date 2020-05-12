@@ -287,6 +287,38 @@ export class TodoService {
       });
   }
 
+  updateTask(id: string, title: string, list: string) {
+    const index = this.cachedTasks.findIndex(cachedTask =>
+      id === cachedTask._id ||
+      id === cachedTask.id);
+
+    if (index > -1) {
+      const task = this.cachedTasks[index];
+      const originalList = task.list;
+      if (task.title !== title || task.list !== list) {
+        task.title = title;
+        task.list = list;
+
+        /* Background sync with backend server */
+        this.notifyOngoingSync();
+        this.http.put<any>(TASKS_URL + task._id, task)
+          .subscribe(response => {
+
+            this.updateCachedTask(response);
+            this.notifyUpdatedTasks();
+            this.notifyFinishedSync(OperationMethod.RENAME_TASK);
+
+            /* Update list version */
+            this.http.put<any>(LISTS_URL + task.list, null)
+              .subscribe(response => {});
+            if (task.list !== originalList) {
+              this.http.put<any>(LISTS_URL + originalList, null)
+                .subscribe(response => {});
+            }
+          });
+      }
+    }
+  }
   updateTaskName(id: string, title: string) {
     const index = this.cachedTasks.findIndex(cachedTask =>
       id === cachedTask._id ||

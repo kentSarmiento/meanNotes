@@ -1,15 +1,14 @@
 @media only screen and (min-width: 680px) {
   .log-out-list { width: calc(24% - 3%); }
   .display-list { padding-left: calc(24px + 24px); }
-  .todo-content-header { width: calc(94vw - 24%); }
-  .todo-content-panel, .todo-content-add-task { width: calc(81% - 8%); }
-  .todo-content-list-title { width: 81%; }
+  .todo-content-header { width: calc(81vw - 8vw); }
+  .todo-content-panel, .todo-content-list-title { width: calc(81% + 8%); }
 }
 @media only screen and (max-width: 680px) {
   .log-out-list { width: calc(75% - 8%); }
   .display-list { padding-left: 24px; }
-  .todo-content-header { width: calc(94vw); }
-  .todo-content-panel, .todo-content-add-task { width: calc(81% + 8%); }
+  .todo-content-header { width: calc(94vw + 8px); }
+  .todo-content-panel { width: 94%; }
   .todo-content-list-title { width: 94%; }
 }
 
@@ -117,20 +116,20 @@
   text-align: left;
   font-weight: 400;
 }
+.title-mobile-true {
+  font-size: 12px;
+}
 .title-true, .title-false,
 .title-finished-true, .title-finished-false {
-  margin: auto;
-  margin-left: 8px;
-  width: 100%;
+  margin: auto 8px;
+  width: calc(94% - 94px);
 }
 .title-form-false,
 .title-form-false:focus, .title-form-false:hover {
-  margin-right: calc(24px + 8px);
-  width: calc(100% - 24px);
+  width: 100%;
 }
 .title-form-true,
 .title-form-true:focus, .title-form-true:hover {
-  margin-right: 8px;
   width: 100%;
 }
 .title-form-fin-true {

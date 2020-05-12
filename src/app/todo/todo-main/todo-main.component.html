@@ -203,7 +203,7 @@
             </span>
 
             <span
-              class="title-{{listEdit}}">
+              class="title-{{listEdit}} title-mobile-{{isMobileView}}">
               <input
                 matInput
                 class="title-form-{{listEdit}} title-form-fin-{{todo.finished}}"
@@ -218,16 +218,15 @@
 
             <span class="spacer"></span>
 
-            <span *ngIf="!listEdit && !todo.localUpdate && !todo.finished">
+            <span *ngIf="enabledList!=null">
+            <span *ngIf="!todo.finished">
             <button
               mat-icon-button
               class="edit"
-              (click)="toggleEditTask(todo)">
+              (click)="openEditTaskDialog(todo)">
               <mat-icon class="edit-icon">edit</mat-icon>
             </button>
             </span>
-
-            <span *ngIf="listEdit || todo.localUpdate">
             <button
               mat-icon-button
               class="delete"
@@ -235,6 +234,10 @@
               (click)="deleteTask(todo.id)">
               <mat-icon class="delete-icon">delete</mat-icon>
             </button>
+            </span>
+
+            <span *ngIf="listEdit || todo.localUpdate">
+
             </span>
             <span *ngIf="!listEdit && todo.localUpdate">
             <button
