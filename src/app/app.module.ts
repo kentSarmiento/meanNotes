@@ -10,6 +10,7 @@ import { AngularMaterialModule } from "./angular-material.module";
 import { NotesModule } from "./notes/notes.module";
 import { MainModule } from "./main/main.module";
 import { TodoModule } from "./todo/todo.module";
+import { ExpenseModule } from "./expense/expense.module";
 import { HeaderComponent } from './header/header.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { ErrorInterceptor } from "./error/error-interceptor";
@@ -29,7 +30,8 @@ import { ErrorComponent } from "./error/error.component";
     AngularMaterialModule,
     NotesModule,
     MainModule,
-    TodoModule
+    TodoModule,
+    ExpenseModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

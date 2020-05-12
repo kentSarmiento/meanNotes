@@ -1,0 +1,207 @@
+@media only screen and (min-width: 680px) {
+  .log-out-container { width: calc(24% - 3%); }
+  .expense-content-title { width: 81%; }
+  .expense-content-table { width: calc(81% - 8%); }
+  .content-title { padding-left: calc(24px + 24px + 8px); }
+}
+@media only screen and (max-width: 680px) {
+  .log-out-container { width: calc(75% - 8%); }
+  .expense-content-title { width: 94%; }
+  .expense-content-table { width: calc(81% + 8%); }
+  .content-title { padding-left: 24px; }
+}
+
+.expense-main-container {
+  position: fixed;
+  overflow: hidden;
+  top: 48px;
+  bottom: 0;
+  width: 100%;
+  margin: auto;
+  background: #e9ebee;
+}
+.expense-side-container-true {
+  background: #e9ebee;
+  width: 62%;
+}
+.expense-side-container-false {
+  background: #ffffff;
+}
+.expense-list-container {
+  margin-bottom: calc(24px + 62px);
+}
+.expense-content-container {
+  width: 100%;
+  margin: auto;
+}
+.expense-content-header {
+  width: 100%;
+  margin: auto;
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+  position: fixed;
+  top: 48px;
+  background: #e9ebee;
+  padding-top: 8px;
+}
+.expense-content-title {
+  height: calc(24px + 8px + 8px);
+  margin: auto;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  background: #e9ebee;
+}
+.content-title {
+  font-size: 24px;
+  background: #e9ebee;
+  border: 0;
+}
+.expense-content-table {
+  margin: auto;
+  margin-top: calc(24px * 2);
+  display: block;
+}
+
+.expense-content-accordion {
+  width: 100%;
+  background: transparent;
+  display: block;
+}
+.expense-content-panel {
+  width: calc(81% + 8%);
+  padding: 8px;
+  margin: auto;
+  margin-top: calc(24px / 8);
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.81);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  background: white;
+  font-size: 14px;
+  z-index: 8000;
+}
+.expense-category-panel {
+  max-width: 24%;
+}
+.expense-title-panel {
+  width: calc(81% - 24%);
+  margin: 0;
+  margin-left: 8px;
+}
+.expense-action-panel {
+  width: 48px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.all-expense-button {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 400;
+  padding: 0;
+}
+.category-button {
+  width: 94%;
+  text-align: left;
+  font-weight: 400;
+}
+.edit-button, .delete-button {
+  line-height: 0;
+  width: 24px;
+  height: 24px;
+}
+.edit-icon, .delete-icon {
+  font-size: calc(24px - 4px);
+  line-height: 24px;
+}
+.edit-button, .settings-button {
+  color: #5d5e5f;
+}
+
+table {
+  width: 100%;
+}
+tr.mat-footer-row {
+  font-weight: 500;
+}
+.mat-column-title {
+  width: 24%;
+}
+.mat-column-category {
+  width: 24%;
+}
+.mat-column-amount {
+  width: calc(24% - 8%);
+}
+.mat-column-actions {
+  width: calc(24px + 24px);
+}
+.mat-spinner {
+  margin: auto;
+  z-index: 9001;
+  margin-top: 24px;
+}
+.mat-caption {
+  margin: auto;
+  margin-left: 24px;
+  color: rgba(0,0,0,.48);
+}
+.date-title {
+  margin: 24px;
+  margin-bottom: 8px;
+  color: rgba(0,0,0,.48);
+}
+:host ::ng-deep .mat-paginator-page-size {
+  margin-bottom: calc(24px - 8px);
+}
+
+:host ::ng-deep .mat-dialog-title {
+  margin-bottom: 8px;
+}
+:host ::ng-deep .mat-dialog-content {
+  overflow: hidden;
+}
+:host ::ng-deep .mat-dialog-actions {
+  padding: 0;
+  padding-bottom: 8px;
+}
+:host ::ng-deep .mat-form-field-appearance-standard
+.mat-form-field-flex {
+  padding: 0;
+}
+:host ::ng-deep .mat-form-field-wrapper {
+   margin-bottom: -.81em;
+}
+.name-form {
+  width: 81%;
+}
+.amount-form-false {
+  width: calc(24% * 2);
+}
+.amount-form-true {
+  width: calc(24% * 3);
+}
+.currency-form-false {
+  width: calc(24% / 2);
+  margin-left: -8%;
+}
+.currency-form-true {
+  width: 24%;
+  margin-left: -24%;
+}
+.category-form {
+  width: calc(24% * 2);
+}
+.date-form {
+  width: calc(24% * 2);
+  margin-left: 8px;
+}

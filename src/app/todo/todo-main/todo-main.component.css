@@ -1,12 +1,10 @@
 @media only screen and (min-width: 680px) {
-  .todo-side-container { width: 25%; }
   .log-out-list { width: calc(24% - 3%); }
-  .display-list { padding-left: calc(24px + 24px + 8px); }
+  .display-list { padding-left: calc(24px + 24px); }
   .todo-content-panel, .todo-content-add-task { width: calc(81% - 8%); }
   .todo-content-list-title { width: 81%; }
 }
 @media only screen and (max-width: 680px) {
-  .todo-side-container { width: 75%; }
   .log-out-list { width: calc(75% - 8%); }
   .display-list { padding-left: 24px; }
   .todo-content-panel, .todo-content-add-task { width: calc(81% + 8%); }
@@ -22,8 +20,12 @@
   margin: auto;
   background: #e9ebee;
 }
-.todo-side-container {
+.todo-side-container-true {
   background: #e9ebee;
+  width: 62%;
+}
+.todo-side-container-false {
+  background: #ffffff;
 }
 .list-drag-container {
   width: 100%;
@@ -36,7 +38,6 @@
 }
 .todo-content-container {
   margin: auto;
-  width: 100%;
 }
 .todo-content-header, .todo-content-footer {
   margin: auto;
@@ -49,6 +50,8 @@
 .todo-content-header {
   position: fixed;
   top: 48px;
+  background: #e9ebee;
+  padding-top: 8px;
 }
 .todo-content-footer {
   position: -webkit-sticky; /* Safari */
@@ -56,6 +59,7 @@
   display: block;
 }
 .todo-content-footer {
+  margin-top: 8px;
   bottom: 0;
 }
 .todo-list-container {
@@ -79,10 +83,10 @@
   background: #e9ebee;
 }
 .add-task-button {
-  margin-left: 24px;
+  margin-left: calc(24px - 8px);
 }
 .sync-button {
-  margin-right: 24px;
+  margin-right: calc(24px - 8px);
 }
 .todo-content-accordion {
   width: 100%;
@@ -120,9 +124,6 @@
   text-align: left;
   font-weight: 400;
 }
-.list-button-false {
-  margin-left: 8px;
-}
 .title-true, .title-false,
 .title-finished-true, .title-finished-false {
   margin: auto;
@@ -146,7 +147,7 @@
   flex: 1 1 auto;
 }
 .delete, .checked, .checked-false, .checked-,
-.edit, .add-empty, .drag-handle {
+.edit, .add-empty {
   line-height: 0;
   width: 24px;
   height: 24px;
@@ -158,8 +159,12 @@
 .edit-icon, .drag-icon, .large-edit-icon {
   color: #5d5e5f;
 }
+.drag-handle {
+  width: calc(24px - 8px);
+  height: 24px;
+}
 .checked-false, .checked-finished-true, .checked- {
-  margin-left: 24px;
+  margin-left: calc(24px - 8px);
 }
 .add-list {
   font-size: 14px;
@@ -197,6 +202,9 @@
   margin: auto;
   z-index: 9001;
 }
+.large-spinner {
+  margin-top: 24px;
+}
 .mat-button {
   font-weight: 400;
 }
@@ -212,6 +220,7 @@
   width: 64px;
   height: 24px;
   line-height: 24px;
+  margin: 0 0 0 8px;
 }
 
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
