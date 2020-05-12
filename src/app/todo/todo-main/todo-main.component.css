@@ -1,12 +1,14 @@
 @media only screen and (min-width: 680px) {
   .log-out-list { width: calc(24% - 3%); }
   .display-list { padding-left: calc(24px + 24px); }
+  .todo-content-header { width: calc(94vw - 24%); }
   .todo-content-panel, .todo-content-add-task { width: calc(81% - 8%); }
   .todo-content-list-title { width: 81%; }
 }
 @media only screen and (max-width: 680px) {
   .log-out-list { width: calc(75% - 8%); }
   .display-list { padding-left: 24px; }
+  .todo-content-header { width: calc(94vw); }
   .todo-content-panel, .todo-content-add-task { width: calc(81% + 8%); }
   .todo-content-list-title { width: 94%; }
 }
@@ -40,12 +42,11 @@
 .todo-content-container {
   margin: auto;
 }
-.todo-content-header, .todo-content-footer {
+.todo-content-header {
   margin: auto;
   font-size: 24px;
   display: flex;
   flex-direction: row;
-  width: 100%;
   z-index: 9001;
 }
 .todo-content-header {
@@ -53,15 +54,6 @@
   top: 48px;
   background: #e9ebee;
   padding-top: 8px;
-}
-.todo-content-footer {
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  display: block;
-}
-.todo-content-footer {
-  margin-top: 8px;
-  bottom: 0;
 }
 .todo-list-container {
   margin-bottom: calc(24px + 62px);
@@ -169,8 +161,8 @@
 }
 .add-list {
   font-size: 14px;
-  width: 81%;
-  padding-left: 24px;
+  width: calc(81% + 8px);
+  padding-left: calc(24px - 8px);
 }
 .display-list {
   font-size: 24px;
@@ -224,6 +216,19 @@
   margin: 0 0 0 8px;
 }
 
+::ng-deep .snack-bar {
+  background: #3f51b5;
+  color: white;
+  max-width: 100% !important;
+  font-size: 12px;
+}
+::ng-deep .snack-bar .mat-simple-snackbar-action {
+  color: white;
+}
+::ng-deep .snack-bar-false {
+  width: calc(81vw - 24vw) !important;
+}
+
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
   padding: 0 !important;
   border-radius: 0 !important;
@@ -251,9 +256,6 @@
 :host ::ng-deep .mat-form-field-appearance-standard
 .mat-form-field-flex {
   padding: 0;
-}
-:host ::ng-deep .mat-form-field-wrapper {
-   margin-bottom: -.81em;
 }
 .title-form {
   font-size: 14px !important;

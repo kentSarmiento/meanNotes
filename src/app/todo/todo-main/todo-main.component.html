@@ -249,27 +249,5 @@
         </div>
       </div>
 
-      <div
-        class="todo-content-footer"
-        *ngIf="enabledList!=null && todos.length==0">
-        <div class="todo-content-add-task">
-
-        <span class="spacer"></span>
-        <span
-          class="mat-caption"
-          *ngIf="isSyncing && todos.length!=0">Ongoing sync in the background...</span>
-        <span *ngIf="todos.length!=0">
-          <button
-            mat-icon-button
-            class="sync-button"
-            (click)="triggerSync(true)">
-          <mat-icon *ngIf="!isSyncing">sync</mat-icon>
-          <mat-spinner diameter=20 color="accent" *ngIf="isSyncing"></mat-spinner>
-          </button>
-        </span>
-
-        </div>
-      </div>
-
   </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,17 +1,16 @@
 import { Component, Inject, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import { Subscription } from "rxjs";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatListModule } from "@angular/material/list";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 import { TodoConfig } from "../todo.config";
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
+import { OperationMethod } from "../todo.service";
 import { Todo, List } from "../todo.model";
 import { AuthService } from "../../auth/auth.service";
 import { TodoSidebarService } from "./todo-sidebar.service";
@@ -64,9 +63,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
-    private dialog: MatDialog,
+    private responsiveService: ResponsiveService,
     private activatedRoute: ActivatedRoute,
-    private responsiveService: ResponsiveService) {}
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -117,7 +117,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
     this.syncListener = this.todoService
       .getSyncUpdatedListener()
-      .subscribe( (sync: { isOngoing: boolean, isManual: boolean }) => {
+      .subscribe( (sync: { isOngoing: boolean, operation: OperationMethod }) => {
         this.isSyncing = sync.isOngoing;
 
         if (!sync.isOngoing) {
@@ -130,6 +130,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
             if (!this.enabledList) this.sidenav.open();
           }
           this.isLoading = false;
+
+          this.notifyOperationResult(sync.operation)
         }
       });
 
@@ -281,7 +283,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-
   updateTaskFinished(id: string) {
     this.todoService.updateTaskFinished(id);
   }
@@ -352,7 +353,51 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  triggerSync(isManual: boolean) {}
+  private notifyOperationResult(operation: OperationMethod) {
+    let message: string = null;
+
+    switch (operation) {
+      case OperationMethod.CREATE_LIST:
+        message = "LIST created successfully";
+        break;
+      case OperationMethod.RENAME_LIST:
+        message = "LIST renamed successfully";
+        break;
+      case OperationMethod.DELETE_LIST:
+        message = "LIST deleted successfully";
+        break;
+      case OperationMethod.CREATE_TASK:
+        message = "TASK created successfully";
+        break;
+      case OperationMethod.RENAME_TASK:
+        message = "TASK renamed successfully";
+        break;
+      case OperationMethod.DELETE_TASK:
+        message = "TASK deleted successfully";
+        break;
+      case OperationMethod.FINISH_TASK:
+        message = "TASK finished successfully";
+        break;
+      case OperationMethod.ONGOING_TASK:
+        message = "TASK restarted successfully";
+        break;
+
+      default:
+        break;
+    }
+
+    if (message) this.openSnackBar(message);
+  }
+
+  private openSnackBar(message: string) {
+    const mainClass = "snack-bar";
+    const subClass = "snack-bar-" + this.isMobileView;
+
+    this.snackBar.open(message, "Dismiss", {
+      duration: 2400,
+      panelClass: [ mainClass, subClass ],
+    });
+  }
 
   logout() {
     this.authService.logout();
@@ -395,7 +440,6 @@ export class TodoAddDialogComponent {
   }
 
   submit() {
-    console.log("submit")
     if (this.form.invalid) {
       return;
     }

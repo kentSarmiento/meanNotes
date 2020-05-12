@@ -21,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSortModule } from '@angular/material/sort';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -50,7 +51,8 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSortModule
+    MatSortModule,
+    MatSnackBarModule
   ]
 })
 export class AngularMaterialModule {}
