@@ -1,6 +1,8 @@
 <mat-toolbar color="primary">
   <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
-
+  <span *ngIf="!isEmptyList">
+    <a mat-button (click)="openAddTaskDialog()">Add Task</a>
+  </span>
   <span class="spacer"></span>
 
   <ul *ngIf="isMobileView">

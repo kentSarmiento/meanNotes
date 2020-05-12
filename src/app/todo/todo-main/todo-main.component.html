@@ -251,17 +251,8 @@
 
       <div
         class="todo-content-footer"
-        *ngIf="enabledList!=null">
+        *ngIf="enabledList!=null && todos.length==0">
         <div class="todo-content-add-task">
-        <button
-          mat-icon-button
-          class="add-task-button"
-          (click)="openAddTaskDialog(null)">
-          <mat-icon>add_circle_outline</mat-icon>
-        </button>
-        <span
-          class="mat-caption"
-          *ngIf="todos.length==0">Add first task!</span>
 
         <span class="spacer"></span>
         <span

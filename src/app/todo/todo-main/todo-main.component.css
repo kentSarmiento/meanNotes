@@ -238,19 +238,30 @@
   height: 36px !important;
 }
 
-.title-dialog {
+:host ::ng-deep .mat-dialog-title {
+  margin-bottom: 8px;
+}
+:host ::ng-deep .mat-dialog-content {
+  overflow: hidden;
+}
+:host ::ng-deep .mat-dialog-actions {
+  padding: 0;
+  padding-bottom: 8px;
+}
+:host ::ng-deep .mat-form-field-appearance-standard
+.mat-form-field-flex {
+  padding: 0;
+}
+:host ::ng-deep .mat-form-field-wrapper {
+   margin-bottom: -.81em;
+}
+.title-form {
   font-size: 14px !important;
   width: 100%;
   margin: auto;
 }
-.title-dialog-input {
-  width: calc(100% - 62px);
-  padding-right: 62px;
-}
-.submit-dialog {
-  margin-left: -62px;
-  width: 62px;
-  min-width: 62px;
-  height: 42px;
-  border-radius: 0;
+.list-form {
+  font-size: 14px !important;
+  width: calc(24% * 2);
+  margin: auto;
 }

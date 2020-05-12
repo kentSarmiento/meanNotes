@@ -126,6 +126,14 @@ export class TodoService {
     }
   }
 
+  getLists() {
+    return this.cachedLists;
+  }
+
+  getEnabledList() {
+    return this.enabledList;
+  }
+
   addList(title: string) {
     const list = {
       title: title

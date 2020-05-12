@@ -6,7 +6,9 @@ import { MatDividerModule } from "@angular/material/divider";
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from '@angular/router';
+
 import { TodoConfig } from "../todo.config";
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
@@ -19,6 +21,7 @@ const TODO_ROUTE = TodoConfig.rootRoute;
 
 export interface TodoData {
   title: string;
+  list: string;
 }
 export interface DeleteDialogData {
   isList: boolean;
@@ -278,26 +281,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  openAddTaskDialog(title: string) {
-    const dialogRef = this.dialog.open(TodoEditDialogComponent, {
-      width: '480px', maxHeight: '320px',
-      data: { title: title }
-    });
-
-    dialogRef.afterClosed().subscribe(title => {
-      if (title) {
-        this.addTask(title);
-      }
-    });
-  }
-
-  addTask(title: string) {
-    this.todoService.addTask(title, this.enabledList);
-    setTimeout(() => {
-      const element = document.getElementById('content-accordion');
-      element.scrollIntoView();
-    }, 100);
-  }
 
   updateTaskFinished(id: string) {
     this.todoService.updateTaskFinished(id);
@@ -385,14 +368,48 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: 'todo-edit-dialog',
-  templateUrl: './todo-edit-dialog.html',
+  templateUrl: './todo-add-dialog.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoEditDialogComponent {
+export class TodoAddDialogComponent {
+  form: FormGroup;
+  lists: List[];
+  enabledList: string;
+  isNew: boolean;
+
   constructor(
-    public dialogRef: MatDialogRef<TodoEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: TodoData) {}
+    public dialogRef: MatDialogRef<TodoAddDialogComponent>,
+    private todoService: TodoService,
+    @Inject(MAT_DIALOG_DATA) public data: TodoData) {
+      this.isNew = (data.title.length > 0) ? false : true;
+      this.lists = this.todoService.getLists();
+      this.enabledList = this.todoService.getEnabledList();
+      this.form = new FormGroup({
+        title: new FormControl(data.title, {
+          validators: [Validators.required]
+        }),
+        list: new FormControl((this.isNew) ? this.enabledList : data.list, {
+          validators: [Validators.required]
+        })
+      });
+  }
+
+  submit() {
+    console.log("submit")
+    if (this.form.invalid) {
+      return;
+    }
+    const result: TodoData = {
+      title: this.form.value.title,
+      list: this.form.value.list,
+    }
+    this.dialogRef.close(result);
+  }
+
+  closeDialog() {
+    this.form.reset();
+    this.dialogRef.close();
+  }
 }
 
 @Component({

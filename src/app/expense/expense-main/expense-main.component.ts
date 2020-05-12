@@ -331,6 +331,7 @@ export class ExpenseAddDialogComponent {
   }
 
   closeDialog() {
+    this.form.reset();
     this.dialogRef.close();
   }
 }
