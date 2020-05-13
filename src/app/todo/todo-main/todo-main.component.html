@@ -164,11 +164,16 @@
         <div
           *ngFor="let todo of todos"
           id="panel-{{todo.id}}"
-          class="todo-content-panel mat-elevation-z2"
+          class="todo-content-panel
+                  todo-content-panel-{{todo.localUpdate}}
+                  mat-elevation-z2"
+          tabindex="1"
           cdkDrag
           [cdkDragDisabled]="!enabledList ||
                               (!listEdit && !todo.localUpdate) ||
                               todo.finished"
+          (focus)="enableEdit(todo)"
+          (blur)="toggleEditTask(todo)"
           #panel>
 
             <span *ngIf="enabledList && (listEdit || todo.localUpdate) && !todo.finished">
@@ -183,6 +188,7 @@
                      checked-{{listEdit || todo.localUpdate}}
                      checked-finished-{{todo.finished}}"
               color="primary"
+              tabindex="-1"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
                 <mat-icon>check_box</mat-icon>
@@ -211,15 +217,16 @@
                 type="text"
                 maxlength="140"
                 value="{{todo.title}}"
-                readonly="{{!(!todo.finished && (listEdit || todo.localUpdate))}}"
-                (keydown.enter)="updateTaskName(todo.id, todoTitle.value)"
-                (blur)="updateTaskName(todo.id, todoTitle.value)"
+                readonly="true"
+                tabindex="2"
+                (focus)="enableEdit(todo)"
+                (blur)="toggleEditTask(todo)"
                 #todoTitle>
             </span>
 
             <span class="spacer"></span>
 
-            <span *ngIf="enabledList!=null">
+            <span *ngIf="enabledList!=null && todo.localUpdate">
             <span *ngIf="!todo.finished">
             <button
               mat-icon-button
@@ -234,19 +241,6 @@
               color="warn"
               (click)="deleteTask(todo.id)">
               <mat-icon class="delete-icon">delete</mat-icon>
-            </button>
-            </span>
-
-            <span *ngIf="listEdit || todo.localUpdate">
-
-            </span>
-            <span *ngIf="!listEdit && todo.localUpdate">
-            <button
-              mat-icon-button
-              class="edit"
-              color="primary"
-              (click)="toggleEditTask(todo)">
-              <mat-icon>done</mat-icon>
             </button>
             </span>
 

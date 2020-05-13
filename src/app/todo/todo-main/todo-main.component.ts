@@ -353,6 +353,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   toggleEditTask(todo: Todo) {
     todo.localUpdate = !todo.localUpdate;
   }
+  enableEdit(todo: Todo) {
+    this.todos.forEach( todo => todo.localUpdate = false );
+    todo.localUpdate = true;
+  }
 
   updateTaskName(id: string, title: string) {
     this.todoService.updateTaskName(id, title);
