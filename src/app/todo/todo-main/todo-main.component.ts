@@ -21,6 +21,7 @@ const TODO_ROUTE = TodoConfig.rootRoute;
 export interface TodoData {
   title: string;
   list: string;
+  isCopy: boolean;
 }
 export interface DeleteDialogData {
   isList: boolean;
@@ -307,7 +308,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.todoService.updateTask(todo._id, result.title, result.list);
+        if (result.isCopy)
+          this.todoService.addTask(result.title, result.list);
+        else
+          this.todoService.updateTask(todo._id, result.title, result.list);
       }
     });
   }
@@ -454,12 +458,14 @@ export class TodoAddDialogComponent {
   lists: List[];
   enabledList: string;
   isNew: boolean;
+  isCopy: boolean;
 
   constructor(
     public dialogRef: MatDialogRef<TodoAddDialogComponent>,
     private todoService: TodoService,
     @Inject(MAT_DIALOG_DATA) public data: TodoData) {
       this.isNew = (data.title.length > 0) ? false : true;
+      this.isCopy = false;
       this.lists = this.todoService.getLists();
       this.enabledList = this.todoService.getEnabledList();
       this.form = new FormGroup({
@@ -479,6 +485,7 @@ export class TodoAddDialogComponent {
     const result: TodoData = {
       title: this.form.value.title,
       list: this.form.value.list,
+      isCopy: this.isCopy
     }
     this.dialogRef.close(result);
   }

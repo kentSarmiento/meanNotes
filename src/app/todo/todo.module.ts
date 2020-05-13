@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
-import { ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 import { TodoMainComponent } from "./todo-main/todo-main.component";
 import { TodoAddDialogComponent } from "./todo-main/todo-main.component";
@@ -22,6 +22,7 @@ import { AngularMaterialModule } from "../angular-material.module";
     AngularMaterialModule,
     RouterModule,
     ReactiveFormsModule,
+    FormsModule,
     TodoRoutingModule
   ]
 })

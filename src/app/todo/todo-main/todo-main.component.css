@@ -253,6 +253,7 @@
 
 :host ::ng-deep .mat-dialog-title {
   margin-bottom: 8px;
+  display: flex;
 }
 :host ::ng-deep .mat-dialog-content {
   overflow: hidden;
@@ -264,6 +265,10 @@
 :host ::ng-deep .mat-form-field-appearance-standard
 .mat-form-field-flex {
   padding: 0;
+}
+:host ::ng-deep .mat-checkbox-layout {
+  font-size: 12px;
+  font-weight: 400;
 }
 .title-form {
   font-size: 14px !important;

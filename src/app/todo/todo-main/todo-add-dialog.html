@@ -1,5 +1,10 @@
 <span *ngIf="isNew" mat-dialog-title>Add Task</span>
-<span *ngIf="!isNew" mat-dialog-title>Edit Task</span>
+<span *ngIf="!isNew" mat-dialog-title>
+Edit Task
+<span class="spacer"></span>
+<mat-checkbox [(ngModel)]="isCopy">Create Copy</mat-checkbox>
+</span>
+
 
 <form (submit)="submit()" [formGroup]="form">
 
@@ -51,7 +56,8 @@
       type="submit"
       color="primary">
       <span *ngIf="isNew">Add</span>
-      <span *ngIf="!isNew">Update</span>
+      <span *ngIf="!isNew && !isCopy">Edit</span>
+      <span *ngIf="!isNew && isCopy">Copy</span>
     </button>
   </span>
 
