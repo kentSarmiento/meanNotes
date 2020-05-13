@@ -1,12 +1,10 @@
 @media only screen and (min-width: 768px) {
   .log-out-list { width: calc(24% - 3%); }
-  .display-list { padding-left: calc(24px + 24px); }
   .todo-content-header { width: calc(81vw - 8vw); }
   .todo-content-panel, .todo-content-list-title { width: calc(81% + 8%); }
 }
 @media only screen and (max-width: 768px) {
   .log-out-list { width: calc(75% - 8%); }
-  .display-list { padding-left: 24px; }
   .todo-content-header { width: calc(94vw + 8px); }
   .todo-content-panel { width: 94%; }
   .todo-content-list-title { width: 94%; }
@@ -144,13 +142,16 @@
   width: 24px;
   height: 24px;
 }
-.edit-icon,
+.settings {
+  margin: auto calc(8px * 2);
+}
+.edit-icon, .edit-icon-true,
 .drag-icon, .delete-icon, .delete-icon-true,
 .setting-icon, .setting-icon-true {
   font-size: calc(24px - 8px);
   line-height: 24px;
 }
-.edit-icon, .drag-icon {
+.edit-icon, .edit-icon-true, .edit-icon-false, .drag-icon {
   color: #5d5e5f;
 }
 .drag-handle {
@@ -166,6 +167,7 @@
   padding-left: calc(24px - 8px);
 }
 .display-list {
+  padding-left: 24px;
   font-size: 24px;
 }
 .edit-list {

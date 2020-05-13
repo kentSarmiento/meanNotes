@@ -23,6 +23,10 @@ export interface TodoData {
   list: string;
   isCopy: boolean;
 }
+export interface ListData {
+  title: string;
+  isCopy: boolean;
+}
 export interface DeleteDialogData {
   isList: boolean;
 }
@@ -241,8 +245,20 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.closeSidenav();
   }
 
-  updateListName(title: string) {
-    this.todoService.updateListName(this.enabledList, title);
+  openEditListDialog() {
+    const dialogRef = this.dialog.open(TodoListDialogComponent, {
+      width: '480px',
+      data: { title: this.enabledListName }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.isCopy)
+          this.todoService.copyList(this.enabledList, result.title);
+        else
+          this.todoService.updateListName(this.enabledList, result.title);
+      }
+    });
   }
 
   toggleEditLists(isEdit: boolean) {
@@ -300,6 +316,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   openEditTaskDialog(todo: Todo) {
     const dialogRef = this.dialog.open(TodoAddDialogComponent, {
       width: '480px',
@@ -497,7 +514,44 @@ export class TodoAddDialogComponent {
 }
 
 @Component({
-  selector: 'todo-delete-dialog',
+  templateUrl: './todo-list-dialog.html',
+  styleUrls: [ './todo-main.component.css' ]
+})
+export class TodoListDialogComponent {
+  form: FormGroup;
+  isNew: boolean;
+  isCopy: boolean;
+
+  constructor(
+    public dialogRef: MatDialogRef<TodoListDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ListData) {
+      this.isNew = (data.title.length > 0) ? false : true;
+      this.isCopy = false;
+      this.form = new FormGroup({
+        title: new FormControl(data.title, {
+          validators: [Validators.required]
+        })
+      });
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      return;
+    }
+    const result: ListData = {
+      title: this.form.value.title,
+      isCopy: this.isCopy
+    }
+    this.dialogRef.close(result);
+  }
+
+  closeDialog() {
+    this.form.reset();
+    this.dialogRef.close();
+  }
+}
+
+@Component({
   templateUrl: './todo-delete-dialog.html',
   styleUrls: [ './todo-main.component.css' ]
 })

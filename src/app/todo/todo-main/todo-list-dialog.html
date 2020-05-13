@@ -1,7 +1,7 @@
-<span *ngIf="isNew" mat-dialog-title>Add Task</span>
+<span *ngIf="isNew" mat-dialog-title>Add List</span>
 <span *ngIf="!isNew" mat-dialog-title>
-<span *ngIf="!isCopy">Edit Task</span>
-<span *ngIf="isCopy">Copy Task</span>
+<span *ngIf="!isCopy">Edit List</span>
+<span *ngIf="isCopy">Copy List</span>
 <span class="spacer"></span>
 <mat-checkbox [(ngModel)]="isCopy">Create Copy</mat-checkbox>
 </span>
@@ -11,36 +11,22 @@
   <div mat-dialog-content>
 
     <mat-form-field
-      class="list-form"
-      appearance="standard"
-      floatLabel="always">
-      <mat-label>List</mat-label>
-      <mat-select class="list-input" formControlName="list">
-        <mat-option 
-          *ngFor="let list of lists"
-          value="{{list._id}}">{{list.title}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field
         class="title-form"
         appearance="standard"
         floatLabel="always">
-      <mat-label>Task Name</mat-label>
+      <mat-label>List Name</mat-label>
       <input
         matInput
         class="title-input"
         type="text"
-        maxlength="81"
+        maxlength="24"
         formControlName="title"
         required
         #title>
       <mat-error
         *ngIf="form.get('title').hasError('required')"></mat-error>
-      <mat-hint
-        *ngIf="title.value.length > 48 && (81 - ((title?.value) ? title.value.length : 0)) > 0"
-        align="end">
-        {{ 81 - ((title?.value) ? title.value.length : 0) }} characters remaining</mat-hint>
+      <mat-hint align="end">
+        {{ 24 - ((title?.value) ? title.value.length : 0) }} characters remaining</mat-hint>
     </mat-form-field>
 
   </div>

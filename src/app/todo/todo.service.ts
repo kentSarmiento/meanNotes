@@ -186,6 +186,51 @@ export class TodoService {
       });
   }
 
+  copyTasks(from: string, to: string) {
+    const copiedTasks = this.cachedTasks.filter(
+      todo => todo.list===from);
+
+    if (copiedTasks.length > 0) {
+      let newTasks = [];
+      for (let idx=0; idx < copiedTasks.length; idx++) {
+        const task = {
+          id: this.generateTaskId(),
+          title: copiedTasks[idx].title,
+          list: to,
+          rank: this.generateTaskRank()
+        };
+        newTasks.push(task)
+      }
+
+      const taskList = {
+        total: newTasks.length,
+        tasks: newTasks
+      };
+      this.http.post<any>(TASKS_URL + "batchCreate", taskList)
+        .subscribe(response => {
+          /* Update list version */
+          this.http.put<any>(LISTS_URL + to, null)
+            .subscribe(response => {});
+        });
+    }
+  }
+
+  copyList(from: string, title: string) {
+    const list = {
+      title: title
+    };
+
+    this.notifyOngoingSync();
+    this.http.post<any>(LISTS_URL, list)
+      .subscribe(response => {
+        this.updateCachedList(response);
+        this.notifyUpdatedLists();
+
+        this.copyTasks(from, response._id);
+        this.notifyFinishedSync(OperationMethod.CREATE_LIST);
+      });
+  }
+
   updateListName(id: string, title: string) {
     const index = this.cachedLists.findIndex(
       cachedList => id === cachedList._id);
@@ -319,6 +364,7 @@ export class TodoService {
       }
     }
   }
+
   updateTaskName(id: string, title: string) {
     const index = this.cachedTasks.findIndex(cachedTask =>
       id === cachedTask._id ||

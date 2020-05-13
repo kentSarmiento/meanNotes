@@ -115,29 +115,23 @@
 
           <input
             matInput
-            class="display-list display-list-{{listEditName}}"
+            class="display-list"
             type="text"
             [value]="enabledListName"
             [style.width.ch]="(display.value.length > 0) ? display.value.length : enabledListName.length"
-            readonly="{{enabledList==null || !listEditName}}"
-            (keydown.enter)="updateListName(display.value)"
-            (blur)="updateListName(display.value)"
+            readonly="true"
             id="display-list-title"
             #display>
 
-          <span class="spacer" *ngIf="isMobileView"></span>
+          <span class="spacer"></span>
 
           <span *ngIf="enabledList!=null">
             <button
               mat-icon-button
               class="edit"
-              (click)="toggleEditListName(!listEditName)">
-              <mat-icon class="edit-icon">edit</mat-icon>
+              (click)="openEditListDialog()">
+              <mat-icon class="edit-icon-{{isMobileView}}">edit</mat-icon>
             </button>
-          </span>
-
-          <span class="spacer" *ngIf="!isMobileView"></span>
-          <span *ngIf="enabledList!=null">
             <button
               mat-icon-button
               class="settings"
