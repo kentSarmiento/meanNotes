@@ -34,10 +34,7 @@
             class="edit-list"
             [color]="listsEdit ? 'primary' : 'black'"
             (click)="toggleEditLists(!listsEdit)">
-            <span *ngIf="!listsEdit">
-              <mat-icon class="edit-icon">edit</mat-icon>
-            </span>
-            <span *ngIf="listsEdit"><mat-icon>done</mat-icon></span>
+            <mat-icon class="setting-icon">settings</mat-icon>
           </button>
         </mat-list-item>
 
@@ -118,33 +115,43 @@
 
           <input
             matInput
-            class="display-list display-list-{{listEdit}}"
+            class="display-list display-list-{{listEditName}}"
             type="text"
             [value]="enabledListName"
             [style.width.ch]="(display.value.length > 0) ? display.value.length : enabledListName.length"
-            readonly="{{enabledList==null || !listEdit}}"
+            readonly="{{enabledList==null || !listEditName}}"
             (keydown.enter)="updateListName(display.value)"
             (blur)="updateListName(display.value)"
             id="display-list-title"
             #display>
 
-          <span *ngIf="enabledList!=null">
-            <span *ngIf="listEdit">
-            <button
-              mat-icon-button
-              color="primary"
-              (click)="toggleEditList(!listEdit)">
-              <mat-icon>done</mat-icon>
-            </button>
-            </span>
+          <span class="spacer" *ngIf="isMobileView"></span>
 
-            <span *ngIf="!listEdit">
+          <span *ngIf="enabledList!=null">
             <button
               mat-icon-button
-              (click)="toggleEditList(!listEdit)">
-              <mat-icon class="large-edit-icon">edit</mat-icon>
+              class="edit"
+              (click)="toggleEditListName(!listEditName)">
+              <mat-icon class="edit-icon">edit</mat-icon>
             </button>
-            </span>
+          </span>
+
+          <span class="spacer" *ngIf="!isMobileView"></span>
+          <span *ngIf="enabledList!=null">
+            <button
+              mat-icon-button
+              class="settings"
+              color="{{listEdit ? 'primary' : 'black'}}"
+              (click)="toggleEditList(!listEdit)">
+              <mat-icon class="setting-icon-{{isMobileView}}">settings</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              class="delete"
+              color="warn"
+              (click)="deleteListById(enabledList)">
+              <mat-icon class="delete-icon-{{isMobileView}}">delete</mat-icon>
+            </button>
           </span>
 
         </div>

@@ -40,7 +40,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   private todoListener : Subscription;
   todos : Todo[] = [];
+
   listEdit = false;
+  listEditName = false;
 
   private authListener : Subscription;
   isUserAuthenticated = false;
@@ -283,6 +285,20 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteListById(list: string) {
+    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+      width: '240px', maxHeight: '240px',
+      data: { isList: true }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteList(list);
+        this.enabledList=null;
+        this.todoService.changeEnabledListToAll();
+      }
+    });
+  }
   openEditTaskDialog(todo: Todo) {
     const dialogRef = this.dialog.open(TodoAddDialogComponent, {
       width: '480px',
@@ -300,9 +316,13 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.todoService.updateTaskFinished(id);
   }
 
+  toggleEditListName(isEdit: boolean) {
+    this.listEditName = isEdit;
+    document.getElementById('display-list-title').focus();
+  }
+
   toggleEditList(isEdit: boolean) {
     this.listEdit = isEdit;
-    document.getElementById('display-list-title').focus();
 
     if (!isEdit) {
       this.todos.forEach( todo => todo.localUpdate = false );
