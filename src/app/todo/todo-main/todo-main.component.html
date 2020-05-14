@@ -132,13 +132,13 @@
 
           <mat-menu #menu="matMenu">
             <button mat-menu-item
-              (click)="openEditListDialog()">
+              (click)="openEditListDialog(false)">
               <mat-icon>edit</mat-icon>
               <span>Rename list</span>
             </button>
 
             <button mat-menu-item
-              (click)="openEditListDialog()">
+              (click)="openEditListDialog(true)">
               <mat-icon>file_copy</mat-icon>
               <span>Copy list</span>
             </button>

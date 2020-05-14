@@ -2,8 +2,6 @@
 <span *ngIf="!isNew" mat-dialog-title>
 <span *ngIf="!isCopy">Edit List</span>
 <span *ngIf="isCopy">Copy List</span>
-<span class="spacer"></span>
-<mat-checkbox [(ngModel)]="isCopy">Create Copy</mat-checkbox>
 </span>
 
 <form (submit)="submit()" [formGroup]="form">

@@ -248,15 +248,15 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.closeSidenav();
   }
 
-  openEditListDialog() {
+  openEditListDialog(isCopy: boolean) {
     const dialogRef = this.dialog.open(TodoListDialogComponent, {
       width: '480px',
-      data: { title: this.enabledListName }
+      data: { title: this.enabledListName, isCopy: isCopy }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.isCopy)
+        if (isCopy)
           this.todoService.copyList(this.enabledList, result.title);
         else
           this.todoService.updateListName(this.enabledList, result.title);
@@ -560,7 +560,7 @@ export class TodoListDialogComponent {
     public dialogRef: MatDialogRef<TodoListDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ListData) {
       this.isNew = (data.title.length > 0) ? false : true;
-      this.isCopy = false;
+      this.isCopy = data.isCopy;
       this.form = new FormGroup({
         title: new FormControl(data.title, {
           validators: [Validators.required]
