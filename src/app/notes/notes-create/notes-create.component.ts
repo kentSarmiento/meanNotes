@@ -93,6 +93,12 @@ export class NotesCreateComponent implements OnInit {
       return;
     }
     this.isLoading = true;
+
+    /* Clean quill data */
+    this.form.value.content = this.form.value.content.replace(
+      /<p><br><\/p>/g, "<br />"
+    );
+
     if (this.mode === 'create' ){
       this.notesService.addNote( this.form.value.title,
                                  this.form.value.content);
