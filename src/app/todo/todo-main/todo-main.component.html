@@ -55,7 +55,8 @@
           <span *ngIf="!listsEdit" class="list-button">
             <button
               mat-button
-              class="list-button list-button-{{listsEdit}}"
+              class="list-button
+                      list-button-selected-{{list._id == enabledList}}"
               (click)="changeEnabledList(list._id)">{{list.title}}</button>
           </span>
           <span *ngIf="listsEdit" class="list-button">{{list.title}}</span>

@@ -1,13 +1,12 @@
 @media only screen and (min-width: 768px) {
   .log-out-list { width: calc(24% - 3%); }
-  .todo-content-header { width: calc(81vw - 8vw); }
-  .todo-content-panel, .todo-content-list-title { width: calc(81% + 8%); }
+  .todo-content-list-title { width: calc(81% + 8%); }
+  .todo-content-panel { width: calc(81% + 8%); }
 }
 @media only screen and (max-width: 768px) {
   .log-out-list { width: calc(75% - 8%); }
-  .todo-content-header { width: calc(94vw + 8px); }
-  .todo-content-panel { width: 94%; }
   .todo-content-list-title { width: 94%; }
+  .todo-content-panel { width: 94%; }
 }
 
 .todo-main-container {
@@ -40,15 +39,12 @@
   margin: auto;
 }
 .todo-content-header {
+  width: 100%;
   margin: auto;
   font-size: 24px;
   display: flex;
   flex-direction: row;
   z-index: 9001;
-}
-.todo-content-header {
-  position: fixed;
-  top: 48px;
   background: #e9ebee;
   padding-top: 8px;
 }
@@ -80,7 +76,6 @@
 }
 .todo-content-accordion {
   width: 100%;
-  padding-top: calc(24px * 2);
   background: transparent;
   display: block;
 }
@@ -116,6 +111,9 @@
   width: 100%;
   text-align: left;
   font-weight: 400;
+}
+.list-button-selected-true {
+  background-color: #e9ebee;
 }
 .title-mobile-true {
   font-size: 12px;
