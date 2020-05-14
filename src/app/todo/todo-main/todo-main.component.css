@@ -120,10 +120,14 @@
 .title-mobile-true {
   font-size: 12px;
 }
-.title-true, .title-false,
+.title-true,
 .title-finished-true, .title-finished-false {
   margin: auto 8px;
   width: calc(94% - 94px);
+}
+.title-false {
+  margin: auto 8px;
+  width: 100%;
 }
 .title-form-false,
 .title-form-false:focus, .title-form-false:hover {
