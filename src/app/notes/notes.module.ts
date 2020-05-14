@@ -36,6 +36,8 @@ import { AngularMaterialModule } from "../angular-material.module";
           [
             { 'align': [] },
             { 'list': 'ordered'}, { 'list': 'bullet' },
+          ],
+          [
             'code-block'
           ],
         ]
