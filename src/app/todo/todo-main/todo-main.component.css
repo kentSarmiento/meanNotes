@@ -113,7 +113,7 @@
   height: 36px;
 }
 .list-button, .new-list-button {
-  width: 94%;
+  width: 100%;
   text-align: left;
   font-weight: 400;
 }
@@ -166,7 +166,7 @@
 }
 .add-list {
   font-size: 14px;
-  width: calc(81% + 8px);
+  width: calc(94% - 24px);
   padding-left: calc(24px - 8px);
 }
 .display-list {
@@ -246,7 +246,6 @@
   padding: 0 !important;
   border-radius: 0 !important;
   margin-top: 12px !important;
-  background-color: #e9ebee;
   height: 42px;
 }
 :host ::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {

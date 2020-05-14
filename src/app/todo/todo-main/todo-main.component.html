@@ -34,7 +34,7 @@
             class="edit-list"
             [color]="listsEdit ? 'primary' : 'black'"
             (click)="toggleEditLists(!listsEdit)">
-            <mat-icon class="setting-icon">settings</mat-icon>
+            <mat-icon class="setting-icon">sort</mat-icon>
           </button>
         </mat-list-item>
 
@@ -45,6 +45,7 @@
             cdkDragLockAxis="y"
             cdkDrag
             [cdkDragDisabled]="!listsEdit">
+
           <span
             *ngIf="listsEdit"
             class="drag-handle"
@@ -58,15 +59,7 @@
               (click)="changeEnabledList(list._id)">{{list.title}}</button>
           </span>
           <span *ngIf="listsEdit" class="list-button">{{list.title}}</span>
-          <span *ngIf="listsEdit">
-          <button
-            mat-icon-button
-            class="delete"
-            color="warn"
-            (click)="deleteList(list)">
-            <mat-icon class="delete-icon">delete</mat-icon>
-          </button>
-          </span>
+
           </div>
         </mat-list-item>
       </mat-list>
@@ -74,18 +67,22 @@
       <mat-form-field
         *ngIf="!isLoading || !isFirstLoad"
         class="add-list"
-        appearance="fill">
+        appearance="standard">
         <input
           matInput
           type="text"
           name="list"
           maxlength="24"
           placeholder="Add new list"
+          tabindex="1"
+          (focus)="enableAddList()"
+          (blur)="disableAddList()"
           (keydown.enter)="[addList(list.value), list.value='']"
           cdkFocusInitial
           #list>
         <mat-hint
-          *ngIf="(24 - ((list?.value) ? list.value.length : 0)) > 0"
+          *ngIf="listAdd &&
+                 (24 - ((list?.value) ? list.value.length : 0)) > 0"
           align="end">
           {{ 24 - ((list?.value) ? list.value.length : 0) }} characters remaining
         </mat-hint>
@@ -124,29 +121,34 @@
             #display>
 
           <span class="spacer"></span>
-
           <span *ngIf="enabledList!=null">
-            <button
-              mat-icon-button
-              class="edit"
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          </span>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item
               (click)="openEditListDialog()">
-              <mat-icon class="edit-icon-{{isMobileView}}">edit</mat-icon>
+              <mat-icon>edit</mat-icon>
+              <span>Rename list</span>
             </button>
-            <button
-              mat-icon-button
-              class="settings"
-              color="{{listEdit ? 'primary' : 'black'}}"
-              (click)="toggleEditList(!listEdit)">
-              <mat-icon class="setting-icon-{{isMobileView}}">settings</mat-icon>
+
+            <button mat-menu-item
+              (click)="openEditListDialog()">
+              <mat-icon>file_copy</mat-icon>
+              <span>Copy list</span>
             </button>
-            <button
-              mat-icon-button
-              class="delete"
+
+            <button mat-menu-item
               color="warn"
               (click)="deleteListById(enabledList)">
-              <mat-icon class="delete-icon-{{isMobileView}}">delete</mat-icon>
+              <mat-icon>delete</mat-icon>
+              <span>Delete list</span>
             </button>
-          </span>
+          </mat-menu>
 
         </div>
       </div>
@@ -170,13 +172,13 @@
           tabindex="1"
           cdkDrag
           [cdkDragDisabled]="!enabledList ||
-                              (!listEdit && !todo.localUpdate) ||
+                              !todo.localUpdate ||
                               todo.finished"
           (focus)="enableEdit(todo)"
           (blur)="toggleEditTask(todo)"
           #panel>
 
-            <span *ngIf="enabledList && (listEdit || todo.localUpdate) && !todo.finished">
+            <span *ngIf="enabledList && todo.localUpdate && !todo.finished">
             <div class="drag-handle" cdkDragHandle>
               <mat-icon class="drag-icon">drag_indicator</mat-icon>
             </div>
@@ -185,10 +187,11 @@
             <button
               mat-icon-button
               class="checked checked-{{enabledList}}
-                     checked-{{listEdit || todo.localUpdate}}
+                     checked-{{todo.localUpdate}}
                      checked-finished-{{todo.finished}}"
               color="primary"
-              tabindex="-1"
+              tabindex="3"
+              (blur)="toggleEditTask(todo)"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
                 <mat-icon>check_box</mat-icon>
@@ -210,10 +213,11 @@
             </span>
 
             <span
-              class="title-{{listEdit}} title-mobile-{{isMobileView}}">
+              class="title-{{todo.localUpdate}} title-mobile-{{isMobileView}}">
               <input
                 matInput
-                class="title-form-{{listEdit}} title-form-fin-{{todo.finished}}"
+                class="title-form-{{todo.localUpdate}}
+                        title-form-fin-{{todo.finished}}"
                 type="text"
                 maxlength="140"
                 value="{{todo.title}}"

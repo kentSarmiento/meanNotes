@@ -46,6 +46,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   private todoListener : Subscription;
   todos : Todo[] = [];
 
+  listAdd = false;
   listEdit = false;
   listEditName = false;
 
@@ -261,6 +262,13 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  enableAddList() {
+    this.listAdd = true;
+  }
+  disableAddList() {
+    this.listAdd = false;
+  }
+
   toggleEditLists(isEdit: boolean) {
     this.listsEdit = isEdit;
   }
@@ -344,10 +352,6 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 
   toggleEditList(isEdit: boolean) {
     this.listEdit = isEdit;
-
-    if (!isEdit) {
-      this.todos.forEach( todo => todo.localUpdate = false );
-    }
   }
 
   toggleEditTask(todo: Todo) {
@@ -355,7 +359,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
   enableEdit(todo: Todo) {
     this.todos.forEach( todo => todo.localUpdate = false );
-    todo.localUpdate = true;
+    setTimeout(() => {
+      todo.localUpdate = true;
+    }, 240);
   }
 
   updateTaskName(id: string, title: string) {
