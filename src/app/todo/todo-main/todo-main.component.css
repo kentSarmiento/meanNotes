@@ -120,14 +120,16 @@
 .title-mobile-true {
   font-size: 12px;
 }
-.title-true,
-.title-finished-true, .title-finished-false {
+.title-true {
   margin: auto 8px;
   width: calc(94% - 94px);
 }
 .title-false {
   margin: auto 8px;
   width: 100%;
+}
+.title-fin-true {
+  width: 100% !important;
 }
 .title-form-false,
 .title-form-false:focus, .title-form-false:hover {
@@ -160,6 +162,9 @@
 }
 .edit-icon, .edit-icon-true, .edit-icon-false, .drag-icon {
   color: #5d5e5f;
+}
+.delete-menu-icon {
+  color: #f44336
 }
 .drag-handle {
   width: calc(24px - 8px);

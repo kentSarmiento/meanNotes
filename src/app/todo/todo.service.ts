@@ -458,4 +458,17 @@ export class TodoService {
         .subscribe(response => {});
   }
 
+  deleteTasksByFinished(list: string) {
+    const deletedTasks = this.cachedTasks.filter(todo =>
+      todo.list===list && todo.finished===true);
+
+    this.cachedTasks = this.cachedTasks.filter(todo =>
+      todo.list!==list || todo.finished!==true);
+    this.notifyUpdatedTasks();
+
+    if (deletedTasks.length > 0)
+      this.http.post<any>(LISTS_URL + list + "/deleteFinishedTasks", null)
+        .subscribe(response => {});
+  }
+
 }

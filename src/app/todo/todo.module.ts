@@ -6,7 +6,7 @@ import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { TodoMainComponent } from "./todo-main/todo-main.component";
 import { TodoAddDialogComponent } from "./todo-main/todo-main.component";
 import { TodoListDialogComponent } from "./todo-main/todo-main.component";
-import { TodoDeleteDialogComponent } from "./todo-main/todo-main.component";
+import { TodoConfirmDialogComponent } from "./todo-main/todo-main.component";
 import { TodoHeaderComponent } from "./todo-header/todo-header.component";
 import { TodoRoutingModule } from './todo-routing.module';
 import { AngularMaterialModule } from "../angular-material.module";
@@ -16,7 +16,7 @@ import { AngularMaterialModule } from "../angular-material.module";
     TodoMainComponent,
     TodoAddDialogComponent,
     TodoListDialogComponent,
-    TodoDeleteDialogComponent,
+    TodoConfirmDialogComponent,
     TodoHeaderComponent
   ],
   imports: [

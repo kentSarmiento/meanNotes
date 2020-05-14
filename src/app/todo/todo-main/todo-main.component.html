@@ -143,9 +143,14 @@
             </button>
 
             <button mat-menu-item
-              color="warn"
+              (click)="deleteFinishedInList(enabledList)">
+              <mat-icon>remove</mat-icon>
+              <span>Remove finished tasks</span>
+            </button>
+
+            <button mat-menu-item
               (click)="deleteListById(enabledList)">
-              <mat-icon>delete</mat-icon>
+              <mat-icon class="delete-menu-icon">delete</mat-icon>
               <span>Delete list</span>
             </button>
           </mat-menu>
@@ -213,7 +218,9 @@
             </span>
 
             <span
-              class="title-{{todo.localUpdate}} title-mobile-{{isMobileView}}">
+              class="title-{{todo.localUpdate}}
+                      title-fin-{{todo.finished}}
+                      title-mobile-{{isMobileView}}">
               <input
                 matInput
                 class="title-form-{{todo.localUpdate}}

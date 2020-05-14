@@ -27,8 +27,10 @@ export interface ListData {
   title: string;
   isCopy: boolean;
 }
-export interface DeleteDialogData {
-  isList: boolean;
+
+export interface ConfirmDialogData {
+  title: string;
+  message: string;
 }
 
 @Component({
@@ -296,7 +298,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteList(list: List) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
       width: '240px', maxHeight: '240px',
       data: { isList: true }
     });
@@ -311,9 +313,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteListById(list: string) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
-      width: '240px', maxHeight: '240px',
-      data: { isList: true }
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete List and Tasks",
+        message: "Are you sure you want to delete this list and all of its tasks?"
+      }
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -321,6 +326,22 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.todoService.deleteList(list);
         this.enabledList=null;
         this.todoService.changeEnabledListToAll();
+      }
+    });
+  }
+
+  deleteFinishedInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all finished tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByFinished(list);
       }
     });
   }
@@ -405,9 +426,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteTask(id: string) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
       width: '240px', maxHeight: '240px',
-      data: { isList: false }
+      data: {
+        title: "Delete task",
+        message: "Are you sure you want to delete this task?"
+      }
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -562,11 +586,11 @@ export class TodoListDialogComponent {
 }
 
 @Component({
-  templateUrl: './todo-delete-dialog.html',
+  templateUrl: './todo-confirm-dialog.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoDeleteDialogComponent {
+export class TodoConfirmDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<TodoDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DeleteDialogData) {}
+    public dialogRef: MatDialogRef<TodoConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {}
 }
