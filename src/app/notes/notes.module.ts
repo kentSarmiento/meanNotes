@@ -30,7 +30,7 @@ import { AngularMaterialModule } from "../angular-material.module";
       modules: {
         toolbar: [
           [
-            { 'header': [1, 2, 3, 4, 5, 6, false] },
+            { 'header': [1, 2, 3, false] },
             'bold', 'italic', 'underline'
           ],
           [
