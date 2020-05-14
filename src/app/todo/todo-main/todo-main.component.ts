@@ -243,9 +243,11 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   addList(title: string) {
-    this.isLoading = true;
-    this.todoService.addList(title);
-    this.closeSidenav();
+    if (title) {
+      this.isLoading = true;
+      this.todoService.addList(title);
+      this.closeSidenav();
+    }
   }
 
   openEditListDialog(isCopy: boolean) {
