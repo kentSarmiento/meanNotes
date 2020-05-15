@@ -52,14 +52,14 @@
             cdkDragHandle>
             <mat-icon class="drag-icon">drag_indicator</mat-icon>
           </span>
-          <span *ngIf="!listsEdit" class="list-button">
+          <span *ngIf="!listsEdit" class="list-item">
             <button
               mat-button
               class="list-button
                       list-button-selected-{{list._id == enabledList}}"
               (click)="changeEnabledList(list._id)">{{list.title}}</button>
           </span>
-          <span *ngIf="listsEdit" class="list-button">{{list.title}}</span>
+          <span *ngIf="listsEdit" class="list-item">{{list.title}}</span>
 
           </div>
         </mat-list-item>
@@ -180,8 +180,8 @@
           [cdkDragDisabled]="!enabledList ||
                               !todo.localUpdate ||
                               todo.finished"
-          (focus)="enableEdit(todo)"
-          (blur)="toggleEditTask(todo)"
+          (focus)="enableEditTask(todo)"
+          (blur)="disableEditTask(todo)"
           #panel>
 
             <span *ngIf="enabledList && todo.localUpdate && !todo.finished">
@@ -192,12 +192,11 @@
 
             <button
               mat-icon-button
-              class="checked checked-{{enabledList}}
-                     checked-{{todo.localUpdate}}
-                     checked-finished-{{todo.finished}}"
+              class="checked-enabled-{{todo.localUpdate}}
+                      checked-finished-{{todo.finished}}"
               color="primary"
               tabindex="3"
-              (blur)="toggleEditTask(todo)"
+              (blur)="disableEditTask(todo)"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
                 <mat-icon>check_box</mat-icon>
@@ -206,6 +205,13 @@
                 <mat-icon>check_box_outline_blank</mat-icon>
               </span>
             </button>
+
+            <span
+              class="title-{{todo.localUpdate}}
+                      title-finished-{{todo.finished}}
+                      title-mobile-{{isMobileView}}">
+                {{todo.title}}
+            </span>
 
             <span
               class="todo-label"
@@ -218,40 +224,22 @@
               </button>
             </span>
 
-            <span
-              class="title-{{todo.localUpdate}}
-                      title-fin-{{todo.finished}}
-                      title-mobile-{{isMobileView}}">
-              <input
-                matInput
-                class="title-form-{{todo.localUpdate}}
-                        title-form-fin-{{todo.finished}}"
-                type="text"
-                maxlength="140"
-                value="{{todo.title}}"
-                readonly="true"
-                tabindex="2"
-                (focus)="enableEdit(todo)"
-                (blur)="toggleEditTask(todo)"
-                #todoTitle>
-            </span>
-
             <span *ngIf="enabledList!=null && todo.localUpdate">
             <span class="spacer"></span>
             <span *ngIf="!todo.finished">
             <button
               mat-icon-button
-              class="edit"
+              class="edit-task"
               (click)="openEditTaskDialog(todo)">
-              <mat-icon class="edit-icon">edit</mat-icon>
+              <mat-icon>edit</mat-icon>
             </button>
             </span>
             <button
               mat-icon-button
-              class="delete"
+              class="delete-task"
               color="warn"
               (click)="deleteTask(todo.id)">
-              <mat-icon class="delete-icon">delete</mat-icon>
+              <mat-icon>delete</mat-icon>
             </button>
             </span>
 

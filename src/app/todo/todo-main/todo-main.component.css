@@ -107,69 +107,63 @@
 .task-lists-header {
   height: 36px;
 }
+.list-item {
+  width: 100%;
+}
 .list-button, .new-list-button {
   width: 100%;
   text-align: left;
   font-weight: 400;
+  padding-left: 24px;
 }
 .list-button-selected-true {
   background-color: #e9ebee;
 }
-.title-mobile-true {
-  font-size: 12px;
-}
+
 .title-true {
   margin: auto 8px;
-  width: calc(94% - 94px);
+  width: calc(100% - 128px);
 }
 .title-false {
   margin: auto 8px;
   width: 100%;
 }
-.title-fin-true {
-  width: 100% !important;
+.title-mobile-true {
+  font-size: 12px;
 }
-.title-form-false,
-.title-form-false:focus, .title-form-false:hover {
-  width: 100%;
-}
-.title-form-true,
-.title-form-true:focus, .title-form-true:hover {
-  width: 100%;
-}
-.title-form-fin-true {
+.title-finished-true {
   color: rgba(0,0,0,.48);
+  width: 100%;
 }
+
 .spacer {
   flex: 1 1 auto;
 }
-.delete, .checked, .checked-false, .checked-,
-.edit, .add-empty, .settings {
+
+.checked-enabled-true, .checked-enabled-false {
   line-height: 0;
   width: 24px;
   height: 24px;
 }
+.checked-enabled-false, .checked-finished-true {
+  margin-left: 24px;
+}
+.drag-handle {
+  width: 24px;
+  height: 24px;
+  cursor: move;
+}
+.delete-task {
+  margin: auto -8px;
+}
 .settings {
   margin: auto calc(8px * 2);
 }
-.edit-icon, .edit-icon-true,
-.drag-icon, .delete-icon, .delete-icon-true,
-.setting-icon, .setting-icon-true {
-  font-size: calc(24px - 8px);
-  line-height: 24px;
-}
-.edit-icon, .edit-icon-true, .edit-icon-false, .drag-icon {
+.edit-task, .drag-icon {
   color: #5d5e5f;
 }
 .delete-menu-icon {
   color: #f44336
-}
-.drag-handle {
-  width: calc(24px - 8px);
-  height: 24px;
-}
-.checked-false, .checked-finished-true, .checked- {
-  margin-left: calc(24px - 8px);
 }
 .add-list {
   font-size: 14px;
@@ -181,20 +175,13 @@
   font-size: 24px;
 }
 .edit-list {
-  line-height: 0;
-  height: 24px;
-  width: 24px;
   margin: auto;
-  padding: 0;
 }
 .display-list-toolbar {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-}
-.drag-handle {
-  cursor: move;
 }
 
 .mat-sidenav-container {
