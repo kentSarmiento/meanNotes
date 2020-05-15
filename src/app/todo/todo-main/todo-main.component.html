@@ -180,15 +180,20 @@
           cdkDrag
           [cdkDragDisabled]="!enabledList ||
                               !todo.localUpdate ||
-                              todo.finished"
+                              todo.finished ||
+                              !isSortableInList"
           (focus)="enableEditTask(todo)"
           (blur)="disableEditTask(todo)"
           #panel>
 
             <span *ngIf="enabledList && todo.localUpdate && !todo.finished">
-            <div class="drag-handle" cdkDragHandle>
-              <mat-icon class="drag-icon">drag_indicator</mat-icon>
-            </div>
+            <span
+              class="drag-handle"
+              cdkDragHandle>
+              <mat-icon
+                *ngIf="isSortableInList"
+                class="drag-icon">drag_indicator</mat-icon>
+            </span>
             </span>
 
             <button
