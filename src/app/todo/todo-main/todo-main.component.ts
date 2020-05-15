@@ -45,6 +45,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   enabledList: string;
   enabledListName: string;
 
+  isFinishedInList = false;
+
   private todoListener : Subscription;
   todos : Todo[] = [];
 
@@ -104,6 +106,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.enabledList = updated.enabled;
         this.enabledListName = this.getEnabledListName();
         this.listEdit = this.getEnabledListLock();
+
+        this.checkFinishedInList();
       });
 
     this.todoListener = this.todoService
@@ -120,6 +124,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
           this.todos.forEach( todo => todo.localUpdate = false );
           this.sortByRank(this.todos);
           this.sortFinishedTasks();
+
+          this.checkFinishedInList();
         } else {
           this.todos = null;
         }
@@ -213,6 +219,16 @@ export class TodoMainComponent implements OnInit, OnDestroy {
       if (a[criteria] < b[criteria]) return 1;
       else if (a[criteria] > b[criteria]) return -1;
       return 0;
+    }
+  }
+
+  private checkFinishedInList() {
+    if (this.todos) {
+      const index = this.todos.findIndex(
+        todo => this.enabledList === todo.list && todo.finished === true);
+
+      if (index > -1) this.isFinishedInList = true;
+      else this.isFinishedInList = false;
     }
   }
 

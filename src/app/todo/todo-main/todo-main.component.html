@@ -144,9 +144,10 @@
             </button>
 
             <button mat-menu-item
-              (click)="deleteFinishedInList(enabledList)">
+              (click)="deleteFinishedInList(enabledList)"
+              [disabled]="!isFinishedInList">
               <mat-icon>remove</mat-icon>
-              <span>Remove finished tasks</span>
+              <span>Remove all finished</span>
             </button>
 
             <button mat-menu-item
