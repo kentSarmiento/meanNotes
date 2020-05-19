@@ -257,10 +257,13 @@
               tabindex="3"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
-                <mat-icon>check_box</mat-icon>
+                <mat-icon>check_circle_outline</mat-icon>
               </span>
-              <span *ngIf="!todo.finished">
-                <mat-icon>check_box_outline_blank</mat-icon>
+              <span *ngIf="!todo.finished && !todo.checkHovered">
+                <mat-icon>radio_button_unchecked</mat-icon>
+              </span>
+              <span *ngIf="!todo.finished && todo.checkHovered">
+                <mat-icon>check</mat-icon>
               </span>
             </button>
 
