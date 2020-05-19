@@ -1,12 +1,15 @@
 @media only screen and (min-width: 768px) {
-  .log-out-list { width: calc(24% - 3%); }
-  .todo-content-list-title { width: calc(81% + 8%); }
-  .todo-content-panel { width: calc(81% + 8%); }
+  .todo-content-list-title,
+  .todo-content-all { width: 81%; }
+  .todo-main-container { width: 100vw; }
+  .todo-content-toolbar { padding: 0 24px; }
+  .todo-content-container { padding-left: 8px; }
 }
 @media only screen and (max-width: 768px) {
-  .log-out-list { width: calc(75% - 8%); }
-  .todo-content-list-title { width: 94%; }
-  .todo-content-panel { width: 94%; }
+  .todo-content-list-title,
+  .todo-content-all { width: 94%; margin: auto; }
+  .todo-main-container { width: 100vw; }
+  .todo-content-toolbar { padding: 0; }
 }
 
 .todo-main-container {
@@ -14,20 +17,26 @@
   overflow: hidden;
   top: 48px;
   bottom: 0;
-  width: 100%;
+  right: 0;
   margin: auto;
   background: #e9ebee;
 }
 .todo-side-container-true {
   background: #e9ebee;
   width: 62%;
+  padding: 0 8px;
 }
 .todo-side-container-false {
-  background: #ffffff;
-  width: 24%;
+  background: #e9ebee;
+  width: calc(24vw - 48px);
+  padding: 0;
+}
+.empty-sidenav-header {
+  height: calc(24px + 8px + 8px) !important;
 }
 .list-drag-container {
   width: 100%;
+  height: calc(24px + 8px);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -48,25 +57,40 @@
   background: #e9ebee;
   padding-top: 8px;
 }
+.todo-content-all {
+  /*border: solid 2px #949494;
+  margin: auto;*/
+}
+.todo-content-toolbar {
+  height: calc(24px + 8px);
+  width: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  background: #e9ebee;
+}
+.todo-content-toolbar-button {
+  height: calc(24px + 8px);
+  line-height: 0;
+  padding: 0 8px;
+}
+
 .todo-list-container {
   margin-bottom: calc(24px + 62px);
 }
-.log-out-list {
-  position: fixed;
-  bottom: 0;
-  background: #e9ebee;
-  margin-left: 8px;
-  padding: 8px 0;
+.padded-list-item {
   padding-left: 8px;
 }
 .todo-content-add-task, .todo-content-list-title {
   height: calc(24px + 8px + 8px);
-  margin: auto;
   padding: 0;
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
   background: #e9ebee;
+  font-size: 24px;
+  font-weight: 500px;
 }
 .add-task-button {
   margin-left: calc(24px - 8px);
@@ -76,11 +100,14 @@
 }
 .todo-content-accordion {
   width: 100%;
+  margin: auto;
   background: transparent;
   display: block;
 }
 .todo-content-panel {
   padding: 8px;
+  width: 100%;
+  min-height: calc(24px + 16px);
   margin: auto;
   margin-top: calc(24px / 8);
   border-bottom: solid 1px #ccc;
@@ -96,6 +123,8 @@
 }
 .todo-content-panel-true {
   border: solid 2px #3f51b5;
+  border-bottom: solid 2px #3f51b5;
+  margin: 8px auto;
 }
 .all-task-button {
   width: 100%;
@@ -109,17 +138,33 @@
 }
 .list-item {
   width: 100%;
+  height: calc(24px + 8px);
+}
+.list-text {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .list-button, .new-list-button {
-  width: 100%;
   text-align: left;
   font-weight: 400;
   padding-left: 24px;
+  border-radius: 0;
+  width: 100%;
+  height: calc(24px + 8px);
+  line-height: 0;
+  border-radius: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .list-button-selected-true {
-  background-color: #e9ebee;
+  background-color: #a4a6a8;
 }
 
+.title-true, .title-false {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 .title-true {
   margin: auto 8px;
   width: calc(100% - 128px);
@@ -145,13 +190,12 @@
   width: 24px;
   height: 24px;
 }
-.checked-enabled-false, .checked-finished-true {
-  margin-left: 24px;
-}
-.drag-handle {
-  width: 24px;
-  height: 24px;
+.drag-handle-true {
   cursor: move;
+  color: #5d5e5f;
+}
+.drag-handle-false {
+  color: #fff;
 }
 .delete-task {
   margin: auto -8px;
@@ -159,7 +203,7 @@
 .settings {
   margin: auto calc(8px * 2);
 }
-.edit-task, .drag-icon {
+.edit-task {
   color: #5d5e5f;
 }
 .delete-menu-icon {
@@ -171,8 +215,14 @@
   padding-left: calc(24px - 8px);
 }
 .display-list {
-  padding-left: 24px;
-  font-size: 24px;
+  min-width: calc(24px + 8px);
+  line-height: calc(24px + 16px);
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.button-width {
+  width: 40px;
+  height: 40px;
 }
 .edit-list {
   margin: auto;
@@ -221,6 +271,8 @@
   height: 24px;
   line-height: 24px;
   margin: 0 0 0 8px;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 ::ng-deep .snack-bar {
@@ -246,7 +298,10 @@
   padding: .25em 0 .75em 8px !important;
 }
 :host ::ng-deep .mat-list-item {
-  height: 36px !important;
+  height: calc(24px + 8px) !important;
+}
+:host ::ng-deep .mat-list-item-content {
+  padding: 0 !important;
 }
 
 :host ::ng-deep .mat-dialog-title {

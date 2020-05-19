@@ -1,6 +1,7 @@
 export interface Todo {
   id: string;
-  localUpdate: boolean;
+  editMode: boolean;
+  checkHovered: boolean;
 
   _id: string;
   creator: string;
@@ -15,7 +16,7 @@ export interface Todo {
 }
 
 export interface List {
-  localUpdate: boolean;
+  editMode: boolean;
 
   _id: string;
   creator: string;

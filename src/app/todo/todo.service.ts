@@ -291,6 +291,10 @@ export class TodoService {
     }
   }
 
+  getTasks() {
+    return this.cachedTasks;
+  }
+
   private generateTaskId() {
     return Math.random().toString(36).substr(2, 9); // temporary id
   }
@@ -452,9 +456,23 @@ export class TodoService {
 
     this.cachedTasks = this.cachedTasks.filter(
       todo => todo.list!==list);
+    this.notifyUpdatedTasks();
 
     if (deletedTasks.length > 0)
       this.http.post<any>(LISTS_URL + list + "/deleteTasks", null)
+        .subscribe(response => {});
+  }
+
+  deleteTasksByOngoing(list: string) {
+    const deletedTasks = this.cachedTasks.filter(todo =>
+      todo.list===list && todo.finished!==true);
+
+    this.cachedTasks = this.cachedTasks.filter(todo =>
+      todo.list!==list || todo.finished===true);
+    this.notifyUpdatedTasks();
+
+    if (deletedTasks.length > 0)
+      this.http.post<any>(LISTS_URL + list + "/deleteOngoingTasks", null)
         .subscribe(response => {});
   }
 

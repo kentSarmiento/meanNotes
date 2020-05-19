@@ -31,6 +31,9 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
   isEmptyList: boolean = true;
   private listListener : Subscription;
 
+  isSidenavOpen: boolean = true;
+  private sidenavListener : Subscription;
+
   readonly todoRoute = TODO_ROUTE;
 
   constructor(
@@ -65,6 +68,12 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
     const list = this.todoService.getLists();
     if (list.length > 0) this.isEmptyList = false;
     else this.isEmptyList = true;
+
+    this.sidenavListener = this.sidebarService
+      .getSidenavToggledListener()
+      .subscribe( isOpen => {
+        this.isSidenavOpen = isOpen;
+      })
   }
 
   openAddTaskDialog() {
@@ -99,5 +108,7 @@ export class TodoHeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.viewUpdated.unsubscribe();
     this.authListener.unsubscribe();
+    this.listListener.unsubscribe();
+    this.sidenavListener.unsubscribe();
   }
 }

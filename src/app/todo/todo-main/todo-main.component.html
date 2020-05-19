@@ -9,7 +9,7 @@
   <mat-sidenav #sidenav
     class="todo-side-container-{{isMobileView}}"
     mode="{{isMobileView ? 'over' : 'side' }}"
-    position="{{isMobileView ? 'end' : 'start' }}"
+    position="{{isMobileView ? 'start' : 'start' }}"
     (keydown.escape)="closeSidenav()">
 
     <div class="todo-list-container">
@@ -19,15 +19,22 @@
         cdkDropList
         (cdkDropListDropped)="sortLists($event)">
 
+        <div
+          class="empty-sidenav-header"
+          cdkFocusInitial>
+        </div>
+
         <mat-list-item>
           <button
             mat-button
             class="all-task-button"
-            (click)="viewAllTasks()">All Tasks</button>
+            (click)="viewAllTasks()">
+            <span class="padded-list-item">All Tasks</span>
+          </button>
         </mat-list-item>
 
         <mat-list-item>
-        Task Lists
+        <span class="padded-list-item">Task Lists</span>
           <span class="spacer"></span>
           <button
             mat-icon-button
@@ -39,6 +46,7 @@
         </mat-list-item>
 
         <mat-list-item
+          class="list-item"
           *ngFor="let list of lists">
           <div
             class="list-drag-container"
@@ -50,7 +58,7 @@
             *ngIf="listsEdit"
             class="drag-handle"
             cdkDragHandle>
-            <mat-icon class="drag-icon">drag_indicator</mat-icon>
+            <mat-icon>drag_indicator</mat-icon>
           </span>
           <span *ngIf="!listsEdit" class="list-item">
             <button
@@ -59,7 +67,7 @@
                       list-button-selected-{{list._id == enabledList}}"
               (click)="changeEnabledList(list._id)">{{list.title}}</button>
           </span>
-          <span *ngIf="listsEdit" class="list-item">{{list.title}}</span>
+          <span *ngIf="listsEdit" class="list-text">{{list.title}}</span>
 
           </div>
         </mat-list-item>
@@ -79,7 +87,6 @@
           (focus)="enableAddList()"
           (blur)="disableAddList()"
           (keydown.enter)="[addList(list.value), list.value='']"
-          cdkFocusInitial
           #list>
         <mat-hint
           *ngIf="listAdd &&
@@ -91,17 +98,6 @@
 
     </div>
 
-      <div
-        class="log-out-list"
-        *ngIf="isMobileView">
-        <button
-          mat-button
-          class="all-task-button log-out-button"
-          (click)="logout()">
-          Log out <mat-icon>exit_to_app</mat-icon>
-        </button>
-      </div>
-
   </mat-sidenav>
 
   <mat-spinner class="large-spinner" *ngIf="isLoading"></mat-spinner>
@@ -111,17 +107,18 @@
       <div class="todo-content-header" *ngIf="lists.length!=0">
         <div class="todo-content-list-title">
 
-          <input
-            matInput
-            class="display-list"
-            type="text"
-            [value]="enabledListName"
-            [style.width.ch]="(display.value.length > 0) ? display.value.length : enabledListName.length"
-            readonly="true"
-            id="display-list-title"
-            #display>
+          <button
+            *ngIf="isMobileView"
+            mat-icon-button
+            class="toolbar-button horizontal-button"
+            (click)="toggleMenu()">
+            <mat-icon class="menu-icon">menu</mat-icon>
+          </button>
 
+          <span class="spacer" *ngIf="isMobileView"></span>
+          <span class="display-list">{{enabledListName}}</span>
           <span class="spacer"></span>
+
           <span *ngIf="enabledList!=null">
           <button
             mat-icon-button
@@ -129,6 +126,7 @@
             <mat-icon>more_vert</mat-icon>
           </button>
           </span>
+          <span *ngIf="enabledList==null" class="button-width"></span>
 
           <mat-menu #menu="matMenu">
             <button mat-menu-item
@@ -144,13 +142,6 @@
             </button>
 
             <button mat-menu-item
-              (click)="deleteFinishedInList(enabledList)"
-              [disabled]="!isFinishedInList">
-              <mat-icon>remove</mat-icon>
-              <span>Remove all finished</span>
-            </button>
-
-            <button mat-menu-item
               (click)="deleteListById(enabledList)">
               <mat-icon class="delete-menu-icon">delete</mat-icon>
               <span>Delete list</span>
@@ -158,6 +149,69 @@
           </mat-menu>
 
         </div>
+      </div>
+
+      <div class="todo-content-all">
+      <div class="todo-content-toolbar" *ngIf="lists.length!=0">
+          <button
+            mat-button
+            class="todo-content-toolbar-button"
+            color="primary"
+            (click)="openAddTaskDialog()">
+            Add Task
+          </button>
+          <span class="spacer"></span>
+          <button
+            mat-button
+            *ngIf="todos.length!=0 && enabledList!=null"
+            class="todo-content-toolbar-button"
+            [matMenuTriggerFor]="showMenu">
+            <span>Display</span>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+          <button
+            mat-button
+            *ngIf="todos.length!=0 && enabledList!=null"
+            color="warn"
+            class="todo-content-toolbar-button"
+            [matMenuTriggerFor]="deleteMenu">
+            <span>Delete</span>
+            <mat-icon>keyboard_arrow_down</mat-icon>
+          </button>
+
+          <mat-menu #showMenu="matMenu">
+            <button mat-menu-item
+              (click)="displayAllTasks()">
+              <span>All</span>
+            </button>
+            <button mat-menu-item
+              (click)="displayOngoingTasks()"
+              [disabled]="!isOngoingInList">
+              <span>Ongoing</span>
+            </button>
+            <button mat-menu-item
+              (click)="displayFinishedTasks()"
+              [disabled]="!isFinishedInList">
+              <span>Finished</span>
+            </button>
+          </mat-menu>
+
+          <mat-menu #deleteMenu="matMenu">
+            <button mat-menu-item
+              (click)="deleteAllInList(enabledList)">
+              <span>All</span>
+            </button>
+            <button mat-menu-item
+              (click)="deleteOngoingInList(enabledList)"
+              [disabled]="!isOngoingInList">
+              <span>Ongoing</span>
+            </button>
+            <button mat-menu-item
+              (click)="deleteFinishedInList(enabledList)"
+              [disabled]="!isFinishedInList">
+              <span>Finished</span>
+            </button>
+          </mat-menu>
       </div>
 
       <div
@@ -174,35 +228,33 @@
           *ngFor="let todo of todos"
           id="panel-{{todo.id}}"
           class="todo-content-panel
-                  todo-content-panel-{{todo.localUpdate}}
-                  mat-elevation-z2"
+                  todo-content-panel-{{todo.editMode}}
+                  todo-content-panel-fin-{{todo.finished}}"
           tabindex="1"
           cdkDrag
           [cdkDragDisabled]="!enabledList ||
-                              !todo.localUpdate ||
+                              !todo.editMode ||
                               todo.finished ||
                               !isSortableInList"
-          (focus)="enableEditTask(todo)"
+          (click)="enableEditTask(todo)"
           (blur)="disableEditTask(todo)"
           #panel>
 
-            <span *ngIf="enabledList && todo.localUpdate && !todo.finished">
-            <span
-              class="drag-handle"
-              cdkDragHandle>
-              <mat-icon
-                *ngIf="isSortableInList"
-                class="drag-icon">drag_indicator</mat-icon>
-            </span>
-            </span>
+            <mat-icon
+              *ngIf="enabledList &&
+                      todo.editMode &&
+                      !todo.finished"
+              class="drag-handle-{{isSortableInList}}"
+              cdkDragHandle>drag_indicator</mat-icon>
 
             <button
               mat-icon-button
-              class="checked-enabled-{{todo.localUpdate}}
+              (mouseover)="checkButtonHover(todo)"
+              (mouseout)="checkButtonHoverOut(todo)"
+              class="checked-enabled-{{todo.editMode}}
                       checked-finished-{{todo.finished}}"
               color="primary"
               tabindex="3"
-              (blur)="disableEditTask(todo)"
               (click)="updateTaskFinished(todo.id)">
               <span *ngIf="todo.finished">
                 <mat-icon>check_box</mat-icon>
@@ -213,7 +265,7 @@
             </button>
 
             <span
-              class="title-{{todo.localUpdate}}
+              class="title-{{todo.editMode}}
                       title-finished-{{todo.finished}}
                       title-mobile-{{isMobileView}}">
                 {{todo.title}}
@@ -230,26 +282,27 @@
               </button>
             </span>
 
-            <span *ngIf="enabledList!=null && todo.localUpdate">
-            <span class="spacer"></span>
-            <span *ngIf="!todo.finished">
             <button
               mat-icon-button
+              *ngIf="enabledList!=null &&
+                      todo.editMode &&
+                      !todo.finished"
               class="edit-task"
               (click)="openEditTaskDialog(todo)">
               <mat-icon>edit</mat-icon>
             </button>
-            </span>
             <button
               mat-icon-button
+              *ngIf="enabledList!=null &&
+                      todo.editMode"
               class="delete-task"
               color="warn"
               (click)="deleteTask(todo.id)">
               <mat-icon>delete</mat-icon>
             </button>
-            </span>
 
         </div>
+      </div>
       </div>
 
   </mat-sidenav-content>

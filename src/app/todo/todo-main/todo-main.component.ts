@@ -46,6 +46,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   enabledListName: string;
 
   isFinishedInList = false;
+  isOngoingInList = false;
   isSortableInList = false;
 
   private todoListener : Subscription;
@@ -123,14 +124,16 @@ export class TodoMainComponent implements OnInit, OnDestroy {
             this.todos = updated.todos.filter(todo =>
                 todo.list===this.enabledList);
           }
-          this.todos.forEach( todo => todo.localUpdate = false );
+          this.todos.forEach( todo => todo.editMode = false );
+          this.todos.forEach( todo => todo.checkHovered = false );
+
           this.sortByRank(this.todos);
           this.sortFinishedTasks();
 
           this.checkFinishedInList();
           this.checkSortableInList();
         } else {
-          this.todos = null;
+          this.todos = [];
         }
       });
 
@@ -179,11 +182,13 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     if (!this.isMobileView) this.sidenav.open();
 
     this.sidenav.openedChange.subscribe((open: boolean) => {
-      // When sidenav is opened, task edit should be disabled
-      if (open) this.toggleEditList(false);
       // When sidenav is closed, list edit should be disabled
-      else this.toggleEditLists(false);
+      if (!open) this.toggleEditLists(false);
     });
+  }
+
+  toggleMenu() {
+    this.sidenav.toggle();
   }
 
   closeSidenav() {
@@ -226,17 +231,23 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   private checkFinishedInList() {
-    if (this.todos) {
-      const index = this.todos.findIndex(
+    if (this.todos.length > 0) {
+      let index = this.todos.findIndex(
         todo => this.enabledList === todo.list && todo.finished === true);
 
       if (index > -1) this.isFinishedInList = true;
       else this.isFinishedInList = false;
+
+      index = this.todos.findIndex(
+        todo => this.enabledList === todo.list && todo.finished !== true);
+
+      if (index > -1) this.isOngoingInList = true;
+      else this.isOngoingInList = false;
     }
   }
 
   private checkSortableInList() {
-    if (this.todos) {
+    if (this.todos.length > 0) {
       const sortable = this.todos.filter(
         todo => this.enabledList === todo.list && todo.finished !== true);
 
@@ -361,6 +372,38 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  deleteAllInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByList(list);
+      }
+    });
+  }
+
+  deleteOngoingInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all ongoing tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByOngoing(list);
+      }
+    });
+  }
+
   deleteFinishedInList(list: string) {
     const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
       width: '340px', maxHeight: '240px',
@@ -373,6 +416,39 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.todoService.deleteTasksByFinished(list);
+      }
+    });
+  }
+
+  displayAllTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list);
+    this.sortByRank(this.todos);
+    this.sortFinishedTasks();
+  }
+
+  displayOngoingTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list && todo.finished !== true);
+  }
+
+  displayFinishedTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list && todo.finished === true);
+  }
+
+  openAddTaskDialog() {
+    const dialogRef = this.dialog.open(TodoAddDialogComponent, {
+      width: '480px',
+      data: { title: "", list: "" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.todoService.addTask(result.title, result.list);
       }
     });
   }
@@ -397,23 +473,25 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.todoService.updateTaskFinished(id);
   }
 
-  toggleEditListName(isEdit: boolean) {
-    this.listEditName = isEdit;
-    document.getElementById('display-list-title').focus();
+  checkButtonHover(todo: Todo) {
+    this.todos.forEach( todo => todo.checkHovered = false );
+    todo.checkHovered = true;
+    setTimeout(() => { todo.checkHovered = false }, 500);
   }
 
-  toggleEditList(isEdit: boolean) {
-    this.listEdit = isEdit;
+  checkButtonHoverOut(todo: Todo) {
+    this.todos.forEach( todo => todo.checkHovered = false );
   }
 
   enableEditTask(todo: Todo) {
-    this.todos.forEach( todo => todo.localUpdate = false );
+    this.todos.forEach( todo => todo.editMode = false );
     setTimeout(() => {
-      if (this.enabledList)  todo.localUpdate = true;
+      if (this.enabledList)  todo.editMode = true;
     }, 240);
   }
+
   disableEditTask(todo: Todo) {
-    todo.localUpdate = false;
+    todo.editMode = false;
   }
 
   updateTaskName(id: string, title: string) {
@@ -424,7 +502,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     const ranks = this.todos.map(list => { return list.rank; });
     let sortedTasks: Todo[] = [];
 
-    this.todos.forEach( todo => todo.localUpdate = false );
+    this.todos.forEach( todo => todo.editMode = false );
     if (event.previousIndex == event.currentIndex) {
       return;
     } else if (event.previousIndex < event.currentIndex) {

@@ -1,6 +1,12 @@
 <mat-toolbar color="primary">
   <span>
-    <a mat-raised-button routerLink="/"><font color="#3f51b5"><b>N</b></font></a>
+    <button
+      mat-raised-button
+      class="main-button"
+      color="primary"
+      routerLink="/">
+      <b>N</b>
+    </button>
   </span>
   <span *ngIf="isUserAuthenticated && isNotesApp()">
     <a mat-button [routerLink]="[noteRoute, 'create']">Add</a>
