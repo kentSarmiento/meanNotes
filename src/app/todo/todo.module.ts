@@ -1,10 +1,12 @@
 import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 import { TodoMainComponent } from "./todo-main/todo-main.component";
-import { TodoEditDialogComponent } from "./todo-main/todo-main.component";
-import { TodoDeleteDialogComponent } from "./todo-main/todo-main.component";
+import { TodoAddDialogComponent } from "./todo-main/todo-main.component";
+import { TodoListDialogComponent } from "./todo-main/todo-main.component";
+import { TodoConfirmDialogComponent } from "./todo-main/todo-main.component";
 import { TodoHeaderComponent } from "./todo-header/todo-header.component";
 import { TodoRoutingModule } from './todo-routing.module';
 import { AngularMaterialModule } from "../angular-material.module";
@@ -12,14 +14,17 @@ import { AngularMaterialModule } from "../angular-material.module";
 @NgModule({
   declarations: [
     TodoMainComponent,
-    TodoEditDialogComponent,
-    TodoDeleteDialogComponent,
+    TodoAddDialogComponent,
+    TodoListDialogComponent,
+    TodoConfirmDialogComponent,
     TodoHeaderComponent
   ],
   imports: [
     CommonModule,
     AngularMaterialModule,
     RouterModule,
+    ReactiveFormsModule,
+    FormsModule,
     TodoRoutingModule
   ]
 })

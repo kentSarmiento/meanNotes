@@ -1,15 +1,16 @@
 import { Component, Inject, OnInit, OnDestroy, ViewChild } from "@angular/core";
 import { Subscription } from "rxjs";
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatListModule } from "@angular/material/list";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar, MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from '@angular/router';
+
 import { TodoConfig } from "../todo.config";
 import { TodoHeaderComponent } from "../todo-header/todo-header.component";
 import { TodoService } from "../todo.service";
+import { OperationMethod } from "../todo.service";
 import { Todo, List } from "../todo.model";
 import { AuthService } from "../../auth/auth.service";
 import { TodoSidebarService } from "./todo-sidebar.service";
@@ -19,9 +20,17 @@ const TODO_ROUTE = TodoConfig.rootRoute;
 
 export interface TodoData {
   title: string;
+  list: string;
+  isCopy: boolean;
 }
-export interface DeleteDialogData {
-  isList: boolean;
+export interface ListData {
+  title: string;
+  isCopy: boolean;
+}
+
+export interface ConfirmDialogData {
+  title: string;
+  message: string;
 }
 
 @Component({
@@ -36,9 +45,16 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   enabledList: string;
   enabledListName: string;
 
+  isFinishedInList = false;
+  isOngoingInList = false;
+  isSortableInList = false;
+
   private todoListener : Subscription;
   todos : Todo[] = [];
+
+  listAdd = false;
   listEdit = false;
+  listEditName = false;
 
   private authListener : Subscription;
   isUserAuthenticated = false;
@@ -61,9 +77,10 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private authService: AuthService,
     private sidebarService: TodoSidebarService,
-    private dialog: MatDialog,
+    private responsiveService: ResponsiveService,
     private activatedRoute: ActivatedRoute,
-    private responsiveService: ResponsiveService) {}
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -72,7 +89,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     this.activatedRoute.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         const id = paramMap.get('id');
-        this.enabledList = id;
+        if (id !== "all") this.enabledList = id;
       }
     });
 
@@ -91,6 +108,9 @@ export class TodoMainComponent implements OnInit, OnDestroy {
         this.enabledList = updated.enabled;
         this.enabledListName = this.getEnabledListName();
         this.listEdit = this.getEnabledListLock();
+
+        this.checkFinishedInList();
+        this.checkSortableInList();
       });
 
     this.todoListener = this.todoService
@@ -104,17 +124,22 @@ export class TodoMainComponent implements OnInit, OnDestroy {
             this.todos = updated.todos.filter(todo =>
                 todo.list===this.enabledList);
           }
-          this.todos.forEach( todo => todo.localUpdate = false );
+          this.todos.forEach( todo => todo.editMode = false );
+          this.todos.forEach( todo => todo.checkHovered = false );
+
           this.sortByRank(this.todos);
           this.sortFinishedTasks();
+
+          this.checkFinishedInList();
+          this.checkSortableInList();
         } else {
-          this.todos = null;
+          this.todos = [];
         }
       });
 
     this.syncListener = this.todoService
       .getSyncUpdatedListener()
-      .subscribe( (sync: { isOngoing: boolean, isManual: boolean }) => {
+      .subscribe( (sync: { isOngoing: boolean, operation: OperationMethod }) => {
         this.isSyncing = sync.isOngoing;
 
         if (!sync.isOngoing) {
@@ -127,6 +152,8 @@ export class TodoMainComponent implements OnInit, OnDestroy {
             if (!this.enabledList) this.sidenav.open();
           }
           this.isLoading = false;
+
+          this.notifyOperationResult(sync.operation)
         }
       });
 
@@ -155,11 +182,13 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     if (!this.isMobileView) this.sidenav.open();
 
     this.sidenav.openedChange.subscribe((open: boolean) => {
-      // When sidenav is opened, task edit should be disabled
-      if (open) this.toggleEditList(false);
       // When sidenav is closed, list edit should be disabled
-      else this.toggleEditLists(false);
+      if (!open) this.toggleEditLists(false);
     });
+  }
+
+  toggleMenu() {
+    this.sidenav.toggle();
   }
 
   closeSidenav() {
@@ -201,6 +230,32 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     }
   }
 
+  private checkFinishedInList() {
+    if (this.todos.length > 0) {
+      let index = this.todos.findIndex(
+        todo => this.enabledList === todo.list && todo.finished === true);
+
+      if (index > -1) this.isFinishedInList = true;
+      else this.isFinishedInList = false;
+
+      index = this.todos.findIndex(
+        todo => this.enabledList === todo.list && todo.finished !== true);
+
+      if (index > -1) this.isOngoingInList = true;
+      else this.isOngoingInList = false;
+    }
+  }
+
+  private checkSortableInList() {
+    if (this.todos.length > 0) {
+      const sortable = this.todos.filter(
+        todo => this.enabledList === todo.list && todo.finished !== true);
+
+      if (sortable.length > 1) this.isSortableInList = true;
+      else this.isSortableInList = false;
+    }
+  }
+
   getListName(id: string) {
     const index = this.lists.findIndex(
       list => id === list._id);
@@ -228,13 +283,34 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   addList(title: string) {
-    this.isLoading = true;
-    this.todoService.addList(title);
-    this.closeSidenav();
+    if (title) {
+      this.isLoading = true;
+      this.todoService.addList(title);
+      this.closeSidenav();
+    }
   }
 
-  updateListName(title: string) {
-    this.todoService.updateListName(this.enabledList, title);
+  openEditListDialog(isCopy: boolean) {
+    const dialogRef = this.dialog.open(TodoListDialogComponent, {
+      width: '480px',
+      data: { title: this.enabledListName, isCopy: isCopy }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (isCopy)
+          this.todoService.copyList(this.enabledList, result.title);
+        else
+          this.todoService.updateListName(this.enabledList, result.title);
+      }
+    });
+  }
+
+  enableAddList() {
+    this.listAdd = true;
+  }
+  disableAddList() {
+    this.listAdd = false;
   }
 
   toggleEditLists(isEdit: boolean) {
@@ -264,7 +340,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteList(list: List) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
       width: '240px', maxHeight: '240px',
       data: { isList: true }
     });
@@ -278,42 +354,144 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  openAddTaskDialog(title: string) {
-    const dialogRef = this.dialog.open(TodoEditDialogComponent, {
-      width: '480px', maxHeight: '320px',
-      data: { title: title }
+  deleteListById(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete List and Tasks",
+        message: "Are you sure you want to delete this list and all of its tasks?"
+      }
     });
 
-    dialogRef.afterClosed().subscribe(title => {
-      if (title) {
-        this.addTask(title);
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteList(list);
+        this.enabledList=null;
+        this.todoService.changeEnabledListToAll();
       }
     });
   }
 
-  addTask(title: string) {
-    this.todoService.addTask(title, this.enabledList);
-    setTimeout(() => {
-      const element = document.getElementById('content-accordion');
-      element.scrollIntoView();
-    }, 100);
+  deleteAllInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByList(list);
+      }
+    });
+  }
+
+  deleteOngoingInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all ongoing tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByOngoing(list);
+      }
+    });
+  }
+
+  deleteFinishedInList(list: string) {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
+      width: '340px', maxHeight: '240px',
+      data: {
+        title: "Delete finished tasks",
+        message: "Are you sure you want to delete all finished tasks in current list?"
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.todoService.deleteTasksByFinished(list);
+      }
+    });
+  }
+
+  displayAllTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list);
+    this.sortByRank(this.todos);
+    this.sortFinishedTasks();
+  }
+
+  displayOngoingTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list && todo.finished !== true);
+  }
+
+  displayFinishedTasks() {
+    this.todos = this.todoService.getTasks();
+    this.todos = this.todos.filter(
+        todo => this.enabledList === todo.list && todo.finished === true);
+  }
+
+  openAddTaskDialog() {
+    const dialogRef = this.dialog.open(TodoAddDialogComponent, {
+      width: '480px',
+      data: { title: "", list: "" }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.todoService.addTask(result.title, result.list);
+      }
+    });
+  }
+
+  openEditTaskDialog(todo: Todo) {
+    const dialogRef = this.dialog.open(TodoAddDialogComponent, {
+      width: '480px',
+      data: { title: todo.title, list: todo.list }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.isCopy)
+          this.todoService.addTask(result.title, result.list);
+        else
+          this.todoService.updateTask(todo._id, result.title, result.list);
+      }
+    });
   }
 
   updateTaskFinished(id: string) {
     this.todoService.updateTaskFinished(id);
   }
 
-  toggleEditList(isEdit: boolean) {
-    this.listEdit = isEdit;
-    document.getElementById('display-list-title').focus();
-
-    if (!isEdit) {
-      this.todos.forEach( todo => todo.localUpdate = false );
-    }
+  checkButtonHover(todo: Todo) {
+    this.todos.forEach( todo => todo.checkHovered = false );
+    todo.checkHovered = true;
+    setTimeout(() => { todo.checkHovered = false }, 500);
   }
 
-  toggleEditTask(todo: Todo) {
-    todo.localUpdate = !todo.localUpdate;
+  checkButtonHoverOut(todo: Todo) {
+    this.todos.forEach( todo => todo.checkHovered = false );
+  }
+
+  enableEditTask(todo: Todo) {
+    this.todos.forEach( todo => todo.editMode = false );
+    setTimeout(() => {
+      if (this.enabledList)  todo.editMode = true;
+    }, 240);
+  }
+
+  disableEditTask(todo: Todo) {
+    todo.editMode = false;
   }
 
   updateTaskName(id: string, title: string) {
@@ -324,6 +502,7 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     const ranks = this.todos.map(list => { return list.rank; });
     let sortedTasks: Todo[] = [];
 
+    this.todos.forEach( todo => todo.editMode = false );
     if (event.previousIndex == event.currentIndex) {
       return;
     } else if (event.previousIndex < event.currentIndex) {
@@ -357,9 +536,12 @@ export class TodoMainComponent implements OnInit, OnDestroy {
   }
 
   deleteTask(id: string) {
-    const dialogRef = this.dialog.open(TodoDeleteDialogComponent, {
+    const dialogRef = this.dialog.open(TodoConfirmDialogComponent, {
       width: '240px', maxHeight: '240px',
-      data: { isList: false }
+      data: {
+        title: "Delete task",
+        message: "Are you sure you want to delete this task?"
+      }
     });
 
     dialogRef.afterClosed().subscribe(confirmed => {
@@ -369,7 +551,51 @@ export class TodoMainComponent implements OnInit, OnDestroy {
     });
   }
 
-  triggerSync(isManual: boolean) {}
+  private notifyOperationResult(operation: OperationMethod) {
+    let message: string = null;
+
+    switch (operation) {
+      case OperationMethod.CREATE_LIST:
+        message = "LIST created successfully";
+        break;
+      case OperationMethod.RENAME_LIST:
+        message = "LIST renamed successfully";
+        break;
+      case OperationMethod.DELETE_LIST:
+        message = "LIST deleted successfully";
+        break;
+      case OperationMethod.CREATE_TASK:
+        message = "TASK created successfully";
+        break;
+      case OperationMethod.RENAME_TASK:
+        message = "TASK renamed successfully";
+        break;
+      case OperationMethod.DELETE_TASK:
+        message = "TASK deleted successfully";
+        break;
+      case OperationMethod.FINISH_TASK:
+        message = "TASK finished successfully";
+        break;
+      case OperationMethod.ONGOING_TASK:
+        message = "TASK restarted successfully";
+        break;
+
+      default:
+        break;
+    }
+
+    if (message) this.openSnackBar(message);
+  }
+
+  private openSnackBar(message: string) {
+    const mainClass = "snack-bar";
+    const subClass = "snack-bar-" + this.isMobileView;
+
+    this.snackBar.open(message, "Dismiss", {
+      duration: 2400,
+      panelClass: [ mainClass, subClass ],
+    });
+  }
 
   logout() {
     this.authService.logout();
@@ -385,23 +611,96 @@ export class TodoMainComponent implements OnInit, OnDestroy {
 }
 
 @Component({
-  selector: 'todo-edit-dialog',
-  templateUrl: './todo-edit-dialog.html',
+  templateUrl: './todo-add-dialog.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoEditDialogComponent {
+export class TodoAddDialogComponent {
+  form: FormGroup;
+  lists: List[];
+  enabledList: string;
+  isNew: boolean;
+  isCopy: boolean;
+
   constructor(
-    public dialogRef: MatDialogRef<TodoEditDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: TodoData) {}
+    public dialogRef: MatDialogRef<TodoAddDialogComponent>,
+    private todoService: TodoService,
+    @Inject(MAT_DIALOG_DATA) public data: TodoData) {
+      this.isNew = (data.title.length > 0) ? false : true;
+      this.isCopy = false;
+      this.lists = this.todoService.getLists();
+      this.enabledList = this.todoService.getEnabledList();
+      this.form = new FormGroup({
+        title: new FormControl(data.title, {
+          validators: [Validators.required]
+        }),
+        list: new FormControl((this.isNew) ? this.enabledList : data.list, {
+          validators: [Validators.required]
+        })
+      });
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      return;
+    }
+    const result: TodoData = {
+      title: this.form.value.title,
+      list: this.form.value.list,
+      isCopy: this.isCopy
+    }
+    this.dialogRef.close(result);
+  }
+
+  closeDialog() {
+    this.form.reset();
+    this.dialogRef.close();
+  }
 }
 
 @Component({
-  selector: 'todo-delete-dialog',
-  templateUrl: './todo-delete-dialog.html',
+  templateUrl: './todo-list-dialog.html',
   styleUrls: [ './todo-main.component.css' ]
 })
-export class TodoDeleteDialogComponent {
+export class TodoListDialogComponent {
+  form: FormGroup;
+  isNew: boolean;
+  isCopy: boolean;
+
   constructor(
-    public dialogRef: MatDialogRef<TodoDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DeleteDialogData) {}
+    public dialogRef: MatDialogRef<TodoListDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ListData) {
+      this.isNew = (data.title.length > 0) ? false : true;
+      this.isCopy = data.isCopy;
+      this.form = new FormGroup({
+        title: new FormControl(data.title, {
+          validators: [Validators.required]
+        })
+      });
+  }
+
+  submit() {
+    if (this.form.invalid) {
+      return;
+    }
+    const result: ListData = {
+      title: this.form.value.title,
+      isCopy: this.isCopy
+    }
+    this.dialogRef.close(result);
+  }
+
+  closeDialog() {
+    this.form.reset();
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  templateUrl: './todo-confirm-dialog.html',
+  styleUrls: [ './todo-main.component.css' ]
+})
+export class TodoConfirmDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<TodoConfirmDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {}
 }

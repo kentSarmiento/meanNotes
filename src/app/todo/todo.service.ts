@@ -11,6 +11,24 @@ const LISTS_URL = environment.serverUrl + "/lists/";
 const TASKS_URL = environment.serverUrl + "/tasks/"
 const TODO_ROUTE = TodoConfig.rootRoute;
 
+export enum OperationMethod {
+  NONE = -1,
+  POST = 0,
+  GET,
+  PUT,
+  DELETE,
+
+  CREATE_LIST,
+  RENAME_LIST,
+  DELETE_LIST,
+
+  CREATE_TASK,
+  RENAME_TASK,
+  FINISH_TASK,
+  ONGOING_TASK,
+  DELETE_TASK
+};
+
 @Injectable({providedIn: "root"})
 export class TodoService {
   private listUpdated = new Subject<{ lists: List[], enabled: string }>();
@@ -20,7 +38,7 @@ export class TodoService {
   private todoUpdated = new Subject<{ todos: Todo[] }>();
   private cachedTasks: Todo[] = [];
 
-  private syncUpdated = new Subject<{ isOngoing: boolean, isManual: boolean }>();
+  private syncUpdated = new Subject<{ isOngoing: boolean, operation: OperationMethod }>();
 
   constructor(
     private http: HttpClient,
@@ -38,22 +56,38 @@ export class TodoService {
     return this.syncUpdated.asObservable();
   }
 
+  private notifyUpdatedTasks() {
+    this.todoUpdated.next({ todos: this.cachedTasks });
+  }
+
+  private notifyUpdatedLists() {
+    this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+  }
+
+  private notifyOngoingSync() {
+    this.syncUpdated.next({ isOngoing: true, operation: OperationMethod.NONE });
+  }
+
+  private notifyFinishedSync(op: OperationMethod) {
+    this.syncUpdated.next({ isOngoing: false, operation: op });
+  }
+
   retrieveDataFromServer(list: string) {
-    this.syncUpdated.next({ isOngoing: true, isManual: false });
+    this.notifyOngoingSync();
     this.http
       .get<any>(LISTS_URL)
       .subscribe(response => {
 
         this.enabledList = list;
-        this.listUpdated.next({ lists: response.lists, enabled: this.enabledList });
         this.cachedLists = response.lists;
+        this.notifyUpdatedLists();
         this.http
           .get<any>(TASKS_URL)
           .subscribe(response => {
-            this.todoUpdated.next({ todos: response.tasks });
             this.cachedTasks = response.tasks;
+            this.notifyUpdatedTasks();
 
-            this.syncUpdated.next({ isOngoing: false, isManual: false });
+            this.notifyFinishedSync(OperationMethod.GET);
           });
       });
   }
@@ -62,9 +96,9 @@ export class TodoService {
     this.router.navigate([TODO_ROUTE]);
 
     this.enabledList = null;
-    this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-    this.todoUpdated.next({ todos: this.cachedTasks });
-    this.syncUpdated.next({ isOngoing: false, isManual: true });
+    this.notifyUpdatedLists();
+    this.notifyUpdatedTasks();
+    this.notifyFinishedSync(OperationMethod.NONE);
   }
 
   changeEnabledList(list: string) {
@@ -76,19 +110,19 @@ export class TodoService {
         const updated = this.updateCachedList(response);
         if (updated) {
           this.enabledList = response._id;
-          this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+          this.notifyUpdatedLists();
           this.http.get<any>(LISTS_URL + list + "/tasks")
             .subscribe(response => {
 
               this.updateCachedTasks(response.tasks);
-              this.todoUpdated.next({ todos: this.cachedTasks });
-              this.syncUpdated.next({ isOngoing: false, isManual: true });
+              this.notifyUpdatedTasks();
+              this.notifyFinishedSync(OperationMethod.GET);
             });
         } else {
           this.enabledList = response._id;
-          this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
-          this.todoUpdated.next({ todos: this.cachedTasks });
-          this.syncUpdated.next({ isOngoing: false, isManual: true });
+          this.notifyUpdatedLists();
+          this.notifyUpdatedTasks();
+          this.notifyFinishedSync(OperationMethod.GET);
         }
       });
   }
@@ -126,21 +160,74 @@ export class TodoService {
     }
   }
 
+  getLists() {
+    return this.cachedLists;
+  }
+
+  getEnabledList() {
+    return this.enabledList;
+  }
+
   addList(title: string) {
     const list = {
       title: title
     };
 
-    this.syncUpdated.next({ isOngoing: true, isManual: true });
+    this.notifyOngoingSync();
     this.http.post<any>(LISTS_URL, list)
       .subscribe(response => {
         this.updateCachedList(response);
         this.enabledList = response._id;
-        this.listUpdated.next({ lists: this.cachedLists, enabled: this.enabledList });
+        this.notifyUpdatedLists();
         this.todoUpdated.next({ todos: [] });
 
         this.router.navigate([TODO_ROUTE, response._id]);
-        this.syncUpdated.next({ isOngoing: false, isManual: true });
+        this.notifyFinishedSync(OperationMethod.CREATE_LIST);
+      });
+  }
+
+  copyTasks(from: string, to: string) {
+    const copiedTasks = this.cachedTasks.filter(
+      todo => todo.list===from);
+
+    if (copiedTasks.length > 0) {
+      let newTasks = [];
+      for (let idx=0; idx < copiedTasks.length; idx++) {
+        const task = {
+          id: this.generateTaskId(),
+          title: copiedTasks[idx].title,
+          list: to,
+          rank: this.generateTaskRank()
+        };
+        newTasks.push(task)
+      }
+
+      const taskList = {
+        total: newTasks.length,
+        tasks: newTasks
+      };
+      this.http.post<any>(TASKS_URL + "batchCreate", taskList)
+        .subscribe(response => {
+          /* Update list version */
+          this.http.put<any>(LISTS_URL + to, null)
+            .subscribe(response => {});
+        });
+    }
+  }
+
+  copyList(from: string, title: string) {
+    const list = {
+      title: title
+    };
+
+    this.notifyOngoingSync();
+    this.http.post<any>(LISTS_URL, list)
+      .subscribe(response => {
+        this.updateCachedList(response);
+        this.notifyUpdatedLists();
+
+        this.copyTasks(from, response._id);
+        this.notifyFinishedSync(OperationMethod.CREATE_LIST);
       });
   }
 
@@ -152,11 +239,11 @@ export class TodoService {
       if (this.cachedLists[index].title !== title) {
         this.cachedLists[index].title = title;
 
-        this.syncUpdated.next({ isOngoing: true, isManual: true });
+        this.notifyOngoingSync();
         this.http.put<any>(LISTS_URL + id, this.cachedLists[index])
           .subscribe(response => {
             this.updateCachedList(response);
-            this.syncUpdated.next({ isOngoing: false, isManual: true });
+            this.notifyFinishedSync(OperationMethod.RENAME_LIST);
           });
       }
     }
@@ -169,11 +256,11 @@ export class TodoService {
     if (index > -1) {
       this.cachedLists[index].locked = locked;
 
-      this.syncUpdated.next({ isOngoing: true, isManual: true });
+      this.notifyOngoingSync();
       this.http.put<any>(LISTS_URL + id, this.cachedLists[index])
         .subscribe(response => {
           this.updateCachedList(response);
-          this.syncUpdated.next({ isOngoing: false, isManual: true });
+          this.notifyFinishedSync(OperationMethod.NONE);
         });
     }
   }
@@ -194,10 +281,18 @@ export class TodoService {
 
     if (index > -1) {
       this.cachedLists.splice(index, 1);
+
       this.http.delete<any>(LISTS_URL + id)
         .subscribe(response => {});
       this.deleteTasksByList(id);
+
+      /* No need to wait for backend processing */
+      this.notifyFinishedSync(OperationMethod.DELETE_LIST);
     }
+  }
+
+  getTasks() {
+    return this.cachedTasks;
   }
 
   private generateTaskId() {
@@ -224,21 +319,54 @@ export class TodoService {
     };
 
     this.updateCachedTask(task);
-    this.todoUpdated.next({ todos: this.cachedTasks });
+    this.notifyUpdatedTasks();
 
     /* Background sync with backend server */
-    this.syncUpdated.next({ isOngoing: true, isManual: true });
+    this.notifyOngoingSync();
     this.http.post<any>(TASKS_URL, task)
       .subscribe(response => {
 
         this.updateCachedTask(response);
-        this.todoUpdated.next({ todos: this.cachedTasks });
-        this.syncUpdated.next({ isOngoing: false, isManual: true });
+        this.notifyUpdatedTasks();
+        this.notifyFinishedSync(OperationMethod.CREATE_TASK);
 
         /* Update list version */
         this.http.put<any>(LISTS_URL + list, null)
           .subscribe(response => {});
       });
+  }
+
+  updateTask(id: string, title: string, list: string) {
+    const index = this.cachedTasks.findIndex(cachedTask =>
+      id === cachedTask._id ||
+      id === cachedTask.id);
+
+    if (index > -1) {
+      const task = this.cachedTasks[index];
+      const originalList = task.list;
+      if (task.title !== title || task.list !== list) {
+        task.title = title;
+        task.list = list;
+
+        /* Background sync with backend server */
+        this.notifyOngoingSync();
+        this.http.put<any>(TASKS_URL + task._id, task)
+          .subscribe(response => {
+
+            this.updateCachedTask(response);
+            this.notifyUpdatedTasks();
+            this.notifyFinishedSync(OperationMethod.RENAME_TASK);
+
+            /* Update list version */
+            this.http.put<any>(LISTS_URL + task.list, null)
+              .subscribe(response => {});
+            if (task.list !== originalList) {
+              this.http.put<any>(LISTS_URL + originalList, null)
+                .subscribe(response => {});
+            }
+          });
+      }
+    }
   }
 
   updateTaskName(id: string, title: string) {
@@ -252,12 +380,12 @@ export class TodoService {
         task.title = title;
 
         /* Background sync with backend server */
-        this.syncUpdated.next({ isOngoing: true, isManual: true });
+        this.notifyOngoingSync();
         this.http.put<any>(TASKS_URL + task._id, task)
           .subscribe(response => {
 
             this.updateCachedTask(response);
-            this.syncUpdated.next({ isOngoing: false, isManual: true });
+            this.notifyFinishedSync(OperationMethod.RENAME_TASK);
 
             /* Update list version */
             this.http.put<any>(LISTS_URL + task.list, null)
@@ -275,15 +403,16 @@ export class TodoService {
     if (index > -1) {
       const task = this.cachedTasks[index];
       task.finished = !task.finished;
-      this.todoUpdated.next({ todos: this.cachedTasks });
+      this.notifyUpdatedTasks();
 
       /* Background sync with backend server */
-      this.syncUpdated.next({ isOngoing: true, isManual: true });
+      this.notifyOngoingSync();
       this.http.put<any>(TASKS_URL + task._id, task)
         .subscribe(response => {
 
           this.updateCachedTask(response);
-          this.syncUpdated.next({ isOngoing: false, isManual: true });
+          if (task.finished) this.notifyFinishedSync(OperationMethod.FINISH_TASK);
+          else this.notifyFinishedSync(OperationMethod.ONGOING_TASK);
         });
     }
   }
@@ -308,7 +437,7 @@ export class TodoService {
       const listId =  this.cachedTasks[index].list;
 
       this.cachedTasks.splice(index, 1);
-      this.todoUpdated.next({ todos: this.cachedTasks });
+      this.notifyUpdatedTasks();
 
       this.http.delete<any>(TASKS_URL + taskId)
         .subscribe(response => {
@@ -316,6 +445,8 @@ export class TodoService {
           this.http.put<any>(LISTS_URL + listId, null)
             .subscribe(response => {});
         });
+
+      this.notifyFinishedSync(OperationMethod.DELETE_TASK);
     }
   }
 
@@ -325,9 +456,36 @@ export class TodoService {
 
     this.cachedTasks = this.cachedTasks.filter(
       todo => todo.list!==list);
+    this.notifyUpdatedTasks();
 
     if (deletedTasks.length > 0)
       this.http.post<any>(LISTS_URL + list + "/deleteTasks", null)
+        .subscribe(response => {});
+  }
+
+  deleteTasksByOngoing(list: string) {
+    const deletedTasks = this.cachedTasks.filter(todo =>
+      todo.list===list && todo.finished!==true);
+
+    this.cachedTasks = this.cachedTasks.filter(todo =>
+      todo.list!==list || todo.finished===true);
+    this.notifyUpdatedTasks();
+
+    if (deletedTasks.length > 0)
+      this.http.post<any>(LISTS_URL + list + "/deleteOngoingTasks", null)
+        .subscribe(response => {});
+  }
+
+  deleteTasksByFinished(list: string) {
+    const deletedTasks = this.cachedTasks.filter(todo =>
+      todo.list===list && todo.finished===true);
+
+    this.cachedTasks = this.cachedTasks.filter(todo =>
+      todo.list!==list || todo.finished!==true);
+    this.notifyUpdatedTasks();
+
+    if (deletedTasks.length > 0)
+      this.http.post<any>(LISTS_URL + list + "/deleteFinishedTasks", null)
         .subscribe(response => {});
   }
 

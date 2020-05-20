@@ -1,19 +1,44 @@
-.mat-toolbar {
-  top: 0;
+.vertical-toolbar {
+  top: 48px;
+  bottom: 0;
   position: fixed;
-  z-index: 9001;
+  z-index: 9000; /* ensure toolbar is on top */
   font-size: 18px;
   font-weight: 400;
-  height: 48px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 48px);
+  width: 48px;
+  background: #a4a6a8;
 }
 
-.menu-icon-button {
-  margin-left: 8px;
+.toolbar-button {
   width: 48px;
+  min-width: 48px;
   height: 48px;
+  margin: 8px auto;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0;
 }
+.vertical-button {
+  text-orientation: sideways;
+  writing-mode: vertical-lr;
+  color: #fff;
+  line-height: 24px;
+  min-width: 48px;
+  padding: 0;
+}
+
 .menu-icon {
+  color: #fff;
   font-size: 24px;
-  width: calc(24px + 8px);
-  height: 24px;
+}
+
+.version-tag {
+  color: #949494;
+  font-size: 12px;
+  font-weight: 100;
 }
