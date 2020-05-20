@@ -1,0 +1,97 @@
+<span *ngIf="isNew" mat-dialog-title>Add note</span>
+<span *ngIf="!isNew" mat-dialog-title>
+<span *ngIf="!isCopy && enabledBook == form.value.book">Edit note</span>
+<span *ngIf="!isCopy && enabledBook != form.value.book">Move note</span>
+<span *ngIf="isCopy">Copy note</span>
+<span class="spacer"></span>
+<mat-checkbox [(ngModel)]="isCopy">Create copy</mat-checkbox>
+</span>
+
+<form (submit)="submit()" [formGroup]="form">
+
+  <div mat-dialog-content>
+
+    <mat-form-field
+      class="book-form"
+      *ngIf="!addBook && books.length > 0"
+      appearance="standard"
+      floatLabel="always">
+      <mat-label>Book</mat-label>
+      <mat-select class="book-input" formControlName="book">
+        <mat-option 
+          *ngFor="let book of books"
+          value="{{book._id}}">{{book.title}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      class="book-form"
+      *ngIf="addBook || books.length == 0"
+      appearance="standard"
+      floatLabel="always">
+      <mat-label>Book title</mat-label>
+      <input
+        matInput
+        class="book-input"
+        type="text"
+        maxlength="24"
+        formControlName="book"
+        required
+        #book>
+      <mat-error
+        *ngIf="form.get('book').hasError('required')"></mat-error>
+      <mat-hint
+        *ngIf="(24 - ((book?.value) ? book.value.length : 0)) > 0"
+        align="end">
+        {{ 24 - ((book?.value) ? book.value.length : 0) }} characters remaining</mat-hint>
+    </mat-form-field>
+
+    <button
+      mat-button
+      class="add-book-button"
+      *ngIf="!addBook && books.length > 0"
+      (click)="toggleNewBook()">
+      New book
+    </button>
+
+    <mat-form-field
+      class="title-form"
+      appearance="standard"
+      floatLabel="always">
+      <mat-label>Note title</mat-label>
+      <input
+        matInput
+        class="title-input"
+        type="text"
+        maxlength="24"
+        formControlName="title"
+        required
+        #title>
+      <mat-error
+        *ngIf="form.get('title').hasError('required')"></mat-error>
+      <mat-hint
+        *ngIf="(24 - ((title?.value) ? title.value.length : 0)) > 0"
+        align="end">
+        {{ 24 - ((title?.value) ? title.value.length : 0) }} characters remaining</mat-hint>
+    </mat-form-field>
+
+  </div>
+
+  <span mat-dialog-actions align="end">
+    <button
+      mat-button
+      color="warn"
+      (click)="closeDialog()">Cancel
+    </button>
+    <button
+      mat-button
+      type="submit"
+      color="primary">
+      <span *ngIf="isNew">Add</span>
+      <span *ngIf="!isNew && !isCopy && enabledBook == form.value.book">Edit</span>
+      <span *ngIf="!isNew && !isCopy && enabledBook != form.value.book">Move</span>
+      <span *ngIf="!isNew && isCopy">Copy</span>
+    </button>
+  </span>
+
+</form>

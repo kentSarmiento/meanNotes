@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AngularMaterialModule } from "./angular-material.module";
 import { NotesModule } from "./notes/notes.module";
+import { NoteModule } from "./note/note.module";
 import { MainModule } from "./main/main.module";
 import { TodoModule } from "./todo/todo.module";
 import { ExpenseModule } from "./expense/expense.module";
@@ -29,6 +30,7 @@ import { ErrorComponent } from "./error/error.component";
     HttpClientModule,
     AngularMaterialModule,
     NotesModule,
+    NoteModule,
     MainModule,
     TodoModule,
     ExpenseModule,
