@@ -21,15 +21,22 @@
   margin: auto;
   background: #e9ebee;
 }
-.todo-side-container-true {
+.todo-side-container-true, .todo-side-container-false {
   background: #e9ebee;
+  overflow: hidden;
+}
+.todo-side-container-true {
   width: 62%;
   padding: 0 8px;
 }
 .todo-side-container-false {
-  background: #e9ebee;
   width: calc(24vw - 48px);
   padding: 0;
+}
+.scrolling-list {
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 50vh;
 }
 .empty-sidenav-header {
   height: calc(24px + 8px + 8px) !important;
@@ -238,6 +245,9 @@
   justify-content: space-between;
 }
 
+:host ::ng-deep .mat-drawer-inner-container {
+  overflow: hidden;
+}
 .mat-sidenav-container {
   margin: auto;
 }
