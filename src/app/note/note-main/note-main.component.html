@@ -1,0 +1,390 @@
+<mat-sidenav-container class="note-main-container">
+
+  <mat-sidenav #sidenav
+    class="note-side-container-{{isMobileView}}"
+    mode="{{isMobileView ? 'over' : 'side' }}"
+    position="{{isMobileView ? 'start' : 'start' }}"
+    (keydown.escape)="closeSidenav()">
+
+    <div class="note-book-container" *ngIf="isBookViewMode">
+
+      <mat-list
+        *ngIf="!isLoading || !isFirstLoad"
+        cdkDropList
+        (cdkDropListDropped)="sortBooks($event)">
+
+        <div
+          class="empty-sidenav-header"
+          cdkFocusInitial>
+          <span class="spacer"></span>
+
+          <button
+            mat-button
+            *ngIf="enabledBook == null"
+            class="back-to-book-button"
+            (click)="viewAllNotes()">
+            <mat-icon
+              class="arrow-back">arrow_forward
+            </mat-icon> Notes view
+          </button>
+        </div>
+
+        <mat-list-item>
+          <span class="padded-list-item">Notebooks</span>
+          <span class="spacer"></span>
+          <button
+            mat-icon-button
+            class="edit-book"
+            [color]="booksEdit ? 'primary' : 'black'"
+            (click)="openBookSettingsDialog()">
+            <mat-icon class="setting-icon">settings</mat-icon>
+          </button>
+        </mat-list-item>
+
+        <div class="scrolling-list">
+        <mat-list-item
+          *ngFor="let book of books">
+
+          <div
+            class="book-drag-container"
+            cdkDragLockAxis="y"
+            cdkDrag
+            [cdkDragDisabled]="!booksEdit">
+
+          <span
+            *ngIf="booksEdit"
+            class="drag-handle"
+            cdkDragHandle>
+            <mat-icon class="drag-icon">drag_indicator</mat-icon>
+          </span>
+          <span *ngIf="!booksEdit" class="book-item">
+            <button
+              mat-button
+              class="book-button
+                     book-button-selected-{{book._id == enabledBook}}"
+              (click)="changeEnabledBook(book._id)">{{book.title}}</button>
+          </span>
+          <span *ngIf="booksEdit" class="book-item">{{book.title}}</span>
+
+          </div>
+        </mat-list-item>
+        </div>
+      </mat-list>
+
+      <mat-form-field
+        *ngIf="!isLoading || !isFirstLoad"
+        class="add-book"
+        appearance="standard">
+        <input
+          matInput
+          type="text"
+          name="book"
+          maxlength="24"
+          placeholder="Add new notebook"
+          tabindex="1"
+          (focus)="enableAddBook()"
+          (blur)="disableAddBook()"
+          (keydown.enter)="[addBook(book.value), book.value='']"
+          cdkFocusInitial
+          #book>
+        <mat-hint
+          *ngIf="bookAdd &&
+                 (24 - ((book?.value) ? book.value.length : 0)) > 0"
+          align="end">
+          {{ 24 - ((book?.value) ? book.value.length : 0) }} characters remaining
+        </mat-hint>
+      </mat-form-field>
+
+    </div>
+
+    <div class="note-list-container" *ngIf="!isBookViewMode">
+
+      <mat-list
+        *ngIf="!isLoading || !isFirstLoad"
+        cdkDropList
+        (cdkDropListDropped)="sortNotes($event)">
+
+        <div
+          class="empty-sidenav-header"
+          cdkFocusInitial>
+        <span class="display-book" *ngIf="enabledBook != null">
+          <mat-icon
+            class="book-icon">library_books
+          </mat-icon>{{enabledBookName}}
+        </span>
+        <span class="spacer"></span>
+
+          <button
+            mat-button
+            *ngIf="enabledBook == null"
+            class="back-to-book-button"
+            (click)="viewAllBooks()">
+            <mat-icon
+              class="arrow-back">arrow_back
+            </mat-icon> Books view
+          </button>
+
+          <button
+            mat-icon-button
+            *ngIf="enabledBook != null"
+            [matMenuTriggerFor]="bookMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+        <mat-menu #bookMenu="matMenu">
+          <button mat-menu-item
+            (click)="openEditBookDialog(false)">
+            <mat-icon>edit</mat-icon>
+            <span>Rename book</span>
+          </button>
+
+          <button mat-menu-item
+            (click)="openEditBookDialog(true)">
+            <mat-icon>file_copy</mat-icon>
+            <span>Copy book</span>
+          </button>
+
+          <button mat-menu-item
+            (click)="deleteBookById(enabledBook)">
+            <mat-icon class="delete-menu-icon">delete</mat-icon>
+            <span>Delete book</span>
+          </button>
+        </mat-menu>
+
+        </div>
+
+        <mat-list-item
+            *ngIf="enabledBook != null">
+          <span class="spacer"></span>
+          <button
+            mat-button
+            class="back-to-book-button"
+            (click)="viewAllBooks()">
+            <mat-icon
+              class="arrow-back">arrow_back
+            </mat-icon> Back to books
+          </button>
+        </mat-list-item>
+
+        <mat-list-item>
+        <span class="padded-list-item">Notes</span>
+          <span class="spacer"></span>
+          <button
+            mat-icon-button
+            class="edit-book"
+            [color]="booksEdit ? 'primary' : 'black'"
+            (click)="openNoteSettingsDialog()">
+            <mat-icon class="setting-icon">settings</mat-icon>
+          </button>
+        </mat-list-item>
+
+        <div class="scrolling-list">
+        <mat-list-item
+          *ngFor="let note of notes">
+
+          <div
+            class="book-drag-container"
+            cdkDragLockAxis="y"
+            cdkDrag
+            [cdkDragDisabled]="!booksEdit">
+
+          <span
+            *ngIf="booksEdit"
+            class="drag-handle"
+            cdkDragHandle>
+            <mat-icon class="drag-icon">drag_indicator</mat-icon>
+          </span>
+          <span *ngIf="!booksEdit" class="book-item">
+            <a
+              mat-button
+              class="book-button"
+              (click)="openNote(note)">
+              {{note.title}}
+            </a>
+          </span>
+          <span *ngIf="booksEdit" class="book-item">{{note.title}}</span>
+
+          </div>
+        </mat-list-item>
+        </div>
+
+        <mat-list-item
+          class="add-button-list"
+          *ngIf="(!isLoading || !isFirstLoad) && enabledBook == null">
+          <button
+            mat-button
+            class="add-button"
+            (click)="openAddNoteDialog()">
+            <mat-icon>add</mat-icon> Add new note
+          </button>
+        </mat-list-item>
+
+      </mat-list>
+
+      <mat-form-field
+        *ngIf="(!isLoading || !isFirstLoad) && enabledBook != null"
+        class="add-book"
+        appearance="standard">
+        <input
+          matInput
+          type="text"
+          name="book"
+          maxlength="24"
+          placeholder="Add new note"
+          tabindex="1"
+          (focus)="enableAddBook()"
+          (blur)="disableAddBook()"
+          (keydown.enter)="[addNote(book.value), book.value='']"
+          cdkFocusInitial
+          #book>
+        <mat-hint
+          *ngIf="bookAdd &&
+                 (24 - ((book?.value) ? book.value.length : 0)) > 0"
+          align="end">
+          {{ 24 - ((book?.value) ? book.value.length : 0) }} characters remaining
+        </mat-hint>
+      </mat-form-field>
+
+    </div>
+  </mat-sidenav>
+
+  <mat-spinner class="large-spinner" *ngIf="isLoading"></mat-spinner>
+
+  <mat-sidenav-content class="note-content-container" *ngIf="!isLoading">
+
+    <div
+      class="note-content-header"
+      *ngIf="openedNotes.length > 0">
+      <div class="note-content-book-title">
+
+        <button
+          *ngIf="isMobileView"
+          mat-icon-button
+          class="toolbar-button horizontal-button"
+          (click)="toggleMenu()">
+          <mat-icon class="menu-icon">menu</mat-icon>
+        </button>
+
+        <span class="spacer" *ngIf="isMobileView"></span>
+        <span class="display-book">
+          <mat-icon
+            *ngIf="!isMobileView"
+            class="book-icon"> insert_drive_file
+          </mat-icon>{{getBookName(openedNotes[enabledIndex]?.book)}}  </span>
+        <span
+          class="display-note"
+          *ngIf="openedNotes.length > 0">
+          — {{openedNotes[enabledIndex]?.title}}
+        </span>
+        <span class="spacer"></span>
+
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="noteMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+
+        <mat-menu #noteMenu="matMenu">
+
+          <button mat-menu-item
+            (click)="openEditOpenedNoteDialog(openedNotes[enabledIndex])">
+            <mat-icon>edit</mat-icon>
+            <span>Rename note</span>
+          </button>
+
+          <button mat-menu-item
+            (click)="openEditOpenedNoteDialog(openedNotes[enabledIndex])">
+            <mat-icon>file_copy</mat-icon>
+            <span>Copy note</span>
+          </button>
+
+          <button mat-menu-item
+            (click)="deleteNote(openedNotes[enabledIndex].id)">
+            <mat-icon class="delete-menu-icon">delete</mat-icon>
+            <span>Delete note</span>
+          </button>
+
+        </mat-menu>
+
+      </div>
+    </div>
+
+    <div class="note-content-body">
+
+      <mat-tab-group
+        *ngIf="openedNotes.length > 0"
+        animationDuration="0ms"
+        [selectedIndex]="enabledIndex"
+        (selectedTabChange)="changeEnabledNote($event)">
+
+        <mat-tab
+          *ngFor="let note of openedNotes; let index=index">
+
+          <ng-template mat-tab-label>
+            <span class="tab-title">{{openedNotes[index].title}}</span>
+            <span class="spacer"></span>
+            <button
+              mat-icon-button
+              class="tab-close"
+              color="warn"
+              (click)="closeNoteByIndex(index)">
+              <mat-icon class="tab-close-icon">close</mat-icon>
+            </button>
+          </ng-template>
+
+          <form
+            (ngSubmit)="saveNote()"
+            [formGroup]="form">
+          <div class="note-form-field">
+            <quill-editor
+              format="html"
+              formControlName="content">
+            <div quill-editor-toolbar>
+            <span class="ql-formats">
+              <select class="ql-font" *ngIf="!isMobileView">
+                <option selected></option>
+                <option value="serif"></option>
+                <option value="monospace"></option>
+              </select>
+              <select class="ql-size">
+                <option value="small"></option>
+                <option selected></option>
+                <option value="large"></option>
+                <option value="huge"></option>
+              </select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-bold"></button>
+              <button class="ql-italic"></button>
+              <button class="ql-underline"></button>
+            </span>
+            <span class="ql-formats" *ngIf="!isMobileView">
+              <select class="ql-color"></select>
+              <select class="ql-background"></select>
+            </span>
+            <span class="ql-formats">
+              <button class="ql-list" value="ordered"></button>
+              <button class="ql-list" value="bullet"></button>
+            </span>
+            <span class="spacer"></span>
+            <span class="">
+                          <button
+                        mat-button
+                        class="submit-button"
+                        color="primary"
+                        type="submit">
+                        Save
+                      </button>
+            </span>
+            </div>
+            </quill-editor>
+          </div>
+          </form>
+
+        </mat-tab>
+      </mat-tab-group>
+
+    </div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>

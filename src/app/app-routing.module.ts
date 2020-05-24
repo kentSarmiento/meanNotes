@@ -7,6 +7,7 @@ import { MainViewComponent } from "./main/main-view.component";
 const routes: Routes = [
   { path: '', loadChildren: () => import('./main/main.module').then(m => m.MainModule) },
   { path: "notes", loadChildren: () => import('./notes/notes.module').then(m => m.NotesModule) },
+  { path: "note", loadChildren: () => import('./note/note.module').then(m => m.NoteModule) },
   { path: "todo", loadChildren: () => import('./todo/todo.module').then(m => m.TodoModule) },
   { path: "expense", loadChildren: () => import('./expense/expense.module').then(m => m.ExpenseModule) },
   { path: "auth", loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) }

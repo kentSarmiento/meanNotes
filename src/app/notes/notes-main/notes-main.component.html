@@ -1,0 +1,109 @@
+<mat-sidenav-container class="expense-main-container">
+
+  <mat-sidenav #sidenav
+    class="expense-side-container-{{isMobileView}}"
+    mode="{{isMobileView ? 'over' : 'side' }}"
+    position="{{isMobileView ? 'end' : 'start' }}"
+    (keydown.escape)="closeSidenav()">
+
+    <div class="expense-list-container">
+
+      <mat-list
+        *ngIf="!isLoading || !isFirstLoad"
+        cdkDropList
+        (cdkDropListDropped)="sortBooks($event)">
+
+        <mat-list-item>
+          <button
+            mat-button
+            class="all-notes-button"
+            (click)="viewAllNotes()">All Notes</button>
+        </mat-list-item>
+
+        <mat-list-item>
+        Notebooks
+          <span class="spacer"></span>
+          <button
+            mat-icon-button
+            class="edit-books"
+            [color]="booksEdit ? 'primary' : 'black'"
+            (click)="toggleEditBooks(!booksEdit)">
+            <mat-icon class="setting-icon">sort</mat-icon>
+          </button>
+        </mat-list-item>
+
+        <mat-list-item
+          *ngFor="let book of books">
+          <div
+            class="book-drag-container"
+            cdkDragLockAxis="y"
+            cdkDrag
+            [cdkDragDisabled]="!booksEdit">
+
+          <span
+            *ngIf="booksEdit"
+            class="drag-handle"
+            cdkDragHandle>
+            <mat-icon class="drag-icon">drag_indicator</mat-icon>
+          </span>
+          <span *ngIf="!booksEdit" class="book-item">
+            <button
+              mat-button
+              class="book-button
+                      book-button-selected-{{book._id == enabledBook}}"
+              (click)="changeEnabledBook(book._id)">{{book.title}}</button>
+          </span>
+          <span *ngIf="booksEdit" class="book-item">{{book.title}}</span>
+
+          </div>
+        </mat-list-item>
+      </mat-list>
+
+      <mat-form-field
+        *ngIf="!isLoading || !isFirstLoad"
+        class="add-book"
+        appearance="standard">
+        <input
+          matInput
+          type="text"
+          name="book"
+          maxlength="24"
+          placeholder="Add new book"
+          tabindex="1"
+          (focus)="enableAddBook()"
+          (blur)="disableAddBook()"
+          (keydown.enter)="[addBook(book.value), book.value='']"
+          cdkFocusInitial
+          #book>
+        <mat-hint
+          *ngIf="bookAdd &&
+                 (24 - ((book?.value) ? book.value.length : 0)) > 0"
+          align="end">
+          {{ 24 - ((book?.value) ? book.value.length : 0) }} characters remaining
+        </mat-hint>
+      </mat-form-field>
+
+    </div>
+
+    <div
+      class="log-out-list"
+      *ngIf="isMobileView">
+      <button
+        mat-button
+        class="log-out-button"
+        (click)="logout()">
+        Log out <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+
+  </mat-sidenav>
+
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+
+  <mat-sidenav-content class="expense-content-container" *ngIf="!isLoading">
+
+      <div class="expense-content-header" *ngIf="lists.length!=0">
+        <div class="todo-content-list-title">
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

@@ -1,0 +1,71 @@
+<h2 mat-dialog-title>Settings</h2>
+
+<mat-dialog-content class="mat-typography">
+  <div
+    class="note-content-accordion"
+    *ngIf="books.length > 0"
+    cdkDropList
+    (cdkDropListDropped)="sortBooks($event)">
+
+    <div
+      *ngFor="let book of books"
+      class="note-content-panel"
+      cdkDrag
+      #panel>
+
+      <mat-icon cdkDragHandle>drag_indicator</mat-icon>
+      <span>{{book.title}}</span>
+        <button
+          mat-icon-button
+          class="small-delete"
+          color="warn"
+          (click)="deleteBook(book)">
+          <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+  </div>
+
+  <div
+    class="note-content-accordion"
+    *ngIf="notes.length > 0"
+    cdkDropList
+    (cdkDropListDropped)="sortNotes($event)">
+
+    <div
+      *ngFor="let note of notes"
+      class="note-content-panel"
+      cdkDrag
+      #panel>
+
+      <mat-icon cdkDragHandle>drag_indicator</mat-icon>
+      <span>{{note.title}}</span>
+        <button
+          mat-icon-button
+          class="small-delete"
+          color="warn"
+          (click)="deleteNote(note._id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+    </div>
+  </div>
+
+  <p
+    class="mat-caption"
+    align="center"
+    *ngIf="notes.length == 0 && books.length == 0">
+  List is empty!</p>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    (click)="closeDialog()"
+    cdkFocusInitial>Cancel
+  </button>
+  <button
+    mat-button
+    color="warn"
+    (click)="confirmedAction()">Confirm
+  </button>
+</mat-dialog-actions>

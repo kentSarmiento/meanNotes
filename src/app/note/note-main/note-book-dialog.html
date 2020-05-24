@@ -1,0 +1,48 @@
+<span *ngIf="isNew" mat-dialog-title>Add Book</span>
+<span *ngIf="!isNew" mat-dialog-title>
+<span *ngIf="!isCopy">Edit Book</span>
+<span *ngIf="isCopy">Copy Book</span>
+</span>
+
+<form (submit)="submit()" [formGroup]="form">
+
+  <div mat-dialog-content>
+
+    <mat-form-field
+        class="title-form"
+        appearance="standard"
+        floatLabel="always">
+      <mat-label>Book Name</mat-label>
+      <input
+        matInput
+        class="title-input"
+        type="text"
+        maxlength="24"
+        formControlName="title"
+        required
+        #title>
+      <mat-error
+        *ngIf="form.get('title').hasError('required')"></mat-error>
+      <mat-hint align="end">
+        {{ 24 - ((title?.value) ? title.value.length : 0) }} characters remaining</mat-hint>
+    </mat-form-field>
+
+  </div>
+
+  <span mat-dialog-actions align="end">
+    <button
+      mat-button
+      color="warn"
+      (click)="closeDialog()">Cancel
+    </button>
+    <button
+      mat-button
+      type="submit"
+      color="primary">
+      <span *ngIf="isNew">Add</span>
+      <span *ngIf="!isNew && !isCopy">Edit</span>
+      <span *ngIf="!isNew && isCopy">Copy</span>
+    </button>
+  </span>
+
+</form>
